@@ -1,3 +1,4 @@
+import { FONTS } from "@/src/constants/fonts";
 import { Dimensions, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -21,18 +22,19 @@ export const styles = StyleSheet.create({
 
   header: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 15,
   },
 
   headerTitle: {
-    fontSize: 13,
-    color: "#8E8E8E",
+    fontFamily: FONTS.inter.light,
+    fontSize: 15,
+    color: "#6e6e6eea",
     marginBottom: 4,
   },
 
   headerSubtitle: {
+    fontFamily: FONTS.inter.semiBold,
     fontSize: 16,
-    fontWeight: "700",
     color: "#6B6B6B",
   },
 
