@@ -69,23 +69,23 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: '500',
   },
-  button: {
-    backgroundColor: 'hsla(14, 37%, 31%, 1.00)',
-    width: '100%',
-    height: 48,
-    borderRadius: 25,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  buttonC: {
-    alignItems: 'center',
-  },
+  // button: {
+  //   backgroundColor: '#6c3f32ff',
+  //   width: '100%',
+  //   height: 48,
+  //   borderRadius: 25,
+  //   paddingVertical: 12,
+  //   alignItems: 'center',
+  //   marginTop: 5,
+  // },
+  // buttonText: {
+  //   color: '#fff',
+  //   fontSize: 18,
+  //   fontWeight: 'bold',
+  // },
+  // buttonC: {
+  //   alignItems: 'center',
+  // },
   link: {
     color: '#6B3F31',
     textAlign: 'center',

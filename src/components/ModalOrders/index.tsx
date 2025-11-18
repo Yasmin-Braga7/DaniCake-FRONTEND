@@ -1,110 +1,96 @@
 import React from "react";
-import { styles } from "./style";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  ScrollView,
-  Image,
-  Dimensions,
+import { 
+    Modal, 
+    View, 
+    Text, 
+    TouchableOpacity, 
+    ScrollView, 
+    Image,
+    TouchableWithoutFeedback 
 } from "react-native";
+import { styles } from "./style"; 
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-type OrderItem = {
-  id: string;
-  name: string;
-  qty: number;
-  price: string;
-  image?: any;
-};
+interface OrderItem {
+    id: string;
+    name: string;
+    qty: number;
+    price: string; 
+    image: any; 
+}
 
-type Order = {
-  id: string;
-  orderNumber: string;
-  date: string;
-  items: OrderItem[];
-  price: string;
-  status: string;
-};
+interface OrderData {
+    id: string;
+    date: string;
+    items: OrderItem[];
+    total: string;
+}
 
-type Props = {
-  visible: boolean;
-  order: Order | null;
-  onClose: () => void;
-};
+interface OrderDetailsModalProps {
+    visible: boolean;          
+    onClose: () => void;       
+    order: OrderData | null;    
+}
 
-export const OrderDetailsModal: React.FC<Props> = ({ visible, order, onClose }) => {
-  return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      {/* Overlay - ao tocar fecha */}
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay} />
-      </TouchableWithoutFeedback>
+export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModalProps) => {
+    if (!order) return null; 
 
-      {/* Modal centralizado */}
-      <View style={styles.wrapper}>
-        {/* Evita fechamento ao tocar dentro */}
-        <TouchableWithoutFeedback onPress={() => {}}>
-          <View style={styles.modal}>
-            {/* Cabeçalho */}
-            <View style={styles.header}>
-              <Text style={styles.title}>Detalhes do pedido {order?.orderNumber}</Text>
-            </View>
+    return (
+        <Modal
+            animationType="fade"
+            transparent={true} 
+            visible={visible}
+            onRequestClose={onClose}
+        >
+           
+            <TouchableOpacity 
+                style={styles.modalOverlay} 
+                activeOpacity={1} 
+                onPressOut={onClose}
+            >
+            
+                <TouchableWithoutFeedback>
+                    <View style={styles.modalContent}>
+                        
+                        {/* Cabeçalho */}
+                        <Text style={styles.modalTitle}>Detalhes do pedido #{order.id}</Text>
 
-            {/* Data de pedido */}
-            <View style={styles.dateRow}>
-              <Text style={styles.dateLabel}>Data de pedido</Text>
-              <Text style={styles.dateValue}>{order?.date}</Text>
-            </View>
+                        <View style={styles.dateRow}>
+                            <Text style={styles.dateLabel}>Data de pedido</Text>
+                            <Text style={styles.dateValue}>{order.date}</Text>
+                        </View>
 
-            {/* Título fixo */}
-            <View style={styles.itemsTitleRow}>
-              <Text style={styles.itemsTitle}>Itens do pedido</Text>
-            </View>
+                        <Text style={styles.sectionTitle}>Itens do pedido</Text>
 
-            {/* Lista rolável - limitar altura */}
-            <View style={[styles.itemsContainer, { maxHeight: SCREEN_HEIGHT * 0.45 }]}>
-              <ScrollView contentContainerStyle={styles.itemsList}>
-                {order?.items?.map((it) => (
-                  <View key={it.id} style={styles.itemRow}>
-                    {it.image ? (
-                      <Image source={it.image} style={styles.itemImage} />
-                    ) : (
-                      <View style={styles.itemImagePlaceholder} />
-                    )}
-                    <View style={styles.itemText}>
-                      <Text style={styles.itemName}>{it.name}</Text>
-                      <Text style={styles.itemQty}>Qtd: {it.qty}</Text>
+                       
+                        <ScrollView style={styles.itemsList} showsVerticalScrollIndicator={true}>
+                            {order.items.map((item, index) => (
+                                <View key={index} style={styles.itemCard}>
+                                    <Image source={item.image} style={styles.itemImage} />
+                                    <View style={styles.itemInfo}>
+                                        <Text style={styles.itemName}>{item.name}</Text>
+                                        <Text style={styles.itemQty}>Qtd: {item.qty}</Text>
+                                    </View>
+                                    <Text style={styles.itemPrice}>{item.price}</Text>
+                                </View>
+                            ))}
+                        </ScrollView>
+
+                        
+                        <View style={styles.footer}>
+                            <View style={styles.totalRow}>
+                                <Text style={styles.totalLabel}>Total:</Text>
+                                <Text style={styles.totalValue}>{order.total}</Text>
+                            </View>
+
+                            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                                <Text style={styles.closeButtonText}>Fechar</Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
-                    <Text style={styles.itemPrice}>{it.price}</Text>
-                  </View>
-                ))}
-
-                {/* Se não houver itens */}
-                {(!order?.items || order.items.length === 0) && (
-                  <View style={styles.emptyRow}>
-                    <Text style={styles.emptyText}>Nenhum item</Text>
-                  </View>
-                )}
-              </ScrollView>
-            </View>
-
-            {/* Footer com total */}
-            <View style={styles.footer}>
-              <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>{order?.price}</Text>
-            </View>
-
-            {/* Botão fechar */}
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <Text style={styles.closeBtnText}>Fechar</Text>
+                </TouchableWithoutFeedback>
             </TouchableOpacity>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-    </Modal>
-  );
+        </Modal>
+    );
 };
