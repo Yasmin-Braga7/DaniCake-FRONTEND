@@ -3,7 +3,7 @@ import { Alert, Image, Text, TextInput, TouchableOpacity, View } from "react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from 'expo-router';
 import { styles } from './style';
-import { ReusableButton } from '@/src/components/ButtonReusable';
+import { ReusableButton } from '@/src/components/Button';
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');

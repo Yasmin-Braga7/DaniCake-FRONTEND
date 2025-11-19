@@ -70,6 +70,15 @@ export const styles = StyleSheet.create({
     color: '#1E90FF',
   },
 
+  badgeEmPreparo:{
+    backgroundColor: '#f1ffa1ff',
+    borderColor: '#e2ff40f1'
+  },
+
+  badgeTextEmPreparo: {
+    color: '#d9ff00ff'
+  },
+
   // ⭐ PENDENTE
   badgePendente: {
     backgroundColor: '#FFF7E6',

@@ -1,7 +1,7 @@
 // OrderCard.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
-import { Check, Truck, Clock, X } from 'lucide-react-native';
+import { Check, Truck, Clock, X, Hourglass } from 'lucide-react-native';
 import { styles } from "./style";
 
 type StatusType = 'Entregue' | 'Pendente' | 'Enviado' | 'Cancelado';

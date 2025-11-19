@@ -32,7 +32,7 @@ export const OrdersScreen = () => {
         <OrderCard
           orderNumber="#001"
           date="10/11/2025"
-          itemsCount={2}
+          itemsCount={1}
           price="R$ 45,00"
           status="Pendente"
           onPress={() =>
@@ -40,13 +40,12 @@ export const OrdersScreen = () => {
               id: "001",
               orderNumber: "#001",
               date: "10/11/2025",
-              price: "R$ 45,00",
               status: "Pendente",
               items: [
                 {
                   id: "i1",
                   name: "Bolo de banana",
-                  qty: 3,
+                  qty: 1,
                   price: "R$ 89,00",
                   image: require("@/assets/imagens/BoloBanana.jpg"),
                 },
@@ -84,8 +83,8 @@ export const OrdersScreen = () => {
         <OrderCard
           orderNumber="#003"
           date="08/11/2025"
-          itemsCount={3}
-          price="R$ 89,00"
+          itemsCount={8}
+          price="R$ 352,00"
           status="Entregue"
           onPress={() =>
             openModal({
@@ -116,6 +115,20 @@ export const OrdersScreen = () => {
                   price: "R$ 15,00",
                   image: require("@/assets/imagens/BoloBanana.jpg"),
                 },
+                {
+                  id: "i6",
+                  name: "Doce",
+                  qty: 1,
+                  price: "R$ 15,00",
+                  image: require("@/assets/imagens/BoloBanana.jpg"),
+                },
+                {
+                  id: "i7",
+                  name: "Doce",
+                  qty: 1,
+                  price: "R$ 15,00",
+                  image: require("@/assets/imagens/BoloBanana.jpg"),
+                },
               ],
             })
           }
@@ -125,14 +138,13 @@ export const OrdersScreen = () => {
           orderNumber="#004"
           date="07/11/2025"
           itemsCount={5}
-          price="R$ 120,00"
+          price="R$ 600,00"
           status="Cancelado"
           onPress={() =>
             openModal({
               id: "004",
               orderNumber: "#004",
               date: "07/11/2025",
-              price: "R$ 120,00",
               status: "Cancelado",
               items: [
                 {

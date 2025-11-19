@@ -1,11 +1,9 @@
-// ... seus outros estilos ...
 import { FONTS } from "@/src/constants/fonts"; // Ajuste se necessário
 import { Dimensions, StyleSheet } from "react-native";
 
 const { height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-
     modalOverlay: {
         flex: 1,
         backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -15,7 +13,7 @@ export const styles = StyleSheet.create({
 
     modalContent: {
         width: "90%",
-        maxHeight: height * 0.8,
+        maxHeight: height * 0.8, // limite para o modal não ultrapassar a tela
         backgroundColor: "#FFF",
         borderRadius: 20,
         padding: 20,
@@ -26,6 +24,27 @@ export const styles = StyleSheet.create({
         shadowRadius: 4,
     },
 
+    modalWrapper: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    backgroundFill: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
+    },
+
+    centered: {
+        width: "100%",
+        alignItems: "center",
+        paddingHorizontal: 18,
+    },
+
     modalTitle: {
         fontSize: 20,
         fontFamily: FONTS.inter.bold,
@@ -34,11 +53,10 @@ export const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
-
     dateRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        backgroundColor: "#FFF0F0", 
+        backgroundColor: "#FFF0F0",
         padding: 12,
         borderRadius: 10,
         marginBottom: 15,
@@ -61,6 +79,7 @@ export const styles = StyleSheet.create({
         color: "#000",
     },
 
+    // itemsList removido (usamos wrapper inline para controlar height dinamicamente)
     itemsList: {
         marginBottom: 20,
     },
@@ -72,6 +91,7 @@ export const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 10,
         marginBottom: 10,
+        minHeight: 70, // garante altura mínima visual estável
     },
     itemImage: {
         width: 50,
