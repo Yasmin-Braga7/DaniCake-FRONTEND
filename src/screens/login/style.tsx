@@ -4,6 +4,12 @@ import { FONTS } from "@/src/constants/fonts";
 const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
+  safeArea:{
+    flex: 1,
+  },
+  keyboardAvoiding:{
+    flex:1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFF6F7',
@@ -43,6 +49,10 @@ export const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 3,
   },
+  inputContainer:{
+    width: '100%',
+    marginBottom: 5,
+  },
   label: {
     fontFamily: FONTS.inter.regular,
     fontSize: 16,
@@ -63,12 +73,24 @@ export const styles = StyleSheet.create({
     borderColor: '#cfcfcfff',
     borderRadius: 8,
   },
-  errorText: {
-    color: '#d8000c',
-    textAlign: 'center',
-    marginBottom: 10,
-    fontWeight: '500',
+  inputError:{
+      borderColor:'#f81345ff',
+      borderWidth: 1.5,
   },
+
+  errorText:{
+        color:'#f81345ff',
+        fontFamily:FONTS.inter.semiBold,
+        fontSize:14,
+        paddingLeft: 15,
+        height: 20,
+    },
+  // errorText: {
+  //   color: '#d8000c',
+  //   textAlign: 'center',
+  //   marginBottom: 10,
+  //   fontWeight: '500',
+  // },
   // button: {
   //   backgroundColor: '#6c3f32ff',
   //   width: '100%',
