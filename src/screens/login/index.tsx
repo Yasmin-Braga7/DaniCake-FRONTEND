@@ -18,9 +18,12 @@ import { styles } from './style';
 import { ReusableButton } from '@/src/components/Button';
 import { useFormLogin } from '@/src/hooks/formLogin';
 import { LoginService } from '@/src/services/auth/login';
+import { useNavigation } from "@/src/constants/router";
 
 
 export const LoginScreen = () => {
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const { errors, validate, clearError, setInvalidCredentialsError } = useFormLogin();
@@ -121,7 +124,7 @@ export const LoginScreen = () => {
                 </View>
 
                 <Text style={styles.footer}>
-                  Não tem uma conta? <Text style={styles.signup} onPress={() => router.push('')}>Cadastra-se</Text>
+                  Não tem uma conta? <Text style={styles.signup} onPress={() => navigation.register}>Cadastra-se</Text>
                 </Text>
               </View>
             </View>
