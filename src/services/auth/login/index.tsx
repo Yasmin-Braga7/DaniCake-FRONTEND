@@ -6,11 +6,9 @@ import { Alert } from "react-native";
 
 export const LoginService = {
   login: async (email: string, senha: string): Promise<LoginResponse> => {
-    console.log("[LoginService] iniciar login", email);
     const credentials: LoginRequest = { email, senha };
 
     try {
-      console.log("[LoginService] POST /usuario/login", credentials);
       const response = await api.post<LoginResponse>('/usuario/login', credentials, {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
       });
