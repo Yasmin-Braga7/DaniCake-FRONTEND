@@ -6,9 +6,11 @@ const { width, height } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   safeArea:{
     flex: 1,
+    backgroundColor: '#FFF6F7',
   },
   keyboardAvoiding:{
     flex:1,
+    backgroundColor: 'transparent',
   },
   container: {
     flex: 1,

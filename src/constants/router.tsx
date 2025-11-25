@@ -4,9 +4,9 @@ export const useNavigation = () => {
     const router = useRouter();
 
     const navigateTo = {
-        login: () => router.push('/app/auth/login'),
-        register: () => router.push('/app/auth/register'),
-        home: () => router.push('/app/(tabs)/Home/index.tsx'),
+        login: () => router.push('/auth/login'),
+        register: () => router.push('/'),
+        home: () => router.push('/'),
         cart: () => router.push('/Cart'),
         orders: () => router.push('/Orders'),
         profile: () => router.push('/Profile'),

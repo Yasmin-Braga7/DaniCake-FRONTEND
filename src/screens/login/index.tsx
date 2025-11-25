@@ -19,6 +19,7 @@ import { ReusableButton } from '@/src/components/Button';
 import { useFormLogin } from '@/src/hooks/formLogin';
 import { LoginService } from '@/src/services/auth/login';
 
+
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -120,7 +121,7 @@ export const LoginScreen = () => {
                 </View>
 
                 <Text style={styles.footer}>
-                  Não tem uma conta? <Text style={styles.signup}>Cadastra-se</Text>
+                  Não tem uma conta? <Text style={styles.signup} onPress={() => router.push('')}>Cadastra-se</Text>
                 </Text>
               </View>
             </View>
