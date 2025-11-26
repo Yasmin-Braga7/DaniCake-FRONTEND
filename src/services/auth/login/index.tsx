@@ -12,7 +12,6 @@ export const LoginService = {
       const response = await api.post<LoginResponse>('/usuario/login', credentials, {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' }
       });
-
       const { usuario, token } = response.data;
       await AuthService.login(usuario, token);
       return response.data;

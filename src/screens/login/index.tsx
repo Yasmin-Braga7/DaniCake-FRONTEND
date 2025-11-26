@@ -51,14 +51,13 @@ export const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    console.log("validate:"+  validate(email, senha))
+
     if (!validate(email, senha)) return;
-    console.log("continuo");
+    
     try {
       setLoading(true);
       await LoginService.login(email, senha);
       
-      //Alert.alert('Sucesso', `Bem-vindo, ${email}`);
       navigation.home();
       // router.push('/(tabs)/Home');
     } catch (error: any) {
