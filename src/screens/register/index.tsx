@@ -1,20 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { 
-    View, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    Keyboard, 
-    Pressable, 
-    KeyboardAvoidingView, 
-    Platform, 
-    ScrollView 
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Keyboard, Pressable, KeyboardAvoidingView, Platform, ScrollView, Image } from "react-native";
+import { ArrowLeft } from 'lucide-react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@/src/constants/router";
 import { styles } from "./style";
+import { ReusableButton } from "@/src/components/Button";
 
 export const RegisterScreen = () => {
 
+    const navigation = useNavigation();
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -22,7 +16,7 @@ export const RegisterScreen = () => {
 
     const scrollViewRef = useRef<ScrollView | null>(null);
 
-    // Garante o scroll resetar quando o teclado desce
+    
     useEffect(() => {
         const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
             scrollViewRef.current?.scrollTo({ y: 0, animated: true });
@@ -49,26 +43,31 @@ export const RegisterScreen = () => {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* Pressable para fechar teclado ao tocar fora */}
+
                     <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+
+                        <View style={styles.topHeader}>
+                            <TouchableOpacity onPress={navigation.back} style={styles.backButton}>
+                                
+                                <ArrowLeft color="#D81B60" size={28} />
+                            </TouchableOpacity>
+                        </View>
                         
-                        {/* Cabeçalho (Logo e Título) */}
                         <View style={styles.header}>
-                            <View style={styles.logoCircle}>
-                                {/* Aqui entraria sua imagem da Logo */}
-                                <Text style={styles.logoText}>Logo</Text>
-                            </View>
+                            
+                                <Image style={styles.img} source={require('@/assets/imagens/LogoCake.png')}/>
+                            
                             
                             <Text style={styles.pageTitle}>CRIAR UMA CONTA</Text>
                         </View>
 
-                        {/* Card do Formulário */}
                         <View style={styles.cardForm}>
                             
                             <View style={styles.inputContainer}>
                                 <Text style={styles.label}>Nome completo</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input,  { fontSize: 17 }]}
+                                    placeholder="Digite seu Nome"
                                     value={nome}
                                     onChangeText={setNome}
                                 />
@@ -77,7 +76,8 @@ export const RegisterScreen = () => {
                             <View style={styles.inputContainer}>
                                 <Text style={styles.label}>E-mail</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input,  { fontSize: 17 }]}
+                                    placeholder="Digite um E-mail"
                                     value={email}
                                     onChangeText={setEmail}
                                     keyboardType="email-address"
@@ -88,7 +88,8 @@ export const RegisterScreen = () => {
                             <View style={styles.inputContainer}>
                                 <Text style={styles.label}>Senha</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input,  { fontSize: 17 }]}
+                                    placeholder="Digite uma senha"
                                     value={senha}
                                     onChangeText={setSenha}
                                     secureTextEntry
@@ -98,16 +99,15 @@ export const RegisterScreen = () => {
                             <View style={styles.inputContainer}>
                                 <Text style={styles.label}>confirmar senha</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input,  { fontSize: 17 }]}
+                                    placeholder="Confirme a senha"
                                     value={confirmarSenha}
                                     onChangeText={setConfirmarSenha}
                                     secureTextEntry
                                 />
                             </View>
 
-                            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                                <Text style={styles.buttonText}>CADASTRAR</Text>
-                            </TouchableOpacity>
+                            <ReusableButton title='CADASTRAR' onPress={handleRegister} />
 
                         </View>
                     </Pressable>

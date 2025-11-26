@@ -1,108 +1,97 @@
 import { StyleSheet } from "react-native";
+import { FONTS } from "@/src/constants/fonts";
 
 export const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#FFF5F6', // Fundo rosa claro da tela inteira
+        backgroundColor: '#FFF5F6',
     },
+    
     keyboardAvoiding: {
         flex: 1,
     },
+
     scrollView: {
         flex: 1,
         backgroundColor: '#FFF5F6',
     },
+
     scrollContent: {
         flexGrow: 1,
         paddingBottom: 20,
     },
+
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
+
+    topHeader: {
+        width: '100%',
+        alignItems: 'flex-start',
+        paddingHorizontal: 25,
+        marginTop: 10,
+    },
+
+    backButton: {
+        padding: 5,
+    },
+
     
-    // Header
     header: {
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 10,
         marginBottom: 20,
     },
-    logoCircle: {
-        width: 130,
-        height: 130,
-        borderRadius: 65,
-        backgroundColor: '#FFE4E9', // Fundo do circulo da logo
-        borderWidth: 2,
-        borderColor: '#F48FB1', // Borda rosa mais forte
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 15,
+
+    img: {
+        width: 200,
+        height: 170,
+        resizeMode: 'contain',
+        marginBottom: 5,
     },
-    logoText: {
-        color: '#D81B60',
-        fontWeight: 'bold',
-    },
+
     pageTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#8D8D8D', // Cinza escuro do título
+        fontSize: 21,
+        fontFamily: FONTS.inter.bold,
+        color: '#828181',
         textTransform: 'uppercase',
     },
 
-    // Card Branco
     cardForm: {
-        backgroundColor: '#FFFFFF', // Branco puro
+        backgroundColor: '#FFFFFF',
         width: '90%',
         borderRadius: 25,
         paddingVertical: 35,
         paddingHorizontal: 25,
-        // Sombras
-        elevation: 5,
-        shadowColor: '#000',
+        elevation: 3,
+        shadowColor: '#000000ff',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
         alignItems: 'center',
     },
 
-    // Inputs
     inputContainer: {
         width: '100%',
         marginBottom: 18,
     },
+
     label: {
-        fontSize: 15,
-        color: '#4A4A4A', // Cinza quase preto para leitura
+        fontSize: 16,
+        fontFamily: FONTS.inter.regular,
+        color: '#73443E',
         marginBottom: 8,
         marginLeft: 5,
     },
-    input: {
-        width: '100%',
-        height: 55,
-        backgroundColor: '#FFF0F3', // Fundo rosa bem clarinho do input
-        borderWidth: 1,
-        borderColor: '#F8BBD0', // Borda rosa suave
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        fontSize: 16,
-        color: '#333333',
-    },
 
-    // Botão
-    button: {
-        width: '100%',
-        height: 60,
-        backgroundColor: '#6D4C41', // Marrom café/chocolate
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 25,
+    input: {
+        borderWidth: 1,
+        borderColor: '#0000002d',
+        borderRadius: 25,
+        height: 55,
+        padding: 10,
+        backgroundColor: '#FFF6F7',
     },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-    }
 });

@@ -22,8 +22,8 @@ import { useNavigation } from "@/src/constants/router";
 
 
 export const LoginScreen = () => {
-  const navigation = useNavigation();
 
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const { errors, validate, clearError, setInvalidCredentialsError } = useFormLogin();
@@ -59,7 +59,8 @@ export const LoginScreen = () => {
       await LoginService.login(email, senha);
       
       //Alert.alert('Sucesso', `Bem-vindo, ${email}`);
-      router.push('/(tabs)/Home');
+      navigation.home();
+      // router.push('/(tabs)/Home');
     } catch (error: any) {
       if (error.response?.status === 401 || error.response?.status === 400) {
         setInvalidCredentialsError();
@@ -95,7 +96,6 @@ export const LoginScreen = () => {
                 <Text style={styles.titulo}>Bem-Vindo de volta !</Text>
 
                 <View style={styles.form}>
-                  <View style={styles.inputContainer}>
                   <Text style={styles.label}>E-mail</Text>
                   {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                   <TextInput
@@ -106,7 +106,7 @@ export const LoginScreen = () => {
                     keyboardType='email-address'
                     autoCapitalize='none'
                   />
-                  </View>
+                  
 
                   <Text style={styles.label}>Senha</Text>
                   {errors.senha ? <Text style={styles.errorText}>{errors.senha}</Text> : null}
@@ -124,7 +124,7 @@ export const LoginScreen = () => {
                 </View>
 
                 <Text style={styles.footer}>
-                  Não tem uma conta? <Text style={styles.signup} onPress={() => navigation.register}>Cadastra-se</Text>
+                  Não tem uma conta? <Text style={styles.signup} onPress={navigation.register}>Cadastra-se</Text>
                 </Text>
               </View>
             </View>
