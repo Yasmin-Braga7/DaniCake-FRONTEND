@@ -94,4 +94,16 @@ export const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#FFF6F7',
     },
+
+    errorText:{
+        color:'#f81345ff',
+        fontFamily:FONTS.inter.light,
+        fontSize:14,
+        paddingLeft: 15, 
+        height: 20,
+    },
+    inputError:{
+        borderColor:'#f81345ff',
+        borderWidth: 1.5,
+    },
 });
