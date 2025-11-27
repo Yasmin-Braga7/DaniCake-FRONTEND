@@ -5,6 +5,7 @@ import { ProdutoCard } from "../../components/ProdutoCard";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
 import { ProdutoService } from "@/src/services/produtos";
+import { ImagePickerComponent } from "@/src/components/UploadImage";
 
 
 interface Categoria {
@@ -84,6 +85,7 @@ export const HomeScreen = () => {
           ))}
         </View>
 
+
         <View style={styles.Containertitle}>
           <Text style={styles.title}>Destaque</Text>
           <View style={styles.linha} />
@@ -125,7 +127,7 @@ export const HomeScreen = () => {
                       key={produto.id} 
                       nome={produto.nome} 
                       preco={produto.preco} 
-                      imagemSource={{ uri: produto.imagem }} 
+                      imagemSource={{ uri: produto.imagem.startsWith('data: ') ? produto.imagem : `data:image/png;base64,${produto.imagem}` }} 
                     />
                   ))}
                 </View>

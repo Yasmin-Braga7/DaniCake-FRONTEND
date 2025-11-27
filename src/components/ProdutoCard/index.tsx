@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, ImageRequireSource } from "react-native";
+import { View, Text, ImageSourcePropType } from "react-native";
 import { Image } from "expo-image";
 import { styles, CARD_WIDTH } from "./style";
 
 interface ProdutoCardProps {
   nome: string;
   preco: string;
-  imagemSource: ImageRequireSource;
+  imagemSource: ImageSourcePropType;
 }
 
 export const ProdutoCard = ({ nome, preco, imagemSource }: ProdutoCardProps) => {
