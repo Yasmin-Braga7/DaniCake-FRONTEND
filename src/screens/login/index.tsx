@@ -74,12 +74,12 @@ export const LoginScreen = () => {
   return (
     <SafeAreaView
       style={styles.safeArea}
-      edges={['bottom']}
+      edges={['top','bottom']}
     >
       <KeyboardAvoidingView
         style={styles.keyboardAvoiding ?? { flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
       >
         <ScrollView
           ref={scrollViewRef}

@@ -37,9 +37,14 @@ export const styles = StyleSheet.create({
     color: "#6B6B6B",
   },
 
-  seguraforms: {
-    height: height * 0.73,
-    justifyContent: 'center'
+  // seguraforms: {
+  //   height: height * 0.73,
+  //   justifyContent: 'center'
+  // },
+
+  scrollContent: {
+    paddingTop: 20, // Espaço entre o header e o primeiro card
+    paddingBottom: 40,
   },
 
   userCard: {
