@@ -5,7 +5,6 @@ import { ProdutoCard } from "../../components/ProdutoCard";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
 import { ProdutoService } from "@/src/services/produtos";
-import { ImagePickerComponent } from "@/src/components/UploadImage";
 
 
 interface Categoria {

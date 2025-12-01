@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
+import { convertImageToBase64 } from '@/src/services/image';
 import { styles } from './style';
 
 interface ImagePickerProps {
@@ -9,21 +9,19 @@ interface ImagePickerProps {
   label: string;
 }
 
-export const ImagePickerComponent: React.FC<ImagePickerProps> = ({ onImageSelected, label }) => {
-  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
+export const UploadImage = ({ onImageSelected, label}: ImagePickerProps) =>  {
+  const [selectedImageUri, setSelectedImageUri] = useState<String | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const pickImage = async () => {
     setError(null);
-    
-    // Solicitar permissão de acesso à galeria
+
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria de fotos.');
+       Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria de fotos.');
       return;
     }
 
-    // Abrir a galeria para seleção de imagem
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -31,31 +29,22 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({ onImageSelect
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled){
       const uri = result.assets[0].uri;
       setSelectedImageUri(uri);
       
-      // Converter a imagem para Base64
       try {
-        const base64 = await FileSystem.readAsStringAsync(uri, {
-          encoding: 'base64',
-        });
-        
-        // O Base64 precisa ser prefixado com o tipo MIME para ser interpretado corretamente
-        // Ex: data:image/jpeg;base64,... ou data:image/png;base64,...
-        // O Expo ImagePicker não fornece o tipo MIME diretamente, mas podemos inferir
-        // ou deixar o backend lidar com isso. Para o seu caso, o backend espera apenas o Base64.
-        // No entanto, para exibição no frontend e para o backend saber o tipo, é melhor prefixar.
-        
-        // Tentativa de inferir o tipo MIME (simplificado)
-        const mimeType = uri.endsWith('.png') ? 'image/png' : 'image/jpeg';
-        const prefixedBase64 = `data:${mimeType};base64,${base64}`;
-        
-        onImageSelected(prefixedBase64);
+        const filename = uri.split('/').pop() || 'image.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+        const base64WithPrefix = await convertImageToBase64(uri, filename, type);;
+
+        onImageSelected(base64WithPrefix);
       } catch (e) {
-        console.error("Erro ao converter para Base64:", e);
-        setError("Erro ao processar a imagem. Tente outra.");
-        onImageSelected('');
+        console.error("Erro ao converte imagem para base64:", e);
+        setError("Erro ao processar imagem. Tente outra.");
+        onImageSelected('')
       }
     }
   };
@@ -66,7 +55,7 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({ onImageSelect
       
       <TouchableOpacity onPress={pickImage} style={styles.imagePreview}>
         {selectedImageUri ? (
-          <Image source={{ uri: selectedImageUri }} style={styles.image} />
+          <Image source={{ uri: selectedImageUri as string }} style={styles.image} />
         ) : (
           <Text style={styles.placeholderText}>Toque para selecionar uma imagem</Text>
         )}
@@ -78,5 +67,5 @@ export const ImagePickerComponent: React.FC<ImagePickerProps> = ({ onImageSelect
       
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
-  );
-};
+  )
+}
