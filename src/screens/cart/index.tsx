@@ -2,7 +2,7 @@ import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./style"
 import { CartCards } from "@/src/components/CardCart";
-import { CreateProduto } from "@/src/components/CreateProduto";
+import { ProductList } from "@/src/components/ProductList";
 
 
 export const CartScreen = () => {
@@ -16,7 +16,7 @@ export const CartScreen = () => {
         </SafeAreaView>
         {/* <CartCards /> */}
 
-        <CreateProduto />
+        <ProductList />
         </View>
     )
 }
