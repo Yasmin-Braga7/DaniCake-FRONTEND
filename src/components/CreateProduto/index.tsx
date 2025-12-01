@@ -1,151 +1,149 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  KeyboardAvoidingView, 
+  Platform 
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Camera, ImagePlus } from 'lucide-react-native';
+
+// Importe o componente Dropdown e sua interface
+import { Dropdown, DropdownItem } from '../ModalSelector';
 import { styles } from './style';
-import { ProdutoService } from '../../services/produtos';
-import { ProdutoCreateRequest } from '@/src/interfaces/produtos/request';
-import { ImagePickerComponent } from '../UploadImage';
 
-// Assumindo que o status é 1 (Ativo) por padrão e idCategoria é 1 para um exemplo
-const initialFormData: ProdutoCreateRequest = {
-  nome: '',
-  descricao: '',
-  preco: 0,
-  imagem: '',
-  // Removido o campo de URL de imagem, agora será Base64
-  status: 1, // 1 = Ativo, 0 = Inativo (baseado na entidade Produto.java)
-  idCategoria: 1, // Exemplo de ID de Categoria
-};
+interface ProdutoFormData {
+  nome: string;
+  idCategoria: number | null;
+  descricao: string;
+  preco: string;
+  imagemUri: string | null;
+}
 
-export const ProdutoForm = () => {
-  const [formData, setFormData] = useState<ProdutoCreateRequest>(initialFormData);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export const CreateProduto = () => {
+  const navigation = useNavigation();
 
-  const handleChange = (name: keyof ProdutoCreateRequest, value: string | number) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const [formData, setFormData] = useState<ProdutoFormData>({
+    nome: '',
+    idCategoria: null,
+    descricao: '',
+    preco: '',
+    imagemUri: null,
+  });
+
+  const categoriasStatic: DropdownItem[] = [
+    { id: 1, label: 'Bolos de Pote' },
+    { id: 2, label: 'Bolos Caseiros' },
+    { id: 3, label: 'Docinhos de Festa' },
+    { id: 4, label: 'Tortas Doces' },
+    { id: 5, label: 'Bebidas' },
+    { id: 6, label: 'Salgados' }, 
+  ];
+
+  const handleChangeText = (key: keyof ProdutoFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleImageSelected = (base64Image: string) => {
-    setFormData({
-      ...formData,
-      imagem: base64Image,
-    });
+  const handleCategorySelect = (item: DropdownItem) => {
+    setFormData(prev => ({ ...prev, idCategoria: Number(item.id) }));
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setSuccessMessage(null);
-    setErrorMessage(null);
-
-    // Validação básica
-    if (!formData.nome || !formData.descricao || formData.preco <= 0 || !formData.imagem || formData.idCategoria <= 0) {
-      setErrorMessage('Por favor, preencha todos os campos obrigatórios e verifique o preço e a categoria.');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // O preço precisa ser um número, mas o TextInput retorna string.
-      // O backend espera um number/BigDecimal, então convertemos.
-      const dataToSend: ProdutoCreateRequest = {
-        ...formData,
-        preco: Number(formData.preco),
-        status: Number(formData.status),
-        idCategoria: Number(formData.idCategoria),
-      };
-
-      // O campo 'imagem' agora contém o Base64 prefixado (data:image/jpeg;base64,...)
-
-      const produtoCriado = await ProdutoService.criarProduto(dataToSend);
-      setSuccessMessage(`Produto "${produtoCriado.nome}" criado com sucesso! ID: ${produtoCriado.id}`);
-      setFormData(initialFormData); // Limpa o formulário
-    } catch (error) {
-      console.error('Erro ao criar produto:', error);
-      setErrorMessage('Falha ao criar produto. Verifique a conexão e os dados inseridos.');
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = () => {
+    console.log("Enviando formulário:", formData);
+    alert("Produto cadastrado (simulação)!");
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Cadastrar Novo Produto</Text>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, justifyContent: 'center' }} 
+    >
+      {/* Container principal com 80% de largura via styles.container */}
+      <View style={styles.container}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer} 
+          showsVerticalScrollIndicator={false}
+          // Importante para deixar o dropdown vazar se necessário
+          keyboardShouldPersistTaps="handled"
+        >
+          
+          {/* Header Removido */}
 
-      {/* Nome */}
-      <Text style={styles.label}>Nome do Produto</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ex: Bolo de Pote de Chocolate"
-        value={formData.nome}
-        onChangeText={(text) => handleChange('nome', text)}
-      />
+          {/* 1. Nome */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Nome do produto</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: Bolo de Cenoura"
+              value={formData.nome}
+              onChangeText={(t) => handleChangeText('nome', t)}
+            />
+          </View>
 
-      {/* Descrição */}
-      <Text style={styles.label}>Descrição</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Descrição detalhada do produto"
-        multiline
-        value={formData.descricao}
-        onChangeText={(text) => handleChange('descricao', text)}
-      />
+          {/* 2. Descrição */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Descrição do produto</Text>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Descreva os detalhes..."
+              multiline={true}
+              numberOfLines={4}
+              value={formData.descricao}
+              onChangeText={(t) => handleChangeText('descricao', t)}
+            />
+          </View>
 
-      {/* Preço */}
-      <Text style={styles.label}>Preço (R$)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ex: 12.50"
-        keyboardType="numeric"
-        value={formData.preco === 0 ? '' : String(formData.preco)}
-        onChangeText={(text) => handleChange('preco', text.replace(',', '.'))}
-      />
+          {/* 3. Preço */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Valor do produto</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.pricePrefix}>R$</Text>
+              <TextInput
+                style={styles.priceInput}
+                placeholder="0,00"
+                keyboardType="numeric"
+                value={formData.preco}
+                onChangeText={(t) => handleChangeText('preco', t)}
+              />
+            </View>
+          </View>
 
-      {/* URL da Imagem */}
-      {/* Seletor de Imagem */}
-      <ImagePickerComponent 
-        label="Imagem do Produto (PNG/JPG)"
-        onImageSelected={handleImageSelected}
-      />
+          {/* 4. Categoria (Dropdown) */}
+          {/* AQUI APLICAMOS O ZINDEX ALTO PARA FICAR POR CIMA */}
+          <View style={styles.dropdownGroup}>
+            <Text style={styles.label}>Selecionar Categoria</Text>
+            <Dropdown 
+              placeholder="Selecione a categoria"
+              options={categoriasStatic}
+              onSelect={handleCategorySelect}
+            />
+          </View>
 
-      {/* ID da Categoria */}
-      <Text style={styles.label}>ID da Categoria</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ex: 1"
-        keyboardType="numeric"
-        value={formData.idCategoria === 0 ? '' : String(formData.idCategoria)}
-        onChangeText={(text) => handleChange('idCategoria', text)}
-      />
+          {/* 5. Imagem */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Imagem</Text>
+            <View style={styles.imageUploadContainer}>
+              <View style={styles.imagePlaceholder}>
+                <Camera size={40} color="#A0A0A0" />
+              </View>
+              
+              <TouchableOpacity style={styles.uploadButton}>
+                <ImagePlus size={20} color="#D81B60" />
+                <Text style={styles.uploadButtonText}>Adicionar imagem</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      {/* Status (1=Ativo, 0=Inativo) */}
-      <Text style={styles.label}>Status (1=Ativo, 0=Inativo)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="1"
-        keyboardType="numeric"
-        value={formData.status === 0 ? '0' : String(formData.status)}
-        onChangeText={(text) => handleChange('status', text)}
-      />
+          {/* Botão Final */}
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} activeOpacity={0.8}>
+            <Text style={styles.submitButtonText}>Criar</Text>
+          </TouchableOpacity>
 
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-      {successMessage && <Text style={styles.successText}>{successMessage}</Text>}
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title={loading ? "Cadastrando..." : "Cadastrar Produto"}
-          onPress={handleSubmit}
-          disabled={loading}
-          color="#D4A574" // Cor de exemplo
-        />
+        </ScrollView>
       </View>
-
-      {loading && <ActivityIndicator size="small" color="#D4A574" style={{ marginTop: 10 }} />}
-      
-      <View style={{ height: 50 }} /> {/* Espaçamento extra no final */}
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
