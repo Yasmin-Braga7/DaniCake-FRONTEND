@@ -12,16 +12,16 @@ import { useNavigation } from '@react-navigation/native';
 import { Camera, ImagePlus } from 'lucide-react-native';
 
 // Importe o componente Dropdown e sua interface
-import { Dropdown, DropdownItem } from '../ModalSelector';
+import { Dropdown } from '../ModalSelector';
+import { DropdownItem } from '@/src/interfaces/DropDown';
+import { ProdutoCreateRequest } from '@/src/interfaces/produtos/request';
+import { ProdutoService } from '@/src/services/produtos';
+import * as ImagePicker from 'expo-image-picker';
+import { convertImageToBase64 } from '@/src/services/image';
+import { Image, Alert } from 'react-native';
 import { styles } from './style';
 
-interface ProdutoFormData {
-  nome: string;
-  idCategoria: number | null;
-  descricao: string;
-  preco: string;
-  imagemUri: string | null;
-}
+import { ProdutoFormData } from '@/src/interfaces/produtos/request';
 
 export const CreateProduto = () => {
   const navigation = useNavigation();
@@ -34,14 +34,47 @@ export const CreateProduto = () => {
     imagemUri: null,
   });
 
-  const categoriasStatic: DropdownItem[] = [
-    { id: 1, label: 'Bolos de Pote' },
-    { id: 2, label: 'Bolos Caseiros' },
-    { id: 3, label: 'Docinhos de Festa' },
-    { id: 4, label: 'Tortas Doces' },
-    { id: 5, label: 'Bebidas' },
-    { id: 6, label: 'Salgados' }, 
-  ];
+  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null); // Estado para a URI local da imagem selecionada
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+       Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria de fotos.');
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled){
+      const uri = result.assets[0].uri;
+      setSelectedImageUri(uri);
+      
+      try {
+        const filename = uri.split('/').pop() || 'image.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+        // Chama o service para converter a imagem para Base64 no backend
+        const base64WithPrefix = await convertImageToBase64(uri, filename, type);
+
+        // Atualiza o formData com a string Base64
+        setFormData(prev => ({ ...prev, imagemUri: base64WithPrefix }));
+
+      } catch (e) {
+        console.error("Erro ao converter imagem para base64:", e);
+        Alert.alert("Erro", "Erro ao processar imagem. Tente outra.");
+        setSelectedImageUri(null);
+        setFormData(prev => ({ ...prev, imagemUri: null }));
+      }
+    }
+  };
+
+
 
   const handleChangeText = (key: keyof ProdutoFormData, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -51,9 +84,31 @@ export const CreateProduto = () => {
     setFormData(prev => ({ ...prev, idCategoria: Number(item.id) }));
   };
 
-  const handleSubmit = () => {
-    console.log("Enviando formulário:", formData);
-    alert("Produto cadastrado (simulação)!");
+  const handleSubmit = async () => {
+    if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    // Mapeamento do formData para o ProdutoCreateRequest
+    const produtoRequest: ProdutoCreateRequest = {
+      nome: formData.nome,
+      descricao: formData.descricao,
+      preco: parseFloat(formData.preco.replace(',', '.')), // Converte para número
+      idCategoria: formData.idCategoria,
+      status: 1, // Assumindo status inicial como 1 (ativo)
+      imagemBase64: formData.imagemUri || undefined, // Envia a imagem Base64 se existir
+    };
+
+    try {
+      const novoProduto = await ProdutoService.criarProduto(produtoRequest);
+      Alert.alert("Sucesso", `Produto "${novoProduto.nome}" criado com sucesso!`);
+      // Opcional: Redirecionar ou limpar o formulário
+      // navigation.goBack();
+    } catch (error) {
+      console.error("Erro ao criar produto:", error);
+      Alert.alert("Erro", "Não foi possível criar o produto. Verifique a conexão com o servidor.");
+    }
   };
 
   return (
@@ -117,7 +172,6 @@ export const CreateProduto = () => {
             <Text style={styles.label}>Selecionar Categoria</Text>
             <Dropdown 
               placeholder="Selecione a categoria"
-              options={categoriasStatic}
               onSelect={handleCategorySelect}
             />
           </View>
@@ -125,16 +179,22 @@ export const CreateProduto = () => {
           {/* 5. Imagem */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Imagem</Text>
-            <View style={styles.imageUploadContainer}>
-              <View style={styles.imagePlaceholder}>
-                <Camera size={40} color="#A0A0A0" />
-              </View>
+            <TouchableOpacity onPress={pickImage} style={styles.imageUploadContainer}>
+              {selectedImageUri ? (
+                <Image source={{ uri: selectedImageUri as string }} style={styles.imagePlaceholder} />
+              ) : (
+                <View style={styles.imagePlaceholder}>
+                  <Camera size={40} color="#A0A0A0" />
+                </View>
+              )}
               
-              <TouchableOpacity style={styles.uploadButton}>
+              <View style={styles.uploadButton}>
                 <ImagePlus size={20} color="#D81B60" />
-                <Text style={styles.uploadButtonText}>Adicionar imagem</Text>
-              </TouchableOpacity>
-            </View>
+                <Text style={styles.uploadButtonText}>
+                  {selectedImageUri ? "Trocar imagem" : "Adicionar imagem"}
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           {/* Botão Final */}
