@@ -1,6 +1,7 @@
 
-export interface CategoriaResponse {
+export interface Categoria {
   id: number;
   nome: string;
-  status?: number;
+  status: number;
 }
+

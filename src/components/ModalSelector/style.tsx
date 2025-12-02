@@ -71,4 +71,14 @@ export const styles = StyleSheet.create({
     fontFamily: FONTS.inter.regular,
     color: '#333',
   },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: FONTS.inter.regular,
+    color: '#A0A0A0',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    textAlign: 'center',
+    backgroundColor: '#F0F0F0',
+    borderRadius: 25,
+  }
 });

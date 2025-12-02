@@ -1,21 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
+import { CategoriaService } from '@/src/services/categoria';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { ChevronDown, ChevronRight } from 'lucide-react-native';
 import { styles } from './style';
 
-// Interface para definir como os dados devem chegar (preparado para o backend)
-export interface DropdownItem {
-  id: number | string;
-  label: string;
-}
+import { DropdownItem } from '@/src/interfaces/DropDown';
 
 interface DropdownProps {
   placeholder?: string;
-  options: DropdownItem[];
   onSelect: (item: DropdownItem) => void;
 }
 
-export const Dropdown = ({ placeholder = "Selecione...", options, onSelect }: DropdownProps) => {
+export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownProps) => {
+  const [categorias, setCategorias] = useState<DropdownItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await CategoriaService.listarCategorias();
+        const dropdownItems: DropdownItem[] = response.map(cat => ({
+          id: cat.id,
+          label: cat.nome,
+        }));
+        setCategorias(dropdownItems);
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error);
+        Alert.alert("Erro", "Não foi possível carregar as categorias.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
+
+  if (loading) {
+    return <Text style={styles.loadingText}>Carregando categorias...</Text>;
+  }
+
+  const options = categorias;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
 

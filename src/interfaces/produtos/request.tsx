@@ -16,3 +16,11 @@ export interface ProdutoCreateRequest {
   status: number;
   idCategoria: number;
 }
+
+export interface ProdutoFormData {
+  nome: string;
+  idCategoria: number | null;
+  descricao: string;
+  preco: string;
+  imagemUri: string | null;
+}
