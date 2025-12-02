@@ -1,10 +1,9 @@
+import { CreateProduto } from "@/src/components/CreateProduto";
 import { View, Text } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./style";
-import { ProductList } from "@/src/components/ProductList";
 
-
-export const ProductCreate = () => {
+export const EditProduct = () => {
 
     return(
         <View style={styles.container}>
@@ -15,7 +14,7 @@ export const ProductCreate = () => {
                 </View>
               </SafeAreaView>
               <View style={styles.List}>
-              <ProductList />
+                <CreateProduto />
               </View>
         </View>
     )

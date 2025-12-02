@@ -1,7 +1,7 @@
 import { FONTS } from "@/src/constants/fonts";
 import { Dimensions, StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
     container: {
@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
       },
       List: {
         width: width,
+        height: height * 0.75,
         paddingTop: 15,
       }
 })

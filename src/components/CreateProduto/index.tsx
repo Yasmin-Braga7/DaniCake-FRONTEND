@@ -6,22 +6,19 @@ import {
   TouchableOpacity, 
   ScrollView, 
   KeyboardAvoidingView, 
-  Platform 
+  Platform,
+  Image, 
+  Alert 
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Camera, ImagePlus } from 'lucide-react-native';
-
-// Importe o componente Dropdown e sua interface
 import { Dropdown } from '../ModalSelector';
 import { DropdownItem } from '@/src/interfaces/DropDown';
-import { ProdutoCreateRequest } from '@/src/interfaces/produtos/request';
+import { ProdutoCreateRequest, ProdutoFormData } from '@/src/interfaces/produtos/request';
 import { ProdutoService } from '@/src/services/produtos';
 import * as ImagePicker from 'expo-image-picker';
 import { convertImageToBase64 } from '@/src/services/image';
-import { Image, Alert } from 'react-native';
 import { styles } from './style';
-
-import { ProdutoFormData } from '@/src/interfaces/produtos/request';
 
 export const CreateProduto = () => {
   const navigation = useNavigation();
@@ -34,12 +31,12 @@ export const CreateProduto = () => {
     imagemUri: null,
   });
 
-  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null); // Estado para a URI local da imagem selecionada
+  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-       Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria de fotos.');
+       Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria.');
       return;
     }
 
@@ -47,7 +44,7 @@ export const CreateProduto = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.8, // Reduzi um pouco a qualidade para otimizar
     });
 
     if (!result.canceled){
@@ -59,22 +56,16 @@ export const CreateProduto = () => {
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : `image/jpeg`;
 
-        // Chama o service para converter a imagem para Base64 no backend
         const base64WithPrefix = await convertImageToBase64(uri, filename, type);
-
-        // Atualiza o formData com a string Base64
         setFormData(prev => ({ ...prev, imagemUri: base64WithPrefix }));
 
       } catch (e) {
-        console.error("Erro ao converter imagem para base64:", e);
-        Alert.alert("Erro", "Erro ao processar imagem. Tente outra.");
+        console.error("Erro imagem:", e);
+        Alert.alert("Erro", "Erro ao processar imagem.");
         setSelectedImageUri(null);
-        setFormData(prev => ({ ...prev, imagemUri: null }));
       }
     }
   };
-
-
 
   const handleChangeText = (key: keyof ProdutoFormData, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -86,28 +77,25 @@ export const CreateProduto = () => {
 
   const handleSubmit = async () => {
     if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
+      Alert.alert("Erro", "Preencha todos os campos obrigatórios.");
       return;
     }
 
-    // Mapeamento do formData para o ProdutoCreateRequest
     const produtoRequest: ProdutoCreateRequest = {
       nome: formData.nome,
       descricao: formData.descricao,
-      preco: parseFloat(formData.preco.replace(',', '.')), // Converte para número
+      preco: parseFloat(formData.preco.replace(',', '.')),
       idCategoria: formData.idCategoria,
-      status: 1, // Assumindo status inicial como 1 (ativo)
-      imagemBase64: formData.imagemUri || undefined, // Envia a imagem Base64 se existir
+      status: 1,
+      imagemBase64: formData.imagemUri || undefined,
     };
 
     try {
-      const novoProduto = await ProdutoService.criarProduto(produtoRequest);
-      Alert.alert("Sucesso", `Produto "${novoProduto.nome}" criado com sucesso!`);
-      // Opcional: Redirecionar ou limpar o formulário
-      // navigation.goBack();
+      await ProdutoService.criarProduto(produtoRequest);
+      Alert.alert("Sucesso", "Produto criado!");
     } catch (error) {
-      console.error("Erro ao criar produto:", error);
-      Alert.alert("Erro", "Não foi possível criar o produto. Verifique a conexão com o servidor.");
+      console.error(error);
+      Alert.alert("Erro", "Não foi possível criar o produto.");
     }
   };
 
@@ -116,17 +104,13 @@ export const CreateProduto = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1, justifyContent: 'center' }} 
     >
-      {/* Container principal com 80% de largura via styles.container */}
       <View style={styles.container}>
         <ScrollView 
           contentContainerStyle={styles.scrollContainer} 
           showsVerticalScrollIndicator={false}
-          // Importante para deixar o dropdown vazar se necessário
           keyboardShouldPersistTaps="handled"
         >
           
-          {/* Header Removido */}
-
           {/* 1. Nome */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Nome do produto</Text>
@@ -140,12 +124,12 @@ export const CreateProduto = () => {
 
           {/* 2. Descrição */}
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Descrição do produto</Text>
+            <Text style={styles.label}>Descrição</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
-              placeholder="Descreva os detalhes..."
+              placeholder="Detalhes..."
               multiline={true}
-              numberOfLines={4}
+              numberOfLines={3}
               value={formData.descricao}
               onChangeText={(t) => handleChangeText('descricao', t)}
             />
@@ -153,7 +137,7 @@ export const CreateProduto = () => {
 
           {/* 3. Preço */}
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Valor do produto</Text>
+            <Text style={styles.label}>Valor</Text>
             <View style={styles.priceContainer}>
               <Text style={styles.pricePrefix}>R$</Text>
               <TextInput
@@ -166,40 +150,34 @@ export const CreateProduto = () => {
             </View>
           </View>
 
-          {/* 4. Categoria (Dropdown) */}
-          {/* AQUI APLICAMOS O ZINDEX ALTO PARA FICAR POR CIMA */}
+          {/* 4. Categoria */}
           <View style={styles.dropdownGroup}>
-            <Text style={styles.label}>Selecionar Categoria</Text>
+            <Text style={styles.label}>Categoria</Text>
             <Dropdown 
-              placeholder="Selecione a categoria"
+              placeholder="Selecione..."
               onSelect={handleCategorySelect}
             />
           </View>
 
-          {/* 5. Imagem */}
+          {/* 5. Imagem OTIMIZADA */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Imagem</Text>
-            <TouchableOpacity onPress={pickImage} style={styles.imageUploadContainer}>
+            
+            <TouchableOpacity onPress={pickImage} style={styles.imageUploadTouch} activeOpacity={0.7}>
               {selectedImageUri ? (
-                <Image source={{ uri: selectedImageUri as string }} style={styles.imagePlaceholder} />
+                <Image source={{ uri: selectedImageUri }} style={styles.imagePreview} />
               ) : (
-                <View style={styles.imagePlaceholder}>
-                  <Camera size={40} color="#A0A0A0" />
+                <View style={styles.uploadContent}>
+                  <Camera size={24} color="#A0A0A0" />
+                  <Text style={styles.uploadText}>Toque para adicionar foto</Text>
                 </View>
               )}
-              
-              <View style={styles.uploadButton}>
-                <ImagePlus size={20} color="#D81B60" />
-                <Text style={styles.uploadButtonText}>
-                  {selectedImageUri ? "Trocar imagem" : "Adicionar imagem"}
-                </Text>
-              </View>
             </TouchableOpacity>
           </View>
 
           {/* Botão Final */}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} activeOpacity={0.8}>
-            <Text style={styles.submitButtonText}>Criar</Text>
+            <Text style={styles.submitButtonText}>Criar Produto</Text>
           </TouchableOpacity>
 
         </ScrollView>

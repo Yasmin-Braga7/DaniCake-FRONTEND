@@ -1,16 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { FONTS } from '@/src/constants/fonts'; // Ajuste o caminho se necessário
+import { FONTS } from '@/src/constants/fonts';
 
 export const styles = StyleSheet.create({
-  // Container principal com 80% de largura e centralizado
   container: {
-    width: '80%', 
-    alignSelf: 'center', 
+    width: '85%',
+    alignSelf: 'center',
     backgroundColor: '#fff',
-    borderRadius: 20, 
-    paddingVertical: 20,
+    borderRadius: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     
-    // Sombra para destacar o card do fundo
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -19,110 +18,115 @@ export const styles = StyleSheet.create({
   },
   
   scrollContainer: {
-    paddingHorizontal: 20, 
-    paddingBottom: 20,
-    // Permite que o dropdown ultrapasse os limites do scroll se necessário (em alguns casos)
-    overflow: 'visible', 
+    paddingBottom: 10,
+    overflow: 'visible',
   },
   
   // --- Formulário ---
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
 
-  // ESTILO NOVO: Use este para o container do Dropdown
   dropdownGroup: {
-    marginBottom: 20,
-    zIndex: 1000, // Garante que o container fique acima dos outros
-    elevation: 1000, // Necessário para Android
+    marginBottom: 12,
+    zIndex: 1000,
+    elevation: 1000,
   },
 
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: FONTS.inter.regular,
     color: '#000',
-    marginBottom: 8,
+    marginBottom: 4,
   },
+  
   input: {
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 15,
     fontFamily: FONTS.inter.regular,
     color: '#333',
     backgroundColor: '#fff',
   },
+  
   textArea: {
-    height: 100,
-    textAlignVertical: 'top', 
+    height: 70,
+    textAlignVertical: 'top',
   },
 
-  // --- Campo de Preço com Prefixo R$ ---
+  // --- Campo de Preço ---
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
-    paddingHorizontal: 15,
+    paddingHorizontal: 12,
     backgroundColor: '#fff',
+    height: 45, 
   },
   pricePrefix: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: FONTS.inter.regular,
     color: '#333',
     marginRight: 5,
   },
   priceInput: {
     flex: 1,
-    paddingVertical: 12,
-    fontSize: 16,
+    paddingVertical: 8,
+    fontSize: 15,
     fontFamily: FONTS.inter.regular,
     color: '#333',
   },
 
-  // --- Upload de Imagem ---
-  imageUploadContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-    zIndex: 1, // Menor que o dropdown
-  },
-  imagePlaceholder: {
+  // --- Upload de Imagem Compacto ---
+  imageUploadTouch: {
     width: '100%',
-    height: 150,
-    backgroundColor: '#D9D9D9', 
+    height: 120,
+    backgroundColor: '#F5F5F5',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
+    overflow: 'hidden',
   },
-  uploadButton: {
-    flexDirection: 'row',
+  
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+
+  // Estilo para o conteúdo vazio (ícone + texto)
+  uploadContent: {
     alignItems: 'center',
-    backgroundColor: '#FCE4EC', 
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
+    justifyContent: 'center',
   },
-  uploadButtonText: {
-    marginLeft: 10,
+  
+  uploadText: {
+    marginTop: 5,
     fontSize: 14,
+    color: '#888',
     fontFamily: FONTS.inter.regular,
-    color: '#D81B60', 
   },
 
   // --- Botão Final ---
   submitButton: {
-    backgroundColor: '#FBCBC9', 
+    backgroundColor: '#FBCBC9',
     borderRadius: 25,
-    paddingVertical: 15,
+    paddingVertical: 12,
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 5,
+    marginBottom: 5,
   },
   submitButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: FONTS.inter.bold,
     color: '#000',
   },

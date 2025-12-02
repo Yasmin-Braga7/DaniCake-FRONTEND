@@ -1,7 +1,6 @@
-import { Text } from "react-native";
+import { EditProduct } from "@/src/screens/Admin/editProduct";
+
 
 export default function CalendarTab() {
-    return (
-        <Text>ola</Text>
-    );
+    return <EditProduct />
 }

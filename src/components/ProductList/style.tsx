@@ -5,7 +5,7 @@ const { width, height } = Dimensions.get('window'); // Pegamos height também
 
 export const styles = StyleSheet.create({
   container: {
-    width: '85%',
+    width: '90%',
     alignSelf: 'center',
     backgroundColor: '#fff',
     borderRadius: 20,

@@ -10,11 +10,14 @@ import { DropdownItem } from '@/src/interfaces/DropDown';
 interface DropdownProps {
   placeholder?: string;
   onSelect: (item: DropdownItem) => void;
+  selectedId?: number | null;
 }
 
-export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownProps) => {
+export const Dropdown = ({ placeholder = "Selecione...", onSelect, selectedId }: DropdownProps) => {
   const [categorias, setCategorias] = useState<DropdownItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -36,13 +39,15 @@ export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownPro
     fetchCategorias();
   }, []);
 
-  if (loading) {
-    return <Text style={styles.loadingText}>Carregando categorias...</Text>;
-  }
-
-  const options = categorias;
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
+  // Novo Effect: Atualiza o item selecionado se receber um ID externo (Edição)
+  useEffect(() => {
+    if (selectedId && categorias.length > 0) {
+      const found = categorias.find(c => Number(c.id) === Number(selectedId));
+      if (found) {
+        setSelectedItem(found);
+      }
+    }
+  }, [selectedId, categorias]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -50,13 +55,17 @@ export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownPro
 
   const handleSelect = (item: DropdownItem) => {
     setSelectedItem(item);
-    onSelect(item); // Envia para o pai
-    setIsOpen(false); // Fecha o dropdown
+    onSelect(item); 
+    setIsOpen(false); 
   };
+
+  // --- 2. O RETORNO CONDICIONAL FICA AQUI EMBAIXO ---
+  if (loading) {
+    return <Text style={styles.loadingText}>Carregando categorias...</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      {/* Botão Principal */}
       <TouchableOpacity 
         style={[styles.header, isOpen && styles.headerOpen]} 
         onPress={toggleDropdown}
@@ -66,7 +75,6 @@ export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownPro
           {selectedItem ? selectedItem.label : placeholder}
         </Text>
         
-        {/* Ícone muda dependendo se está aberto ou fechado */}
         {isOpen ? (
           <ChevronDown size={24} color="#000" />
         ) : (
@@ -74,11 +82,10 @@ export const Dropdown = ({ placeholder = "Selecione...", onSelect }: DropdownPro
         )}
       </TouchableOpacity>
 
-      {/* Lista de Opções (Só aparece se isOpen for true) */}
       {isOpen && (
         <View style={styles.listContainer}>
           <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
-            {options.map((item, index) => (
+            {categorias.map((item, index) => (
               <TouchableOpacity 
                 key={index} 
                 style={styles.item} 

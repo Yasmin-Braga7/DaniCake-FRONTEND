@@ -1,38 +1,45 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import { PlusCircle, Pencil, Trash2 } from 'lucide-react-native';
 import { ProdutoService } from '@/src/services/produtos';
 import { Produto } from '@/src/interfaces/produtos/request';
 import { styles } from './style';
 
-// A interface Produto já está em '@/src/interfaces/produtos/request'
-// A imagem será uma string Base64 (imagemBase64) ou URL.
+// Importa o hook atualizado
+import { useNavigation } from '@/src/constants/router'; 
+
 interface ProductDisplay extends Produto {
-  imageSource: any; // Para lidar com a exibição da imagem (Base64 ou URL)
+  imageSource: any;
 }
 
 export const ProductList = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); // Instancia o hook
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const fetchedProducts = await ProdutoService.listarProdutos();
+      const rawData: Produto[] = await ProdutoService.listarProdutos();
       
-      // Mapeia os produtos para o formato de exibição
-      const displayProducts: ProductDisplay[] = fetchedProducts.map(p => ({
-        ...p,
-        // Se a imagem for Base64, cria a source para o componente Image
-        imageSource: p.imagemBase64 ? { uri: p.imagemBase64 } : require('@/assets/imagens/BoloCenoura.jpg'), // Fallback
-      }));
+      const displayProducts: ProductDisplay[] = rawData.map((p) => {
+        let finalImageSource = require('@/assets/imagens/BoloCenoura.jpg'); 
+        const rawImage = p.imagem || p.imagemBase64;
+
+        if (rawImage) {
+          const base64String = rawImage.startsWith('data:') 
+            ? rawImage 
+            : `data:image/png;base64,${rawImage}`;
+          finalImageSource = { uri: base64String };
+        }
+
+        return { ...p, imageSource: finalImageSource };
+      });
 
       setProducts(displayProducts);
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
-      Alert.alert("Erro", "Não foi possível carregar a lista de produtos.");
+      Alert.alert("Erro", "Não foi possível carregar a lista.");
     } finally {
       setLoading(false);
     }
@@ -42,38 +49,27 @@ export const ProductList = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const handleAddProduct = () => {
-    // A navegação para criar produto será definida pelo usuário
-    console.log("Navegar para tela de criação de produto");
-    // Exemplo: navigation.navigate('CreateProdutoScreen');
-  };
-
-  const handleEdit = (id: number) => {
-    // A navegação para editar produto será definida pelo usuário
-    console.log("Navegar para tela de edição do produto", id);
-    // Exemplo: navigation.navigate('EditProdutoScreen', { produtoId: id });
-  };
+  // Função atualizada para navegar para edição
+  // const handleEdit = (id: number) => {
+  //   navigation.adminEditProduct(id);
+  // };
 
   const handleDelete = async (id: number) => {
     Alert.alert(
       "Confirmação",
-      "Tem certeza que deseja excluir este produto?",
+      "Deseja excluir este produto?",
       [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
+        { text: "Cancelar", style: "cancel" },
         { 
           text: "Excluir", 
           onPress: async () => {
             try {
               await ProdutoService.apagarProduto(id);
-              Alert.alert("Sucesso", "Produto excluído com sucesso!");
-              // Atualiza a lista após a exclusão
+              Alert.alert("Sucesso", "Produto excluído!");
               fetchProducts(); 
             } catch (error) {
-              console.error("Erro ao excluir produto:", error);
-              Alert.alert("Erro", "Não foi possível excluir o produto.");
+              console.error("Erro exclusão:", error);
+              Alert.alert("Erro", "Falha ao excluir produto.");
             }
           }
         }
@@ -84,60 +80,60 @@ export const ProductList = () => {
   return (
     <View style={styles.container}>
       
-      {/* --- HEADER FIXO --- */}
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Fazer um novo produto</Text>
         </View>
         
-        <TouchableOpacity onPress={handleAddProduct}>
+        {/* Navega para criar produto */}
+        <TouchableOpacity onPress={navigation.adminCreateProduct}>
           <PlusCircle size={28} color="#000" strokeWidth={1.5} />
         </TouchableOpacity>
       </View>
 
-      {/* --- LISTA ROLÁVEL COM ALTURA FIXA --- */}
-	      <View style={styles.listContainer}>
-	        {loading ? (
-	          <Text style={styles.loadingText}>Carregando produtos...</Text>
-	        ) : products.length === 0 ? (
-	          <Text style={styles.emptyText}>Nenhum produto cadastrado.</Text>
-	        ) : (
-	          <ScrollView 
-	            contentContainerStyle={styles.scrollContent}
-	            showsVerticalScrollIndicator={true} // Mostra a barra para indicar rolagem
-	            nestedScrollEnabled={true} // Importante se estiver dentro de outro ScrollView
-	          >
-	            {products.map((item) => (
-	              <View key={item.id} style={styles.itemWrapper}>
-	                
-	                {/* Card Cinza (Info + Edit) */}
-	                <View style={styles.itemCard}>
-	                  <Image source={item.imageSource} style={styles.itemImage} resizeMode="cover" />
-	                  
-	                  <View style={styles.itemInfo}>
-	                    <Text style={styles.itemTitle}>{item.nome}</Text>
-	                    <Text style={styles.itemDesc} numberOfLines={3}>
-	                      {item.descricao}
-	                    </Text>
-	                  </View>
-	
-	                  {/* Ícone Editar (Absoluto no topo direita do card) */}
-	                  <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item.id)}>
-	                    <Pencil size={20} color="#000" strokeWidth={1.5} />
-	                  </TouchableOpacity>
-	                </View>
-	
-	                {/* Ícone Lixeira (Fora do card) */}
-	                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-	                  <Trash2 size={24} color="#000" strokeWidth={1.5} />
-	                </TouchableOpacity>
-	
-	              </View>
-	            ))}
-	          </ScrollView>
-	        )}
-	      </View>
+      <View style={styles.listContainer}>
+        {loading ? (
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+             <ActivityIndicator size="large" color="#D4A574" />
+             <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        ) : products.length === 0 ? (
+          <Text style={styles.emptyText}>Nenhum produto cadastrado.</Text>
+        ) : (
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+          >
+            {products.map((item) => (
+              <View key={item.id} style={styles.itemWrapper}>
+                
+                <View style={styles.itemCard}>
+                  <Image source={item.imageSource} style={styles.itemImage} resizeMode="cover" />
+                  
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemTitle}>{item.nome}</Text>
+                    <Text style={styles.itemDesc} numberOfLines={2}>{item.descricao}</Text>
+                    <Text style={[styles.itemDesc, {marginTop: 4, fontWeight: 'bold'}]}>
+                      R$ {item.preco?.toFixed(2).replace('.', ',')}
+                    </Text>
+                  </View>
 
+                  {/* Botão de Editar Conectado */}
+                  {/* <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item.id)}>
+                    <Pencil size={20} color="#000" strokeWidth={1.5} />
+                  </TouchableOpacity> */}
+                </View>
+
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+                  <Trash2 size={24} color="#000" strokeWidth={1.5} />
+                </TouchableOpacity>
+
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      </View>
     </View>
   );
 };
