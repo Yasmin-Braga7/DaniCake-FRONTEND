@@ -107,4 +107,18 @@ export const styles = StyleSheet.create({
   deleteButton: {
     padding: 5,
   },
+  loadingText: {
+    textAlign: 'center',
+    paddingVertical: 20,
+    fontSize: 16,
+    fontFamily: FONTS.inter.regular,
+    color: '#666',
+  },
+  emptyText: {
+    textAlign: 'center',
+    paddingVertical: 20,
+    fontSize: 16,
+    fontFamily: FONTS.inter.regular,
+    color: '#999',
+  },
 });
