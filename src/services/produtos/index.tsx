@@ -31,5 +31,14 @@ export const ProdutoService = {
       console.error('Erro ao criar produto:', error);
       throw error;
     }
+  },
+
+  async apagarProduto(produtoId: number): Promise<void> {
+    try {
+      await api.delete(`/produto/apagar/${produtoId}`);
+    } catch (error) {
+      console.error('Erro ao apagar produto:', error);
+      throw error;
+    }
   }
 };
