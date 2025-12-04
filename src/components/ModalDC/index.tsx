@@ -8,44 +8,55 @@ import {
   Image 
 } from 'react-native';
 import { ShoppingCart } from 'lucide-react-native';
-import { styles } from './style'; // Importando do arquivo separado
+import { styles } from './style'; 
+import { Produto } from '@/src/interfaces/produtos/request';
 
-interface ModalDC {
+interface ModalDCProps {
   visible: boolean;
   onClose: () => void;
+  produto: Produto | null;
+  imagemSource: any;
 }
 
-export default function ProductModal({ visible, onClose }: ModalDC) {
+export default function ProductModal({ visible, onClose, produto, imagemSource }: ModalDCProps) {
+  // Se não tiver produto selecionado, não renderiza nada (segurança extra)
+  if (!produto && visible) return null;
+
   return (
     <Modal
-      animationType="fade" // Efeito suave ao aparecer
-      transparent={true}   // Permite ver o fundo escuro
+      animationType="fade"
+      transparent={true} 
       visible={visible}
-      onRequestClose={onClose} // Obrigatório para o botão voltar do Android
-      statusBarTranslucent // Cobre até a barra de status
+      onRequestClose={onClose}
+      statusBarTranslucent
     >
-      {/* 1. Camada escura clicável (fecha o modal) */}
+      {/* 1. Camada escura - Clique fora fecha */}
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           
-          {/* 2. Bloqueia o clique para não fechar se clicar NO CARD */}
+          {/* 2. Card do Produto - Clique dentro NÃO fecha */}
           <TouchableWithoutFeedback>
             <View style={styles.card}>
               
-              {/* Imagem Placeholder */}
               <View style={styles.imageContainer}>
                 <Image 
-                  source={{ uri: 'https://via.placeholder.com/300x200' }} 
+                  // Usa a imagem passada ou um placeholder
+                  source={imagemSource || { uri: 'https://via.placeholder.com/300x200' }} 
                   style={styles.image}
                   resizeMode="cover"
                 />
               </View>
 
-              <Text style={styles.title}>Nome do produto</Text>
+              {/* Título Dinâmico */}
+              <Text style={styles.title}>{produto?.nome}</Text>
 
+              {/* Descrição Dinâmica (com fallback caso não tenha descrição) */}
               <Text style={styles.description}>
-                Descrição: ex; bolo de cenoura com calda cremosa de chocolate
+                {produto?.descricao || 'Sem descrição disponível.'}
               </Text>
+              
+              {/* Preço (Opcional, se tiver no objeto produto) */}
+              {/* <Text style={styles.price}>R$ {produto?.preco}</Text> */}
 
               <TouchableOpacity style={styles.addButton} activeOpacity={0.8}>
                 <Text style={styles.addButtonText}>Adicionar</Text>

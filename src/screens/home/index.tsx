@@ -6,6 +6,8 @@ import { styles } from "./style";
 import { useEffect, useState } from "react";
 import { ProdutoService } from "@/src/services/produtos";
 import { AuthService } from "@/src/services/storage";
+import { Produto } from "@/src/interfaces/produtos/request";
+import ProductModal from "@/src/components/ModalDC";
 
 
 interface Categoria {
@@ -13,16 +15,19 @@ interface Categoria {
   image: ImageRequireSource;
 }
 
-interface ProdutoLocal {
-  id: number;
-  nome: string;
-  preco: string;
-  imagem: string;
-}
+// interface ProdutoLocal {
+//   id: number;
+//   nome: string;
+//   preco: string;
+//   imagem: string;
+// }
 
 
 export const HomeScreen = () => {
-  const [produtos, setProdutos] = useState<ProdutoLocal[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedProductImageSource, setSelectedProductImageSource] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -58,14 +63,8 @@ export const HomeScreen = () => {
       // Converter para o formato local
       const produtosFormatados = produtosAtivos.map(produto => {
     // 💡 Chame a nova função para obter a URL completa
-    const imageUrl = ProdutoService.getProdutoFotoUrl(produto.id); // Use o ID do produto como idProdutoFoto
     
-    return {
-        id: produto.id,
-        nome: produto.nome,
-        preco: `R$ ${produto.preco.toFixed(2).replace('.', ',')}`,
-        imagem: imageUrl // Armazena a URL completa no objeto local
-    };
+    return produto;
 });
       
       setProdutos(produtosFormatados);
@@ -80,6 +79,24 @@ export const HomeScreen = () => {
   // Dividir produtos em duas listas para exibição
   const produtosDestaque = produtos.slice(0, 3);
   const produtosAdicionais = produtos.slice(3, 6);
+
+  const handleProductPress = (produto: Produto) => {
+    console.log("Clicou no produto:", produto.nome);
+    setSelectedProduct(produto);
+    setSelectedProductImageSource({ 
+      uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${produto.id}`, 
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedProduct(null);
+    setSelectedProductImageSource(null);
+  };
 
   return (
     <View style={styles.containerGeral}>
@@ -125,8 +142,8 @@ export const HomeScreen = () => {
               {produtosDestaque.map((produto) => (
                 <ProdutoCard 
                   key={produto.id} 
-                  nome={produto.nome} 
-                  preco={produto.preco} 
+                  produto={produto}
+                  onPress={() => handleProductPress(produto)}
                   imagemSource={{ uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${produto.id}`, 
                     headers: {
                       Authorization: `Bearer ${token}`,
@@ -144,8 +161,8 @@ export const HomeScreen = () => {
                   {produtosAdicionais.map((produto) => (
                     <ProdutoCard 
                       key={produto.id} 
-                      nome={produto.nome} 
-                      preco={produto.preco} 
+                      produto={produto}
+                      onPress={() => handleProductPress(produto)} 
                       imagemSource={{ uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${produto.id}`, 
                         headers: {
                           Authorization: `Bearer ${token}`,
@@ -160,6 +177,13 @@ export const HomeScreen = () => {
           </>
         )}
       </ScrollView>
+      <ProductModal
+        produto={selectedProduct}
+        visible={isModalVisible}
+        onClose={handleCloseModal}
+        
+        imagemSource={selectedProductImageSource}
+      />
     </View>
   );
 };
