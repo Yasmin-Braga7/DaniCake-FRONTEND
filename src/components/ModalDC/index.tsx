@@ -4,10 +4,10 @@ import {
   View, 
   Text, 
   TouchableOpacity, 
-  TouchableWithoutFeedback, 
-  Image 
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { ShoppingCart } from 'lucide-react-native';
+import { Image } from 'expo-image';
 import { styles } from './style'; 
 import { Produto } from '@/src/interfaces/produtos/request';
 
@@ -41,9 +41,9 @@ export default function ProductModal({ visible, onClose, produto, imagemSource }
               <View style={styles.imageContainer}>
                 <Image 
                   // Usa a imagem passada ou um placeholder
-                  source={imagemSource || { uri: 'https://via.placeholder.com/300x200' }} 
+                  source={imagemSource} 
                   style={styles.image}
-                  resizeMode="cover"
+                  contentFit="cover"
                 />
               </View>
 
