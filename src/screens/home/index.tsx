@@ -5,6 +5,7 @@ import { ProdutoCard } from "../../components/ProdutoCard";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
 import { ProdutoService } from "@/src/services/produtos";
+import { AuthService } from "@/src/services/storage";
 
 
 interface Categoria {
@@ -24,6 +25,7 @@ export const HomeScreen = () => {
   const [produtos, setProdutos] = useState<ProdutoLocal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const categoriasData: Categoria[] = [
     { title: "Bolos", image: require('../../../assets/imagens/BoloCategoria.png') },
@@ -33,6 +35,15 @@ export const HomeScreen = () => {
 
   useEffect(() => {
     carregarProdutos();
+    var token: string;
+
+    const carregarToken = async () => {
+      const savedToken = await AuthService.getToken();
+      setToken(savedToken);
+    };
+
+    carregarToken();
+
   }, []);
 
   const carregarProdutos = async () => {
@@ -45,12 +56,17 @@ export const HomeScreen = () => {
       const produtosAtivos = produtosAPI.filter(p => p.status === 1);
       
       // Converter para o formato local
-      const produtosFormatados = produtosAtivos.map(produto => ({
+      const produtosFormatados = produtosAtivos.map(produto => {
+    // 💡 Chame a nova função para obter a URL completa
+    const imageUrl = ProdutoService.getProdutoFotoUrl(produto.id); // Use o ID do produto como idProdutoFoto
+    
+    return {
         id: produto.id,
         nome: produto.nome,
         preco: `R$ ${produto.preco.toFixed(2).replace('.', ',')}`,
-        imagem: produto.imagem
-      }));
+        imagem: imageUrl // Armazena a URL completa no objeto local
+    };
+});
       
       setProdutos(produtosFormatados);
     } catch (err) {
@@ -111,7 +127,11 @@ export const HomeScreen = () => {
                   key={produto.id} 
                   nome={produto.nome} 
                   preco={produto.preco} 
-                  imagemSource={{ uri: produto.imagem }} 
+                  imagemSource={{ uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${produto.id}`, 
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                }} 
                 />
               ))}
             </View>
@@ -126,8 +146,13 @@ export const HomeScreen = () => {
                       key={produto.id} 
                       nome={produto.nome} 
                       preco={produto.preco} 
-                      imagemSource={{ uri: produto.imagem.startsWith('data: ') ? produto.imagem : `data:image/png;base64,${produto.imagem}` }} 
+                      imagemSource={{ uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${produto.id}`, 
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },                    
+                    }}
                     />
+                    
                   ))}
                 </View>
               </>

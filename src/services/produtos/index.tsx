@@ -1,5 +1,5 @@
 import { Produto, ProdutoCreateRequest } from "@/src/interfaces/produtos/request";
-import { api } from "..";
+import { api } from '@/src/services/index';
 
 
 export const ProdutoService = {
@@ -40,5 +40,17 @@ export const ProdutoService = {
       console.error('Erro ao apagar produto:', error);
       throw error;
     }
-  }
+  },
+
+    // ... Seus métodos existentes (listarProdutos, etc.) ...
+
+    /**
+     * Constrói a URL pública para obter a foto do produto.
+     * @param idProdutoFoto O ID do produto para obter a foto.
+     * @returns A URL completa do endpoint da foto.
+     */
+    getProdutoFotoUrl(idProdutoFoto: number): string {
+        // Constrói a URL: BASE_URL + /foto/ + ID
+        return `${api}/foto/${idProdutoFoto}`;
+    },
 };
