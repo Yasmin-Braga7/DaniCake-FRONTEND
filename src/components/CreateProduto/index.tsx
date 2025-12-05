@@ -17,7 +17,7 @@ import { DropdownItem } from '@/src/interfaces/DropDown';
 import { ProdutoCreateRequest, ProdutoFormData } from '@/src/interfaces/produtos/request';
 import { ProdutoService } from '@/src/services/produtos';
 import * as ImagePicker from 'expo-image-picker';
-import { convertImageToBase64 } from '@/src/services/image';
+import { uploadImage } from '@/src/services/image';
 import { styles } from './style';
 
 export const CreateProduto = () => {
@@ -31,7 +31,7 @@ export const CreateProduto = () => {
     imagemUri: null,
   });
 
-  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ uri: string; filename: string; type: string } | null>(null);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -47,23 +47,16 @@ export const CreateProduto = () => {
       quality: 0.8, // Reduzi um pouco a qualidade para otimizar
     });
 
-    if (!result.canceled){
+    if (!result.canceled) {
       const uri = result.assets[0].uri;
-      setSelectedImageUri(uri);
+      const filename = uri.split('/').pop() || 'image.jpg';
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+      setSelectedImage({ uri, filename, type });
       
-      try {
-        const filename = uri.split('/').pop() || 'image.jpg';
-        const match = /\.(\w+)$/.exec(filename);
-        const type = match ? `image/${match[1]}` : `image/jpeg`;
-
-        const base64WithPrefix = await convertImageToBase64(uri, filename, type);
-        setFormData(prev => ({ ...prev, imagemUri: base64WithPrefix }));
-
-      } catch (e) {
-        console.error("Erro imagem:", e);
-        Alert.alert("Erro", "Erro ao processar imagem.");
-        setSelectedImageUri(null);
-      }
+      
+      
     }
   };
 
@@ -76,8 +69,8 @@ export const CreateProduto = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria) {
-      Alert.alert("Erro", "Preencha todos os campos obrigatórios.");
+    if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria || !selectedImage) {
+      Alert.alert("Erro", "Preencha todos os campos obrigatórios, incluindo a imagem.");
       return;
     }
 
@@ -87,11 +80,14 @@ export const CreateProduto = () => {
       preco: parseFloat(formData.preco.replace(',', '.')),
       idCategoria: formData.idCategoria,
       status: 1,
-      imagemBase64: formData.imagemUri || undefined,
     };
 
     try {
-      await ProdutoService.criarProduto(produtoRequest);
+      const novoProduto = await ProdutoService.criarProduto(produtoRequest);
+
+      if (novoProduto && novoProduto.id && selectedImage) {
+        await uploadImage(novoProduto.id, selectedImage.uri, selectedImage.filename, selectedImage.type);
+      }
       Alert.alert("Sucesso", "Produto criado!");
     } catch (error) {
       console.error(error);
@@ -164,8 +160,8 @@ export const CreateProduto = () => {
             <Text style={styles.label}>Imagem</Text>
             
             <TouchableOpacity onPress={pickImage} style={styles.imageUploadTouch} activeOpacity={0.7}>
-              {selectedImageUri ? (
-                <Image source={{ uri: selectedImageUri }} style={styles.imagePreview} />
+              {selectedImage ? (
+                <Image source={{ uri: selectedImage.uri }} style={styles.imagePreview} />
               ) : (
                 <View style={styles.uploadContent}>
                   <Camera size={24} color="#A0A0A0" />

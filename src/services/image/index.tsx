@@ -39,3 +39,37 @@ export const convertImageToBase64 = async (uri: string, filename: string, type: 
     throw error;
   }
 };
+
+/**
+ * Envia uma imagem diretamente para o backend usando multipart/form-data.
+ * @param idProduto ID do produto ao qual a imagem será associada.
+ * @param uri URI local da imagem (ex: 'file:///data/user/0/...' )
+ * @param filename Nome do arquivo (ex: 'foto.jpg')
+ * @param type Tipo MIME do arquivo (ex: 'image/jpeg')
+ */
+export const uploadImage = async (idProduto: number, uri: string, filename: string, type: string): Promise<void> => {
+  try {
+    const formData = new FormData();
+    
+    // Ajuste da URI para iOS, se necessário
+    const fileUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+
+    // Adiciona o arquivo ao FormData
+    formData.append('file', {
+      uri: fileUri,
+      name: filename,
+      type: type,
+    } as any);
+
+    // Faz a requisição POST para o endpoint de upload do backend
+    await axios.post(`${BASE_URL}/images/foto/upload/${idProduto}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+  } catch (error) {
+    console.error('Erro ao fazer upload da imagem:', error);
+    throw error;
+  }
+};
