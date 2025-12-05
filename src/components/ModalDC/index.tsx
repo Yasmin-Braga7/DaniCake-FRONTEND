@@ -5,11 +5,13 @@ import {
   Text, 
   TouchableOpacity, 
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import { ShoppingCart } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { styles } from './style'; 
 import { Produto } from '@/src/interfaces/produtos/request';
+import { useCart } from '@/src/context/CartContext';
 
 interface ModalDCProps {
   visible: boolean;
@@ -19,8 +21,16 @@ interface ModalDCProps {
 }
 
 export default function ProductModal({ visible, onClose, produto, imagemSource }: ModalDCProps) {
+  const { addToCart } = useCart();
   // Se não tiver produto selecionado, não renderiza nada (segurança extra)
   if (!produto && visible) return null;
+
+  const handleAddToCart = () => {
+    if (produto) {
+      addToCart(produto, imagemSource);
+      onClose(); // Fecha o modal depois de adicionar (opcional)
+    }
+  };
 
   return (
     <Modal
@@ -58,7 +68,7 @@ export default function ProductModal({ visible, onClose, produto, imagemSource }
               {/* Preço (Opcional, se tiver no objeto produto) */}
               {/* <Text style={styles.price}>R$ {produto?.preco}</Text> */}
 
-              <TouchableOpacity style={styles.addButton} activeOpacity={0.8}>
+              <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={handleAddToCart}>
                 <Text style={styles.addButtonText}>Adicionar</Text>
                 <ShoppingCart color="black" size={24} strokeWidth={2} />
               </TouchableOpacity>
