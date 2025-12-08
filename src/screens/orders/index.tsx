@@ -1,22 +1,99 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, Text, ScrollView, RefreshControl, Alert, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OrderCard } from "@/src/components/PedidoCard";
 import { OrderDetailsModal } from "@/src/components/ModalOrders";
 import { styles } from "./style";
+import { OrderService } from "@/src/services/orders";
+import { AuthService } from "@/src/services/storage";
+import { Order } from "@/src/interfaces/pedidos";
+import { OrderStatus } from "@/src/enums/pedidos";
 
 export const OrdersScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
-  const openModal = (order: any) => {
-    setSelectedOrder(order);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedOrderForModal, setSelectedOrderForModal] = useState<any>(null);
+
+  const [canConfirm, setCanConfirm] = useState<{ [key: number]: boolean }>({});
+
+  useEffect(() => {
+    const carregarToken = async () => {
+      const t = await AuthService.getToken();
+      setToken(t);
+    };
+    carregarToken();
+  }, []);
+
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await OrderService.listarMeusPedidos();
+      const sorted = data.sort((a, b) => new Date(b.criado).getTime() - new Date(a.criado).getTime());
+      setOrders(sorted);
+    } catch (error) {
+      console.error("Erro ao carregar pedidos", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  useEffect(() => {
+    orders.forEach((order) => {
+      if (order.status === OrderStatus.ENVIADO && !canConfirm[order.id]) {
+        const timer = setTimeout(() => {
+          setCanConfirm((prev) => ({ ...prev, [order.id]: true }));
+        }, 15000); // 15 segundos depois vou alterar para 15min(90000)
+        return () => clearTimeout(timer);
+      }
+    });
+  }, [orders]);
+
+  const handleOpenModal = (order: Order) => {
+    const formattedDate = new Date(order.criado).toLocaleDateString('pt-BR');
+
+    const items = order.pedidoItems.map((item) => ({
+        id: String(item.produto.id),
+        name: item.produto.nome,
+        qty: item.quantidade,
+        price: `R$ ${item.preco.toFixed(2).replace('.', ',')}`,
+        image: { 
+            uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${item.produto.id}`,
+            headers: { Authorization: `Bearer ${token}` }
+        }
+    }));
+
+    // Objeto final para o modal
+    const modalData = {
+        id: String(order.id).padStart(3, '0'),
+        date: formattedDate,
+        total: `R$ ${order.total.toFixed(2).replace('.', ',')}`,
+        items: items
+    };
+
+    setSelectedOrderForModal(modalData);
     setModalVisible(true);
   };
 
   const closeModal = () => {
-    setSelectedOrder(null);
     setModalVisible(false);
+    setSelectedOrderForModal(null);
+  };
+
+  const handleConfirmReceipt = async (orderId: number) => {
+    try {
+      await OrderService.atualizarStatus(orderId, OrderStatus.ENTREGUE);
+      Alert.alert("Obrigado!", "Ficamos felizes que seu pedido chegou.");
+      fetchOrders();
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao confirmar entrega.");
+    }
   };
 
   return (
@@ -28,139 +105,67 @@ export const OrdersScreen = () => {
         </View>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={styles.listContent}>
-        <OrderCard
-          orderNumber="#001"
-          date="10/11/2025"
-          itemsCount={1}
-          price="R$ 45,00"
-          status="Pendente"
-          onPress={() =>
-            openModal({
-              id: "001",
-              orderNumber: "#001",
-              date: "10/11/2025",
-              status: "Pendente",
-              items: [
-                {
-                  id: "i1",
-                  name: "Bolo de banana",
-                  qty: 1,
-                  price: "R$ 89,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-              ],
-            })
-          }
-        />
+      <ScrollView 
+        contentContainerStyle={styles.listContent}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchOrders} colors={["#D4A574"]} />}
+      >
+        {!loading && orders.length === 0 && (
+            <Text style={{textAlign: 'center', color: '#888', marginTop: 20}}>
+                Você ainda não fez nenhum pedido.
+            </Text>
+        )}
 
-        <OrderCard
-          orderNumber="#002"
-          date="09/11/2025"
-          itemsCount={1}
-          price="R$ 22,00"
-          status="Enviado"
-          onPress={() =>
-            openModal({
-              id: "002",
-              orderNumber: "#002",
-              date: "09/11/2025",
-              price: "R$ 22,00",
-              status: "Enviado",
-              items: [
-                {
-                  id: "i2",
-                  name: "Bolo de cenoura",
-                  qty: 1,
-                  price: "R$ 22,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-              ],
-            })
-          }
-        />
+        {orders.map((order) => {
+            const formattedDate = new Date(order.criado).toLocaleDateString('pt-BR');
+            const totalItems = order.pedidoItems ? order.pedidoItems.reduce((acc, item) => acc + item.quantidade, 0) : 0;
+            const showConfirmButton = order.status === OrderStatus.ENVIADO && canConfirm[order.id];
+            const isWaiting = order.status === OrderStatus.ENVIADO && !canConfirm[order.id];
 
-        <OrderCard
-          orderNumber="#003"
-          date="08/11/2025"
-          itemsCount={8}
-          price="R$ 352,00"
-          status="Entregue"
-          onPress={() =>
-            openModal({
-              id: "003",
-              orderNumber: "#003",
-              date: "08/11/2025",
-              price: "R$ 89,00",
-              status: "Entregue",
-              items: [
-                {
-                  id: "i3",
-                  name: "Bolo de banana",
-                  qty: 3,
-                  price: "R$ 89,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-                {
-                  id: "i4",
-                  name: "Biscoito",
-                  qty: 2,
-                  price: "R$ 20,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-                {
-                  id: "i5",
-                  name: "Doce",
-                  qty: 1,
-                  price: "R$ 15,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-                {
-                  id: "i6",
-                  name: "Doce",
-                  qty: 1,
-                  price: "R$ 15,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-                {
-                  id: "i7",
-                  name: "Doce",
-                  qty: 1,
-                  price: "R$ 15,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-              ],
-            })
-          }
-        />
+            return (
+                <View key={order.id} style={{marginBottom: 15}}>
+                    <OrderCard
+                        orderNumber={String(order.id).padStart(3, '0')}
+                        date={formattedDate}
+                        itemsCount={totalItems}
+                        price={`R$ ${order.total.toFixed(2).replace('.', ',')}`}
+                        status={order.status}
+                        onPress={() => handleOpenModal(order)}
+                    />
 
-        <OrderCard
-          orderNumber="#004"
-          date="07/11/2025"
-          itemsCount={5}
-          price="R$ 600,00"
-          status="Cancelado"
-          onPress={() =>
-            openModal({
-              id: "004",
-              orderNumber: "#004",
-              date: "07/11/2025",
-              status: "Cancelado",
-              items: [
-                {
-                  id: "i6",
-                  name: "Torta de maçã",
-                  qty: 5,
-                  price: "R$ 120,00",
-                  image: require("@/assets/imagens/BoloBanana.jpg"),
-                },
-              ],
-            })
-          }
-        />
+                    {isWaiting && (
+                        <Text style={{ textAlign: 'center', fontSize: 12, color: '#1E90FF', marginTop: -5, marginBottom: 5 }}>
+                            Pedido a caminho... O botão de confirmação aparecerá em breve.
+                        </Text>
+                    )}
+
+                    {showConfirmButton && (
+                        <TouchableOpacity 
+                            onPress={() => handleConfirmReceipt(order.id)}
+                            style={{
+                                backgroundColor: '#C81D63',
+                                padding: 12,
+                                borderRadius: 12,
+                                marginTop: -8,
+                                marginHorizontal: 4,
+                                alignItems: 'center',
+                                elevation: 3
+                            }}
+                        >
+                            <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                                CHEGOU! CONFIRMAR ENTREGA
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            );
+        })}
       </ScrollView>
 
-      <OrderDetailsModal visible={modalVisible} order={selectedOrder} onClose={closeModal} />
+      <OrderDetailsModal 
+        visible={modalVisible} 
+        order={selectedOrderForModal} 
+        onClose={closeModal} 
+      />
     </View>
   );
 };
