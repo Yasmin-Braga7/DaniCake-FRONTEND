@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
-import { Check, Truck, Clock, X, ChefHat } from 'lucide-react-native'; // Importe o ChefHat
+import { Check, Truck, Clock, X, ChefHat } from 'lucide-react-native';
 import { styles } from "./style";
 import { OrderStatus } from '@/src/enums/pedidos';
 
@@ -9,7 +9,7 @@ type OrderCardProps = {
   date: string;
   itemsCount: number;
   price: string;
-  status: number; // Agora recebe o número do Enum
+  status: number;
   onPress?: (e: GestureResponderEvent) => void;
 };
 
@@ -22,7 +22,6 @@ export const OrderCard = ({
   onPress,
 }: OrderCardProps) => {
 
-  // Função para pegar o Texto Baseado no Enum
   const getStatusLabel = (status: number) => {
     switch (status) {
         case OrderStatus.PENDENTE: return 'Pendente';
@@ -45,7 +44,6 @@ export const OrderCard = ({
       case OrderStatus.CANCELADO:
         return <X width={14} height={14} color="#FF4A4A" style={{ marginRight: 6 }} />;
       case OrderStatus.EM_PREPARO:
-        // Ícone novo para Status 1
         return <ChefHat width={14} height={14} color="#8E24AA" style={{ marginRight: 6 }} />;
       default:
         return null;
@@ -58,7 +56,7 @@ export const OrderCard = ({
       case OrderStatus.ENVIADO: return styles.badgeEnviado;
       case OrderStatus.PENDENTE: return styles.badgePendente;
       case OrderStatus.CANCELADO: return styles.badgeCancelado;
-      case OrderStatus.EM_PREPARO: return styles.badgeEmPreparo; // Estilo novo
+      case OrderStatus.EM_PREPARO: return styles.badgeEmPreparo;
       default: return styles.badgeDefault;
     }
   };
@@ -69,7 +67,7 @@ export const OrderCard = ({
       case OrderStatus.ENVIADO: return styles.badgeTextEnviado;
       case OrderStatus.PENDENTE: return styles.badgeTextPendente;
       case OrderStatus.CANCELADO: return styles.badgeTextCancelado;
-      case OrderStatus.EM_PREPARO: return styles.badgeTextEmPreparo; // Estilo novo
+      case OrderStatus.EM_PREPARO: return styles.badgeTextEmPreparo;
       default: return styles.badgeText;
     }
   };
