@@ -15,6 +15,7 @@ interface CartContextData {
   decrementQuantity: (productId: number) => void;
   totalValue: number;
   cartCount: number;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
@@ -61,6 +62,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   const totalValue = cartItems.reduce((acc, item) => acc + (item.preco * item.quantity), 0);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -72,7 +77,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       incrementQuantity, 
       decrementQuantity,
       totalValue, 
-      cartCount
+      cartCount,
+      clearCart
     }}>
       {children}
     </CartContext.Provider>
