@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform,
-  Image, 
-  Alert 
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Camera, ImagePlus } from 'lucide-react-native';
+import { Camera } from 'lucide-react-native';
 import { Dropdown } from '../ModalSelector';
 import { DropdownItem } from '@/src/interfaces/DropDown';
 import { ProdutoCreateRequest, ProdutoFormData } from '@/src/interfaces/produtos/request';
 import { ProdutoService } from '@/src/services/produtos';
 import * as ImagePicker from 'expo-image-picker';
-import { uploadImage } from '@/src/services/image';
+import { api } from '@/src/services/index';
 import { styles } from './style';
 
 export const CreateProduto = () => {
@@ -41,22 +31,20 @@ export const CreateProduto = () => {
     }
 
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images' as any,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.8, // Reduzi um pouco a qualidade para otimizar
+      quality: 0.8,
     });
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
+      
       const filename = uri.split('/').pop() || 'image.jpg';
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image/jpeg`;
 
       setSelectedImage({ uri, filename, type });
-      
-      
-      
     }
   };
 
@@ -70,7 +58,7 @@ export const CreateProduto = () => {
 
   const handleSubmit = async () => {
     if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria || !selectedImage) {
-      Alert.alert("Erro", "Preencha todos os campos obrigatórios, incluindo a imagem.");
+      Alert.alert("Atenção", "Preencha todos os campos obrigatórios e selecione uma imagem.");
       return;
     }
 
@@ -86,12 +74,29 @@ export const CreateProduto = () => {
       const novoProduto = await ProdutoService.criarProduto(produtoRequest);
 
       if (novoProduto && novoProduto.id && selectedImage) {
-        await uploadImage(novoProduto.id, selectedImage.uri, selectedImage.filename, selectedImage.type);
+        
+        const uploadFormData = new FormData();
+        
+        uploadFormData.append('file', {
+          uri: selectedImage.uri,
+          name: selectedImage.filename,
+          type: selectedImage.type,
+        } as any);
+
+        await api.post(`/v1/images/foto/upload/${novoProduto.id}`, uploadFormData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       }
-      Alert.alert("Sucesso", "Produto criado!");
+
+      Alert.alert("Sucesso", "Produto criado com imagem!", [
+        { text: "OK", onPress: () => navigation.goBack() }
+      ]);
+
     } catch (error) {
-      console.error(error);
-      Alert.alert("Erro", "Não foi possível criar o produto.");
+      console.error("Erro ao criar produto ou fazer upload:", error);
+      Alert.alert("Erro", "Falha ao processar o cadastro.");
     }
   };
 
@@ -107,7 +112,6 @@ export const CreateProduto = () => {
           keyboardShouldPersistTaps="handled"
         >
           
-          {/* 1. Nome */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Nome do produto</Text>
             <TextInput
@@ -118,7 +122,6 @@ export const CreateProduto = () => {
             />
           </View>
 
-          {/* 2. Descrição */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Descrição</Text>
             <TextInput
@@ -131,7 +134,6 @@ export const CreateProduto = () => {
             />
           </View>
 
-          {/* 3. Preço */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Valor</Text>
             <View style={styles.priceContainer}>
@@ -146,7 +148,6 @@ export const CreateProduto = () => {
             </View>
           </View>
 
-          {/* 4. Categoria */}
           <View style={styles.dropdownGroup}>
             <Text style={styles.label}>Categoria</Text>
             <Dropdown 
@@ -155,7 +156,6 @@ export const CreateProduto = () => {
             />
           </View>
 
-          {/* 5. Imagem OTIMIZADA */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Imagem</Text>
             
@@ -171,7 +171,6 @@ export const CreateProduto = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Botão Final */}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} activeOpacity={0.8}>
             <Text style={styles.submitButtonText}>Criar Produto</Text>
           </TouchableOpacity>
