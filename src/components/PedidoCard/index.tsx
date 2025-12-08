@@ -1,17 +1,15 @@
-// OrderCard.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
-import { Check, Truck, Clock, X, Hourglass } from 'lucide-react-native';
+import { Check, Truck, Clock, X, ChefHat } from 'lucide-react-native'; // Importe o ChefHat
 import { styles } from "./style";
-
-type StatusType = 'Entregue' | 'Pendente' | 'Enviado' | 'Cancelado';
+import { OrderStatus } from '@/src/enums/pedidos';
 
 type OrderCardProps = {
   orderNumber: string;
   date: string;
   itemsCount: number;
   price: string;
-  status?: StatusType | string;
+  status: number; // Agora recebe o número do Enum
   onPress?: (e: GestureResponderEvent) => void;
 };
 
@@ -20,75 +18,76 @@ export const OrderCard = ({
   date,
   itemsCount,
   price,
-  status = 'Pendente',
+  status,
   onPress,
 }: OrderCardProps) => {
 
-  const normalizedStatus = status.toLowerCase();
+  // Função para pegar o Texto Baseado no Enum
+  const getStatusLabel = (status: number) => {
+    switch (status) {
+        case OrderStatus.PENDENTE: return 'Pendente';
+        case OrderStatus.EM_PREPARO: return 'Em Preparo';
+        case OrderStatus.ENVIADO: return 'Enviado';
+        case OrderStatus.ENTREGUE: return 'Entregue';
+        case OrderStatus.CANCELADO: return 'Cancelado';
+        default: return 'Desconhecido';
+    }
+  };
 
-  // 🔥 Retorna o ícone correto
   const renderStatusIcon = () => {
-    switch (normalizedStatus) {
-      case 'entregue':
+    switch (status) {
+      case OrderStatus.ENTREGUE:
         return <Check width={14} height={14} color="#C81D63" style={{ marginRight: 6 }} />;
-      case 'enviado':
+      case OrderStatus.ENVIADO:
         return <Truck width={14} height={14} color="#1E90FF" style={{ marginRight: 6 }} />;
-      case 'pendente':
+      case OrderStatus.PENDENTE:
         return <Clock width={14} height={14} color="#F0A500" style={{ marginRight: 6 }} />;
-      case 'cancelado':
+      case OrderStatus.CANCELADO:
         return <X width={14} height={14} color="#FF4A4A" style={{ marginRight: 6 }} />;
+      case OrderStatus.EM_PREPARO:
+        // Ícone novo para Status 1
+        return <ChefHat width={14} height={14} color="#8E24AA" style={{ marginRight: 6 }} />;
       default:
         return null;
     }
   };
 
-  // ⭐ Retorna a cor do badge conforme o status
   const getBadgeStyle = () => {
-    switch (normalizedStatus) {
-      case 'entregue':
-        return styles.badgeDelivered;
-      case 'enviado':
-        return styles.badgeEnviado;
-      case 'pendente':
-        return styles.badgePendente;
-      case 'cancelado':
-        return styles.badgeCancelado;
-      default:
-        return styles.badgeDefault;
+    switch (status) {
+      case OrderStatus.ENTREGUE: return styles.badgeDelivered;
+      case OrderStatus.ENVIADO: return styles.badgeEnviado;
+      case OrderStatus.PENDENTE: return styles.badgePendente;
+      case OrderStatus.CANCELADO: return styles.badgeCancelado;
+      case OrderStatus.EM_PREPARO: return styles.badgeEmPreparo; // Estilo novo
+      default: return styles.badgeDefault;
     }
   };
 
-  // ⭐ Retorna a cor do texto conforme o status
   const getBadgeTextStyle = () => {
-    switch (normalizedStatus) {
-      case 'entregue':
-        return styles.badgeTextDelivered;
-      case 'enviado':
-        return styles.badgeTextEnviado;
-      case 'pendente':
-        return styles.badgeTextPendente;
-      case 'cancelado':
-        return styles.badgeTextCancelado;
-      default:
-        return styles.badgeText;
+    switch (status) {
+      case OrderStatus.ENTREGUE: return styles.badgeTextDelivered;
+      case OrderStatus.ENVIADO: return styles.badgeTextEnviado;
+      case OrderStatus.PENDENTE: return styles.badgeTextPendente;
+      case OrderStatus.CANCELADO: return styles.badgeTextCancelado;
+      case OrderStatus.EM_PREPARO: return styles.badgeTextEmPreparo; // Estilo novo
+      default: return styles.badgeText;
     }
   };
 
   return (
     <TouchableOpacity style={styles.container} activeOpacity={0.85} onPress={onPress}>
       <View style={styles.header}>
-        
         <View style={styles.titleBlock}>
-          <Text style={styles.title}>Pedido {orderNumber}</Text>
+          <Text style={styles.title}>Pedido #{orderNumber}</Text>
           <Text style={styles.date}>{date}</Text>
         </View>
 
-        {/* BADGE */}
         <View style={[styles.badge, getBadgeStyle()]}>
           {renderStatusIcon()}
-          <Text style={[styles.badgeText, getBadgeTextStyle()]}>{status}</Text>
+          <Text style={[styles.badgeText, getBadgeTextStyle()]}>
+            {getStatusLabel(status)}
+          </Text>
         </View>
-
       </View>
 
       <View style={styles.divider} />

@@ -70,15 +70,6 @@ export const styles = StyleSheet.create({
     color: '#1E90FF',
   },
 
-  badgeEmPreparo:{
-    backgroundColor: '#f1ffa1ff',
-    borderColor: '#e2ff40f1'
-  },
-
-  badgeTextEmPreparo: {
-    color: '#d9ff00ff'
-  },
-
   // ⭐ PENDENTE
   badgePendente: {
     backgroundColor: '#FFF7E6',
@@ -95,6 +86,14 @@ export const styles = StyleSheet.create({
   },
   badgeTextCancelado: {
     color: '#FF4A4A',
+  },
+
+  badgeEmPreparo: {
+    backgroundColor: '#F3E5F5', // Um lilás claro ou roxo suave
+    borderColor: '#E1BEE7',
+  },
+  badgeTextEmPreparo: {
+    color: '#8E24AA', // Roxo escuro
   },
 
   badgeText: {
