@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, Dimensions, RefreshControl, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,18 +15,10 @@ export const DashboardScreen = () => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
 
-    // 🔥 Mês e Ano selecionados
-    const [mesSelecionado, setMesSelecionado] = useState(new Date().getMonth() + 1);
-    const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
-
-    // 🔥 Lista dinâmica de anos
-    const [anos, setAnos] = useState<number[]>([]);
-
-    // 🔥 Carrega dados do dashboard com mês e ano selecionados
     const loadDashboard = async () => {
         setLoading(true);
         try {
-            const result = await OrderService.getDashboard(mesSelecionado, anoSelecionado);
+            const result = await OrderService.getDashboard();
             setData(result);
         } catch (error) {
             console.log("Erro dashboard", error);
@@ -35,33 +27,11 @@ export const DashboardScreen = () => {
         }
     };
 
-    // Executa quando entrar na tela
     useFocusEffect(
         useCallback(() => {
             loadDashboard();
-        }, [mesSelecionado, anoSelecionado])
+        }, [])
     );
-
-    // 🔥 Carrega lista de anos automaticamente
-    useEffect(() => {
-        const carregarAnos = async () => {
-            try {
-                const anoAtual = new Date().getFullYear();
-                const anoMinimo = await OrderService.fetchAnoMinimo(); // você já criou no service!
-
-                const lista = [];
-                for (let ano = anoAtual; ano >= anoMinimo; ano--) {
-                    lista.push(ano);
-                }
-
-                setAnos(lista);
-            } catch (error) {
-                console.log("Erro ao carregar anos:", error);
-            }
-        };
-
-        carregarAnos();
-    }, []);
 
     const chartConfig = {
         backgroundGradientFrom: "#ffffff",
@@ -86,7 +56,7 @@ export const DashboardScreen = () => {
                 strokeWidth: 2
             }
         ],
-        legend: ["Vendas do Mês"]
+        legend: ["Vendas do Mês"] 
     };
 
     if (loading && !data) {
@@ -114,11 +84,10 @@ export const DashboardScreen = () => {
             >
                 <Text style={styles.subTitleSection}>Desempenho Financeiro</Text>
 
-                {/* Gráfico */}
                 <View style={styles.chartContainer}>
                     <LineChart
                         data={chartData}
-                        width={width - 40}
+                        width={width - 40} 
                         height={220}
                         chartConfig={chartConfig}
                         bezier
@@ -127,7 +96,6 @@ export const DashboardScreen = () => {
                     />
                 </View>
 
-                {/* Cards inferiores */}
                 <View style={styles.statsRow}>
                     <View style={styles.card}>
                         <Text style={styles.cardLabel}>Total Vendido</Text>
@@ -146,4 +114,4 @@ export const DashboardScreen = () => {
             </ScrollView>
         </View>
     );
-};
+}

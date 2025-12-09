@@ -57,8 +57,8 @@ export const OrderService = {
         }
     },
 
-    async fetchAnoMinimo() {
-        const response = await api.get("/pedido/anos");
-        return response.data;
-    },
+    // async fetchAnoMinimo() {
+    //     const response = await api.get("/pedido/anos");
+    //     return response.data;
+    // },
 };
