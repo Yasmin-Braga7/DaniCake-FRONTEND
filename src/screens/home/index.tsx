@@ -5,25 +5,22 @@ import { ProdutoCard } from "../../components/ProdutoCard";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
 import { ProdutoService } from "@/src/services/produtos";
+import { CategoriaService } from "@/src/services/categoria"; //
 import { AuthService } from "@/src/services/storage";
 import { Produto } from "@/src/interfaces/produtos/request";
+import { Categoria as CategoriaModel } from "@/src/interfaces/categoria/response"; //
 import ProductModal from "@/src/components/ModalDC";
 
-
-interface Categoria {
+// Interface local para o componente visual (com imagem)
+interface CategoriaView {
   title: string;
   image: ImageRequireSource;
 }
 
-// interface ProdutoLocal {
-//   id: number;
-//   nome: string;
-//   preco: string;
-//   imagem: string;
-// }
-
-
 export const HomeScreen = () => {
+  // Estado para armazenar as categorias vindas da API
+  const [categorias, setCategorias] = useState<CategoriaView[]>([]);
+  
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,24 +29,38 @@ export const HomeScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const categoriasData: Categoria[] = [
-    { title: "Bolos", image: require('../../../assets/imagens/BoloCategoria.png') },
-    { title: "Sobremesas", image: require('../../../assets/imagens/BoloCategoria.png') },
-    { title: "Encomenda", image: require('../../../assets/imagens/BoloCategoria.png') },
-  ];
-
   useEffect(() => {
-    carregarProdutos();
-    var token: string;
-
-    const carregarToken = async () => {
-      const savedToken = await AuthService.getToken();
-      setToken(savedToken);
-    };
-
     carregarToken();
-
+    carregarCategorias(); // Chama a função de categorias
+    carregarProdutos();
   }, []);
+
+  const carregarToken = async () => {
+    const savedToken = await AuthService.getToken();
+    setToken(savedToken);
+  };
+
+  // Função para buscar e formatar as categorias
+  const carregarCategorias = async () => {
+    try {
+      const listaCategorias = await CategoriaService.listarCategorias(); //
+      
+      // Filtra ativas (status 1), pega as 3 primeiras e formata para o componente
+      const categoriasFormatadas = listaCategorias
+        .filter((c: CategoriaModel) => c.status === 1)
+        .slice(0, 3) // Limita a 3 categorias como pedido
+        .map((c: CategoriaModel) => ({
+          title: c.nome,
+          // Como a API não retorna imagem, usamos a imagem padrão do seu projeto
+          image: require('../../../assets/imagens/BoloCategoria.png') 
+        }));
+
+      setCategorias(categoriasFormatadas);
+    } catch (err) {
+      console.error('Erro ao carregar categorias:', err);
+      // Opcional: tratar erro de categoria visualmente se desejar
+    }
+  };
 
   const carregarProdutos = async () => {
     try {
@@ -60,14 +71,7 @@ export const HomeScreen = () => {
       // Filtrar apenas produtos ativos (status = 1)
       const produtosAtivos = produtosAPI.filter(p => p.status === 1);
       
-      // Converter para o formato local
-      const produtosFormatados = produtosAtivos.map(produto => {
-    // 💡 Chame a nova função para obter a URL completa
-    
-    return produto;
-});
-      
-      setProdutos(produtosFormatados);
+      setProdutos(produtosAtivos);
     } catch (err) {
       console.error('Erro ao carregar produtos:', err);
       setError('Não foi possível carregar os produtos. Tente novamente.');
@@ -111,12 +115,17 @@ export const HomeScreen = () => {
           <View style={styles.linha} />
         </View>
 
+        {/* Renderização dinâmica das categorias vindas da API */}
         <View style={styles.categorias}>
-          {categoriasData.map((item, index) => (
-            <CategoriaItem key={index} title={item.title} imageSource={item.image} />
-          ))}
+          {categorias.length > 0 ? (
+            categorias.map((item, index) => (
+              <CategoriaItem key={index} title={item.title} imageSource={item.image} />
+            ))
+          ) : (
+            // Fallback caso não carregue ou esteja vazio (opcional)
+            <Text style={{color: '#999', padding: 10}}>Carregando categorias...</Text>
+          )}
         </View>
-
 
         <View style={styles.Containertitle}>
           <Text style={styles.title}>Destaque</Text>
@@ -181,7 +190,6 @@ export const HomeScreen = () => {
         produto={selectedProduct}
         visible={isModalVisible}
         onClose={handleCloseModal}
-        
         imagemSource={selectedProductImageSource}
       />
     </View>

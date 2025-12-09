@@ -45,7 +45,6 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: FONTS.inter?.regular || 'System',
         color: '#000',
-        fontWeight: '500',
     },
 
     listContent: {
