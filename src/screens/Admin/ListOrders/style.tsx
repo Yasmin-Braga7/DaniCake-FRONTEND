@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     headerSubtitle: { 
         fontFamily: FONTS.inter.semiBold, 
         fontSize: 18, 
-        color: "#333" 
+        color: "#6B6B6B" 
     },
     cardWrapper: { 
         marginBottom: 15 

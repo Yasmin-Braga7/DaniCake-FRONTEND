@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform,Image, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+// REMOVEMOS: useRouter, KeyboardAvoidingView, Platform (agora controlados pelo pai)
 import { Camera } from 'lucide-react-native';
 import { Dropdown } from '../ModalSelector';
 import { DropdownItem } from '@/src/interfaces/DropDown';
@@ -9,9 +9,15 @@ import { ProdutoService } from '@/src/services/produtos';
 import * as ImagePicker from 'expo-image-picker';
 import { api } from '@/src/services/index';
 import { styles } from './style';
+import { CustomAlert } from '../AlertaR';
 
-export const CreateProduto = () => {
-  const navigation = useNavigation();
+// Interface para receber a função de sucesso do pai
+interface CreateProdutoProps {
+  onSuccess: () => void;
+}
+
+export const CreateProduto = ({ onSuccess }: CreateProdutoProps) => {
+  // REMOVEMOS: const router = useRouter();
 
   const [formData, setFormData] = useState<ProdutoFormData>({
     nome: '',
@@ -23,10 +29,29 @@ export const CreateProduto = () => {
 
   const [selectedImage, setSelectedImage] = useState<{ uri: string; filename: string; type: string } | null>(null);
 
+  const [alertParams, setAlertParams] = useState({
+    visible: false,
+    title: '',
+    message: '',
+    onClose: () => {} 
+  });
+
+  const showAlert = (title: string, message: string, customOnClose: () => void = () => {}) => {
+    setAlertParams({
+      visible: true,
+      title,
+      message,
+      onClose: () => {
+        setAlertParams(prev => ({ ...prev, visible: false })); 
+        customOnClose();
+      }
+    });
+  };
+
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-       Alert.alert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria.');
+      showAlert('Permissão Negada', 'Precisamos de permissão para acessar sua galeria.');
       return;
     }
 
@@ -39,7 +64,6 @@ export const CreateProduto = () => {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      
       const filename = uri.split('/').pop() || 'image.jpg';
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image/jpeg`;
@@ -58,7 +82,7 @@ export const CreateProduto = () => {
 
   const handleSubmit = async () => {
     if (!formData.nome || !formData.descricao || !formData.preco || !formData.idCategoria || !selectedImage) {
-      Alert.alert("Atenção", "Preencha todos os campos obrigatórios e selecione uma imagem.");
+      showAlert("Atenção", "Preencha todos os campos obrigatórios e selecione uma imagem.");
       return;
     }
 
@@ -74,9 +98,7 @@ export const CreateProduto = () => {
       const novoProduto = await ProdutoService.criarProduto(produtoRequest);
 
       if (novoProduto && novoProduto.id && selectedImage) {
-        
         const uploadFormData = new FormData();
-        
         uploadFormData.append('file', {
           uri: selectedImage.uri,
           name: selectedImage.filename,
@@ -90,28 +112,29 @@ export const CreateProduto = () => {
         });
       }
 
-      Alert.alert("Sucesso", "Produto criado com imagem!", [
-        { text: "OK", onPress: () => navigation.goBack() }
-      ]);
+      // SUCESSO: Chama o alerta e depois executa o onSuccess passado pelo pai
+      showAlert(
+        "Sucesso", 
+        "Produto criado com imagem!", 
+        () => {
+          onSuccess(); // Fecha o modal e atualiza a lista
+        }
+      );
 
     } catch (error) {
-      console.error("Erro ao criar produto ou fazer upload:", error);
-      Alert.alert("Erro", "Falha ao processar o cadastro.");
+      console.error("Erro ao criar produto:", error);
+      showAlert("Erro", "Falha ao processar o cadastro.");
     }
   };
 
+  // REMOVEMOS o KeyboardAvoidingView externo e a View container principal com flex:1
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, justifyContent: 'center' }} 
-    >
-      <View style={styles.container}>
+    <View style={{ flex: 1 }}> {/* Apenas um flex:1 simples para o ScrollView ocupar o espaço do modal */}
         <ScrollView 
-          contentContainerStyle={styles.scrollContainer} 
-          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[styles.scrollContainer, { paddingVertical: 10, paddingHorizontal: 5 }]} // Ajuste de padding para o modal
+          showsVerticalScrollIndicator={true}
           keyboardShouldPersistTaps="handled"
         >
-          
           <View style={styles.formGroup}>
             <Text style={styles.label}>Nome do produto</Text>
             <TextInput
@@ -158,7 +181,6 @@ export const CreateProduto = () => {
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>Imagem</Text>
-            
             <TouchableOpacity onPress={pickImage} style={styles.imageUploadTouch} activeOpacity={0.7}>
               {selectedImage ? (
                 <Image source={{ uri: selectedImage.uri }} style={styles.imagePreview} />
@@ -174,9 +196,14 @@ export const CreateProduto = () => {
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} activeOpacity={0.8}>
             <Text style={styles.submitButtonText}>Criar Produto</Text>
           </TouchableOpacity>
-
         </ScrollView>
-      </View>
-    </KeyboardAvoidingView>
+
+      <CustomAlert 
+        visible={alertParams.visible}
+        title={alertParams.title}
+        message={alertParams.message}
+        onClose={alertParams.onClose}
+      />
+    </View>
   );
 };

@@ -14,7 +14,6 @@ export const EditProduct = () => {
                 </View>
               </SafeAreaView>
               <View style={styles.List}>
-                <CreateProduto />
               </View>
         </View>
     )

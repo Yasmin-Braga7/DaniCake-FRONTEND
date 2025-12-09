@@ -72,6 +72,43 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escuro transparente
+    justifyContent: 'center', // Centraliza verticalmente
+    alignItems: 'center', // Centraliza horizontalmente
+    padding: 20,
+  },
+  modalContentContainer: {
+    width: '100%',
+    maxWidth: 400, // Largura máxima para não ficar gigante em tablets
+    maxHeight: '85%', // Altura máxima para caber na tela
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    elevation: 10, // Sombra Android
+    shadowColor: '#000', // Sombra iOS
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    paddingBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+
   itemImage: {
     width: 60,
     height: 60,
