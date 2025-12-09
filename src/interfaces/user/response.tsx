@@ -6,6 +6,8 @@ export interface UsuarioResponse {
   email: string;
   criado: string;
   status: Status;
+  imagem?: string;
+  roles: string[];
 }
 
 export interface UsuarioLoginResponse {
@@ -16,4 +18,6 @@ export interface UsuarioLoginResponse {
   endereco: string;
   criado: string;
   status: Status;
+  imagem?: string;
+  roles: string[];
 }

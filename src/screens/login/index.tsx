@@ -20,7 +20,6 @@ import { useFormLogin } from '@/src/hooks/formLogin';
 import { LoginService } from '@/src/services/auth/login';
 import { useNavigation } from "@/src/constants/router";
 
-
 export const LoginScreen = () => {
 
   const navigation = useNavigation();
@@ -56,10 +55,22 @@ export const LoginScreen = () => {
     
     try {
       setLoading(true);
-      await LoginService.login(email, senha);
+      // O LoginService agora retorna o usuário com as roles que configuramos no Backend
+      const response = await LoginService.login(email, senha);
       
-      navigation.home();
-      // router.push('/(tabs)/Home');
+      const userRoles = response.usuario.roles || [];
+      console.log("Roles do usuário:", userRoles); // Para você conferir no terminal se está vindo certo
+
+      // --- LÓGICA DE SEPARAÇÃO ---
+      if (userRoles.includes("ROLE_ADMINISTRADOR")) {
+        // Se for admin, manda para a área administrativa
+        router.replace('/(adm)/createProduct'); 
+      } else {
+        // Se for cliente (ou qualquer outro), manda para a Home do App
+        router.replace('/(tabs)/Home');
+      }
+      // ---------------------------
+
     } catch (error: any) {
       if (error.response?.status === 401 || error.response?.status === 400) {
         setInvalidCredentialsError();
@@ -106,7 +117,6 @@ export const LoginScreen = () => {
                     autoCapitalize='none'
                   />
                   
-
                   <Text style={styles.label}>Senha</Text>
                   {errors.senha ? <Text style={styles.errorText}>{errors.senha}</Text> : null}
                   <TextInput                  
@@ -117,13 +127,13 @@ export const LoginScreen = () => {
                     onChangeText={setSenha}
                   />
 
-                  <ReusableButton title='ENTRAR' onPress={handleLogin} />
+                  <ReusableButton title={loading ? 'ENTRANDO...' : 'ENTRAR'} onPress={handleLogin} />
 
                   <Text style={styles.link}>Esqueci minha senha</Text>
                 </View>
 
                 <Text style={styles.footer}>
-                  Não tem uma conta? <Text style={styles.signup} onPress={navigation.register}>Cadastra-se</Text>
+                  Não tem uma conta? <Text style={styles.signup} onPress={navigation.register}>Cadastre-se</Text>
                 </Text>
               </View>
             </View>
