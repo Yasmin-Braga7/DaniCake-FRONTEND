@@ -17,10 +17,20 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.DaniCake"
+      "package": "com.anonymous.DaniCake",
+      "usesCleartextTraffic": true,
+      "networkSecurityConfig": "./network-security-config.xml"
     },
     "web": {
       "output": "static"
+    },
+    "plugins": [
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0f48c0db-ed02-4815-94f7-ffcb26bf1303"
+      }
     }
   }
 }
