@@ -7,7 +7,7 @@ import { OrderCard } from "@/src/components/PedidoCard";
 import { OrderStatus } from "@/src/enums/pedidos";
 import { styles } from "./style";
 
-export default function AdminOrders() {
+export default function ListOrdersScreen() {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 

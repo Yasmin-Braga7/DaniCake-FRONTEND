@@ -75,7 +75,7 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
                 keyExtractor={(item, index) => `${item.id ?? "item"}-${index}`}
                 renderItem={({ item }) => (
                   <View style={styles.itemCard}>
-                    <Image source={item.image} style={styles.itemImage} />
+                    <Image source={{ uri: `data:image/png;base64,${item.image}` }} style={styles.itemImage} resizeMode="cover" />
                     <View style={styles.itemInfo}>
                       <Text style={styles.itemName}>{item.name}</Text>
                       <Text style={styles.itemQty}>Qtd: {item.qty}</Text>

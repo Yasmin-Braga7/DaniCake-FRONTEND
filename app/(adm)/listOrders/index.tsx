@@ -1,7 +1,5 @@
-import { Text } from "react-native";
+import ListOrdersScreen from "@/src/screens/Admin/ListOrders";
 
-export default function CalendarTab() {
-    return (
-        <Text>ola</Text>
-    );
+export default function HomeTab() {
+  return <ListOrdersScreen />;
 }
