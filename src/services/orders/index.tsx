@@ -55,5 +55,10 @@ export const OrderService = {
             console.error("Erro ao carregar dashboard:", error);
             throw error;
         }
-    }
+    },
+
+    async fetchAnoMinimo() {
+        const response = await api.get("/pedido/anos");
+        return response.data;
+    },
 };
