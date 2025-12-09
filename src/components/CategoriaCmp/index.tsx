@@ -14,7 +14,7 @@ export const CategoriaItem = ({ title, imageSource }: CategoriaItemProps) => {
       <View style={styles.categoria123}>
         <Image style={styles.imgCategoria} source={imageSource} />
       </View>
-      <Text style={styles.textCategoria}>{title}</Text>
+      <Text style={styles.textCategoria}>{title ?? ""}</Text>
     </View>
   );
 };

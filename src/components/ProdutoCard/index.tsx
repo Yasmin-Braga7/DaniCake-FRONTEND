@@ -22,7 +22,7 @@ export const ProdutoCard = ({ produto, imagemSource, onPress }: ProdutoCardProps
     >
       <Image style={styles.cardImage} source={imagemSource} />
       <View style={styles.cardInfo}>
-        <Text style={styles.cardNome}>{produto.nome}</Text>
+        <Text style={styles.cardNome}>{produto.nome ?? ""}</Text>
         <Text style={styles.cardPreco}>
           R$ {produto.preco ? produto.preco.toFixed(2).replace('.', ',') : '0,00'}
         </Text>
