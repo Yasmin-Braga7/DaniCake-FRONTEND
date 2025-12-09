@@ -45,5 +45,15 @@ export const OrderService = {
             console.error("Erro ao criar item do pedido:", error);
             throw error;
         }
+    },
+
+    async getDashboard(): Promise<any> {
+        try {
+            const response = await api.get('/pedido/dashboard');
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao carregar dashboard:", error);
+            throw error;
+        }
     }
 };

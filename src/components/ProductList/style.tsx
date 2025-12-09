@@ -80,19 +80,17 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   modalContentContainer: {
-    width: '100%',
-    maxWidth: 400, // Largura máxima para não ficar gigante em tablets
-    maxHeight: '85%', // Altura máxima para caber na tela
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    elevation: 10, // Sombra Android
-    shadowColor: '#000', // Sombra iOS
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-  },
+  width: '90%',
+  maxHeight: '85%',
+  backgroundColor: '#fff',
+  borderRadius: 20,
+  padding: 20,
+  elevation: 10,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 5 },
+  shadowOpacity: 0.3,
+  shadowRadius: 6,
+},
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

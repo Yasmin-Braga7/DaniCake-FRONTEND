@@ -129,7 +129,7 @@ export const CreateProduto = ({ onSuccess }: CreateProdutoProps) => {
 
   // REMOVEMOS o KeyboardAvoidingView externo e a View container principal com flex:1
   return (
-    <View style={{ flex: 1 }}> {/* Apenas um flex:1 simples para o ScrollView ocupar o espaço do modal */}
+    <View>
         <ScrollView 
           contentContainerStyle={[styles.scrollContainer, { paddingVertical: 10, paddingHorizontal: 5 }]} // Ajuste de padding para o modal
           showsVerticalScrollIndicator={true}

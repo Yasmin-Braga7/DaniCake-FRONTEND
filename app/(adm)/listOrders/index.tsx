@@ -1,4 +1,4 @@
-import ListOrdersScreen from "@/src/screens/Admin/ListOrders";
+import ListOrdersScreen from "@/src/screens/Admin/ordersList";
 
 export default function HomeTab() {
   return <ListOrdersScreen />;

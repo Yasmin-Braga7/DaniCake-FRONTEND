@@ -1,6 +1,6 @@
-import { EditProduct } from "@/src/screens/Admin/editProduct";
+import { DashboardScreen } from "@/src/screens/Admin/dashboard";
 
 
 export default function CalendarTab() {
-    return <EditProduct />
+    return <DashboardScreen />
 }
