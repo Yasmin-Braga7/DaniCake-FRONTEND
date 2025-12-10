@@ -59,14 +59,11 @@ export const OrdersScreen = () => {
     const formattedDate = new Date(order.criado).toLocaleDateString('pt-BR');
 
     const items = order.pedidoItems.map((item) => ({
-        id: String(item.produto.id),
+        id: String(item.produto.id), // Garantindo que o ID é do produto
         name: item.produto.nome,
         qty: item.quantidade,
         price: `R$ ${item.preco.toFixed(2).replace('.', ',')}`,
-        image: { 
-            uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${item.produto.id}`,
-            headers: { Authorization: `Bearer ${token}` }
-        }
+        // REMOVI A PROPRIEDADE IMAGE DAQUI, FICOU MAIS LIMPO!
     }));
 
     // Objeto final para o modal
@@ -164,7 +161,8 @@ export const OrdersScreen = () => {
       <OrderDetailsModal 
         visible={modalVisible} 
         order={selectedOrderForModal} 
-        onClose={closeModal} 
+        onClose={closeModal}
+        token={token}
       />
     </View>
   );

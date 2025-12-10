@@ -7,7 +7,6 @@ interface OrderItem {
   name: string;
   qty: number;
   price: string;
-  image: any;
 }
 
 interface OrderData {
@@ -21,9 +20,10 @@ interface OrderDetailsModalProps {
   visible: boolean;
   onClose: () => void;
   order: OrderData | null;
+  token: string | null;
 }
 
-export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModalProps) => {
+export const OrderDetailsModal = ({ visible, onClose, order, token }: OrderDetailsModalProps) => {
   if (!order) return null;
 
   const screenHeight = Dimensions.get("window").height;
@@ -75,7 +75,11 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
                 keyExtractor={(item, index) => `${item.id ?? "item"}-${index}`}
                 renderItem={({ item }) => (
                   <View style={styles.itemCard}>
-                    <Image source={{ uri: `data:image/png;base64,${item.image}` }} style={styles.itemImage} resizeMode="cover" />
+                    <Image 
+                    source={{ 
+                      uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${item.id}`,
+                      headers: { Authorization: `Bearer ${token}` }
+                      }} style={styles.itemImage} resizeMode="cover" />
                     <View style={styles.itemInfo}>
                       <Text style={styles.itemName}>{item.name}</Text>
                       <Text style={styles.itemQty}>Qtd: {item.qty}</Text>

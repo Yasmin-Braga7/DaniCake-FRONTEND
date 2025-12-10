@@ -123,7 +123,7 @@ export const HomeScreen = () => {
             ))
           ) : (
             // Fallback caso não carregue ou esteja vazio (opcional)
-            <Text style={{color: '#999', padding: 10}}>Carregando categorias...</Text>
+            <Text style={{color: '#ff7c96ff', padding: 10}}>Carregando categorias...</Text>
           )}
         </View>
 

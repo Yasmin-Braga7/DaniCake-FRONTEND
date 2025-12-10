@@ -13,10 +13,10 @@ export const styles = StyleSheet.create({
     width: CARD_WIDTH,
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    padding: 16, // Aumentei o padding interno
+    padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 110, // <--- AQUI: Aumentei a altura mínima do card
+    minHeight: 130,
 
     // Sombras
     shadowColor: "#000",
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     elevation: 4,
   },
   image: {
-    width: 80, // Aumentei um pouco a imagem
+    width: 80,
     height: 80,
     borderRadius: 12,
     marginRight: 16,

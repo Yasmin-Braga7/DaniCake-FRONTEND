@@ -19,7 +19,7 @@ export const CartCards = ({ data, onIncrement, onDecrement, onRemove }: CartCard
       <View style={styles.card}>
         {/* Imagem */}
         <Image
-          source={data.imagemSource || require('@/assets/imagens/BombomPote.jpg')} // Fallback
+          source={data.imagemSource}
           style={styles.image}
           contentFit="cover"
         />

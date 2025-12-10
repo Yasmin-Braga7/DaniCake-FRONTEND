@@ -93,7 +93,7 @@ export const CartScreen = () => {
                 )}
                 ListEmptyComponent={() => (
                     <View style={{ alignItems: 'center', marginTop: 50 }}>
-                        <Text style={{ color: '#888' }}>Seu carrinho está vazio.</Text>
+                        <Text style={{ color: '#4e4e4eff' }}>Seu carrinho está vazio.</Text>
                     </View>
                 )}
             />
@@ -101,8 +101,8 @@ export const CartScreen = () => {
             {cartItems.length > 0 && (
                 <View style={{ padding: 20, backgroundColor: '#fff', elevation: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                        <Text style={{ fontSize: 16, color: '#666' }}>Subtotal</Text>
-                        <Text style={{ fontSize: 16, color: '#666' }}>
+                        <Text style={{ fontSize: 16, color: '#4e4e4eff' }}>Subtotal</Text>
+                        <Text style={{ fontSize: 16, color: '#4e4e4eff' }}>
                             R$ {totalValue.toFixed(2).replace('.', ',')}
                         </Text>
                     </View>
