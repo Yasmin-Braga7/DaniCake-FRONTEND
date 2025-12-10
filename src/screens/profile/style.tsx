@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
   },
 
   infoCard: {
-    height: 350,
+    height: 430,
     backgroundColor: "#fff",
     marginHorizontal: 16,
     marginTop: 15,

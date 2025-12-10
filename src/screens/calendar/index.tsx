@@ -8,10 +8,9 @@ export const CalendarScreen = () => {
     const navigation = useNavigation();
     return(
         <View>
-            <ReusableButton 
-                title="Dashboard Admin" 
-                onPress={navigation.adminCreateProduct} 
-            />
+            <View>
+                <Text>Em breve será implementado o caléndario</Text>
+            </View>
         </View>
     )
 }

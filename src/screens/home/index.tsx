@@ -134,8 +134,8 @@ export const HomeScreen = () => {
 
         {loading ? (
           <View style={{ padding: 20, alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#D4A574" />
-            <Text style={{ marginTop: 10, color: '#666' }}>Carregando produtos...</Text>
+            <ActivityIndicator size="large" color="#F7B6C3" />
+            <Text style={{ marginTop: 10, color: '#ff6785ff' }}>Carregando produtos...</Text>
           </View>
         ) : error ? (
           <View style={{ padding: 20, alignItems: 'center' }}>
@@ -143,7 +143,7 @@ export const HomeScreen = () => {
           </View>
         ) : produtos.length === 0 ? (
           <View style={{ padding: 20, alignItems: 'center' }}>
-            <Text style={{ color: '#666', textAlign: 'center' }}>Nenhum produto disponível no momento.</Text>
+            <Text style={{ color: '#ff6785ff', textAlign: 'center' }}>Nenhum produto disponível no momento.</Text>
           </View>
         ) : (
           <>
