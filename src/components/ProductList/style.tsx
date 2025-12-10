@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 16,
+    fontSize: 1,
     fontFamily: FONTS.inter.regular,
     color: '#000',
   },

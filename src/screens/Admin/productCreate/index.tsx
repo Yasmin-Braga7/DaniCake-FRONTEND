@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text } from "react-native"; // Removi ScrollView daqui se não for usar mais nada
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./style";
 import { ProductList } from "@/src/components/ProductList";
@@ -14,21 +14,11 @@ export const ProductCreate = () => {
           <Text style={styles.headerSubtitle}>Acompanhe seus pedidos</Text>
         </View>
       </SafeAreaView>
-
-      <FlatList
-        data={[1]}   // truque: FlatList precisa de dados, mas só queremos usar como container
-        renderItem={() => null}
-        keyExtractor={() => "unique"}
-
-        ListHeaderComponent={
-          <View style={styles.List}>
-            <ProductList />
-            <CategoryList />
-          </View>
-        }
-
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={[styles.List, { flex: 1, paddingBottom: 20 }]}>
+          <ProductList />
+          <View style={{ height: 20 }} /> 
+          <CategoryList />
+      </View>
     </View>
   );
 };

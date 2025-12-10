@@ -96,7 +96,7 @@ export const ProductList = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.listContainer}>
+      <View style={[styles.listContainer, {height: 300}]}>
         {loading ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" color="#D4A574" />
@@ -108,6 +108,7 @@ export const ProductList = () => {
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
           >
             {products.map((item) => (
               <View key={item.id} style={styles.itemWrapper}>

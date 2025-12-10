@@ -25,7 +25,9 @@
       "output": "static"
     },
     "plugins": [
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-router",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

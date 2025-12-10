@@ -9,7 +9,7 @@ import {
     Alert,
     ActivityIndicator
 } from "react-native";
-import { Plus, Trash2, Edit3, X } from "lucide-react-native";
+import { Plus, Trash2, Edit3, X, PlusCircle } from "lucide-react-native";
 import { styles } from "./style";
 import { CategoriaService } from "@/src/services/categoria";
 import { Categoria } from "@/src/interfaces/categoria/response";
@@ -92,19 +92,19 @@ export const CategoryList = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {height: 200}]}>
             {/* 1. Header FIXO (fora da lista) */}
             <View style={styles.header}>
                 <View style={styles.headerTitleContainer}>
                     <Text style={styles.headerTitle}>Categorias Disponíveis</Text>
                 </View>
                 <TouchableOpacity onPress={handleOpenCreate}>
-                    <Plus color="#000" size={24} />
+                    <PlusCircle size={28} color="#000" strokeWidth={1.5} />
                 </TouchableOpacity>
             </View>
 
-            {/* 2. Área de Lista Rolável */}
-            {/* O container tem altura fixa, então o flex: 1 fará a lista ocupar o resto e rolar se necessário */}
+            <View style={[styles.listContainer, {height: 115}]}>
+
             {loading ? (
                 <ActivityIndicator color="#000" style={{ marginTop: 20 }} />
             ) : (
@@ -113,6 +113,7 @@ export const CategoryList = () => {
                     keyExtractor={(item) => String(item.id)}
                     contentContainerStyle={{ paddingBottom: 10 }}
                     showsVerticalScrollIndicator={true}
+                    nestedScrollEnabled={true}
                     renderItem={({ item }) => (
                         <View style={styles.itemRow}>
                             <View style={styles.nameBox}>
@@ -134,11 +135,11 @@ export const CategoryList = () => {
                         <Text style={styles.emptyText}>Nenhuma categoria.</Text>
                     }
 
-                    /* AQUI ESTÁ A MÁGICA */
                     style={{ flex: 1 }}
                 />
 
             )}
+            </View>
 
             <Modal
                 visible={modalVisible}

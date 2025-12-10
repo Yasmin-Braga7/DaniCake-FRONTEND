@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 15,
 
         // Altura fixa
-        height: 220,
+        // height: 200,
 
         // Remover paddingTop/paddingBottom do container
         paddingTop: 10,
@@ -35,16 +35,22 @@ export const styles = StyleSheet.create({
 
     headerTitleContainer: {
         borderBottomWidth: 1,
-        borderBottomColor: '#000',
-        paddingBottom: 4,
+        borderBottomColor: '#666',
+        paddingBottom: 2,
         flex: 1,
-        marginRight: 15,
+        marginRight: 10,
     },
 
     headerTitle: {
-        fontSize: 16,
-        fontFamily: FONTS.inter?.regular || 'System',
+        fontSize: 18,
+        fontFamily: FONTS.inter.regular,
         color: '#000',
+    },
+
+    listContainer: {
+        // Aumentado para exibir mais itens (aprox 4.5 itens visíveis)
+        height: 480,
+        // Opção responsiva: height: height * 0.55, 
     },
 
     listContent: {
