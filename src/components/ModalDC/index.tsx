@@ -1,15 +1,15 @@
 import React from 'react';
-import { 
-  Modal, 
-  View, 
-  Text, 
-  TouchableOpacity, 
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 import { ShoppingCart } from 'lucide-react-native';
 import { Image } from 'expo-image';
-import { styles } from './style'; 
+import { styles } from './style';
 import { Produto } from '@/src/interfaces/produtos/request';
 import { useCart } from '@/src/context/CartContext';
 
@@ -35,7 +35,7 @@ export default function ProductModal({ visible, onClose, produto, imagemSource }
   return (
     <Modal
       animationType="fade"
-      transparent={true} 
+      transparent={true}
       visible={visible}
       onRequestClose={onClose}
       statusBarTranslucent
@@ -43,17 +43,20 @@ export default function ProductModal({ visible, onClose, produto, imagemSource }
       {/* 1. Camada escura - Clique fora fecha */}
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
-          
+
           {/* 2. Card do Produto - Clique dentro NÃO fecha */}
           <TouchableWithoutFeedback>
             <View style={styles.card}>
-              
+
               <View style={styles.imageContainer}>
-                <Image 
+                <Image
                   // Usa a imagem passada ou um placeholder
-                  source={imagemSource} 
+                  source={imagemSource}
                   style={styles.image}
+                  // 'cover' = preenche tudo (pode cortar bordas)
+                  // 'contain' = mostra imagem inteira (pode sobrar espaço)
                   contentFit="cover"
+                  transition={1000} // Efeito suave ao carregar
                 />
               </View>
 
@@ -64,7 +67,7 @@ export default function ProductModal({ visible, onClose, produto, imagemSource }
               <Text style={styles.description}>
                 {produto?.descricao || 'Sem descrição disponível.'}
               </Text>
-              
+
               {/* Preço (Opcional, se tiver no objeto produto) */}
               {/* <Text style={styles.price}>R$ {produto?.preco}</Text> */}
 

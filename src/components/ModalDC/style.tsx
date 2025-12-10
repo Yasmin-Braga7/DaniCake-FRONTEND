@@ -3,49 +3,59 @@ import { StyleSheet, Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
-  // O MODAL PRECISA DISSO PARA APARECER:
+  // ... (overlay e card continuam iguais)
   overlay: {
-    flex: 1, // Ocupa a tela toda
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo escuro transparente
-    justifyContent: 'center', // Centraliza verticalmente
-    alignItems: 'center', // Centraliza horizontalmente
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
-    width: width * 0.85, // 85% da largura da tela
+    width: width * 0.85,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
-    elevation: 10, // Sombra no Android
-    shadowColor: '#000', // Sombra no iOS
+    elevation: 10,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
+
+  // AQUI ESTÁ A MUDANÇA PRINCIPAL
   imageContainer: {
-    width: '100%',
-    height: 150,
+    width: '100%',        // Fixa na largura total disponível do card
+    height: 300,          // Aumentei de 150 para 300 (agora fica bem maior/quadrado)
+    backgroundColor: '#ffffffff', // Cor de fundo suave caso a imagem demore ou seja transparente
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: 'hidden',   // OBRIGATÓRIO: Corta qualquer parte da imagem que tentar "fugir"
     marginBottom: 12,
+    justifyContent: 'center', // Centraliza o conteúdo
+    alignItems: 'center',
   },
   image: {
-    width: '100%',
+    width: '95%',  // Ocupa toda a largura do container
     height: '100%',
+    borderRadius: 12, // Ocupa toda a altura do container
   },
+
+  // ... (restante dos estilos: title, description, addButton...)
   title: {
-    fontSize: 20,
+    fontSize: 22, // Aumentei um pouco para combinar com a imagem maior
     fontWeight: 'bold',
     marginBottom: 8,
     color: '#333',
+  
   },
   description: {
     fontSize: 14,
     color: '#666',
     marginBottom: 20,
     lineHeight: 20,
+    textAlign: 'center', // Descrição centralizada também
   },
   addButton: {
-    backgroundColor: '#D4A574', // Cor do seu tema
+    backgroundColor: '#D4A574',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
