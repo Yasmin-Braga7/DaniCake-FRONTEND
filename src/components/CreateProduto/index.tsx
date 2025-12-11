@@ -98,6 +98,7 @@ export const CreateProduto = ({ onSuccess }: CreateProdutoProps) => {
       const novoProduto = await ProdutoService.criarProduto(produtoRequest);
 
       if (novoProduto && novoProduto.id && selectedImage) {
+
         const uploadFormData = new FormData();
         uploadFormData.append('file', {
           uri: selectedImage.uri,
