@@ -1,15 +1,15 @@
 import { View, Text } from "react-native"
 import { useNavigation } from "@/src/constants/router";
-import { ReusableButton } from "@/src/components/Button";
+import { styles } from "./style";
 
 
 export const CalendarScreen = () => {
 
     const navigation = useNavigation();
     return(
-        <View>
-            <View>
-                <Text>Em breve será implementado o caléndario</Text>
+        <View style={styles.containerPai}>
+            <View style={styles.container}>
+                <Text style={styles.text}>Em breve será implementado o caléndario</Text>
             </View>
         </View>
     )
