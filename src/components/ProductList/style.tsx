@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { FONTS } from '@/src/constants/fonts';
 
-const { width, height } = Dimensions.get('window'); // Pegamos height também
+const { width, height } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -44,11 +44,8 @@ export const styles = StyleSheet.create({
     color: '#000',
   },
 
-  // --- ALTERAÇÃO AQUI ---
   listContainer: {
-    // Aumentado para exibir mais itens (aprox 4.5 itens visíveis)
     height: 480, 
-    // Opção responsiva: height: height * 0.55, 
   },
   
   scrollContent: {
@@ -61,36 +58,42 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
+  // --- AQUI ESTÁ A ALTERAÇÃO ---
   itemCard: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#D9D9D9',
+    // Alterado de '#D9D9D9' (cinza) para o rosa claro do seu tema
+    backgroundColor: '#FFF6F7', 
+    // Opcional: Borda com o rosa mais escuro (usado na Home) para destacar
+    borderWidth: 1,
+    borderColor: '#F7B6C3', 
     borderRadius: 12,
     padding: 10,
     alignItems: 'center',
     marginRight: 10,
     position: 'relative',
   },
+  // -----------------------------
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escuro transparente
-    justifyContent: 'center', // Centraliza verticalmente
-    alignItems: 'center', // Centraliza horizontalmente
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   modalContentContainer: {
-  width: '90%',
-  maxHeight: '85%',
-  backgroundColor: '#fff',
-  borderRadius: 20,
-  padding: 20,
-  elevation: 10,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 5 },
-  shadowOpacity: 0.3,
-  shadowRadius: 6,
-},
+    width: '90%',
+    maxHeight: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

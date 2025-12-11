@@ -111,6 +111,7 @@ export const LoginScreen = () => {
                   <TextInput
                     style={[styles.input, errors.email && styles.inputError, { fontSize: 17 }]}
                     placeholder="Digite seu email"
+                    placeholderTextColor="#5e5e5eff"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType='email-address'
@@ -122,6 +123,7 @@ export const LoginScreen = () => {
                   <TextInput                  
                     style={[styles.input, errors.senha && styles.inputError, { fontSize: 17 }]}
                     placeholder="Digite sua senha"
+                    placeholderTextColor="#5e5e5eff"
                     secureTextEntry
                     value={senha}
                     onChangeText={setSenha}

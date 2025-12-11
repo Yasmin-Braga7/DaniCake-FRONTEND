@@ -11,9 +11,6 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 15,
 
-        // Altura fixa
-        // height: 200,
-
         // Remover paddingTop/paddingBottom do container
         paddingTop: 10,
 
@@ -48,27 +45,30 @@ export const styles = StyleSheet.create({
     },
 
     listContainer: {
-        // Aumentado para exibir mais itens (aprox 4.5 itens visíveis)
         height: 480,
-        // Opção responsiva: height: height * 0.55, 
     },
 
     listContent: {
-        paddingBottom: 10, // Espaço extra no final do scroll
+        paddingBottom: 10, 
     },
 
     itemRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 12, // Espaço entre os itens
-        paddingHorizontal: 2, // Para a sombra não cortar nas laterais se tiver
+        marginBottom: 12, 
+        paddingHorizontal: 2, 
     },
 
     nameBox: {
         flex: 1,
-        backgroundColor: '#D9D9D9',
+        // Fundo rosa claro do tema
+        backgroundColor: '#FFF6F7', 
+        // Borda rosa mais escura para destacar
+        borderWidth: 1,
+        borderColor: '#F7B6C3',
+        
         borderRadius: 8,
-        paddingVertical: 12, // Altura do retângulo cinza
+        paddingVertical: 12, 
         paddingHorizontal: 15,
         marginRight: 10,
     },
@@ -91,7 +91,7 @@ export const styles = StyleSheet.create({
         fontFamily: FONTS.inter?.regular || 'System',
     },
 
-    // --- Estilos do Modal (sem alterações) ---
+    // --- Estilos do Modal ---
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -125,15 +125,19 @@ export const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#FAFAFA'
     },
+    
+    // Botão estilizado (Rosa e Redondinho)
     saveButton: {
-        backgroundColor: '#000',
-        borderRadius: 8,
-        padding: 14,
+        backgroundColor: '#FBCBC9',
+        borderRadius: 25,
+        paddingVertical: 12,
         alignItems: 'center',
+        marginTop: 5,
+        marginBottom: 5,
     },
     saveButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
         fontSize: 16,
+        fontFamily: FONTS.inter.bold,
+        color: '#000',
     },
 });
