@@ -49,24 +49,30 @@ export const OrdersScreen = () => {
       if (order.status === OrderStatus.ENVIADO && !canConfirm[order.id]) {
         const timer = setTimeout(() => {
           setCanConfirm((prev) => ({ ...prev, [order.id]: true }));
-        }, 15000); // 15 segundos depois vou alterar para 15min(90000)
+        }, 15000); 
         return () => clearTimeout(timer);
       }
     });
   }, [orders]);
 
+  // --- AQUI ESTÁ A MÁGICA QUE FALTAVA ---
   const handleOpenModal = (order: Order) => {
     const formattedDate = new Date(order.criado).toLocaleDateString('pt-BR');
 
     const items = order.pedidoItems.map((item) => ({
-        id: String(item.produto.id), // Garantindo que o ID é do produto
+        id: String(item.produto.id),
         name: item.produto.nome,
         qty: item.quantidade,
         price: `R$ ${item.preco.toFixed(2).replace('.', ',')}`,
-        // REMOVI A PROPRIEDADE IMAGE DAQUI, FICOU MAIS LIMPO!
+        // Recolocamos a imagem com a estrutura correta para o expo-image
+        image: { 
+            uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${item.produto.id}`, 
+            headers: {
+              Authorization: `Bearer ${token}`, // Passando o token salvo no state
+            },
+        }
     }));
 
-    // Objeto final para o modal
     const modalData = {
         id: String(order.id).padStart(3, '0'),
         date: formattedDate,
@@ -162,7 +168,6 @@ export const OrdersScreen = () => {
         visible={modalVisible} 
         order={selectedOrderForModal} 
         onClose={closeModal}
-        token={token}
       />
     </View>
   );

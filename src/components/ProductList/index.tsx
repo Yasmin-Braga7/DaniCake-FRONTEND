@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+// REMOVA o Image do import do react-native acima ^
+
+import { Image } from 'expo-image'; // <--- ADICIONE ISSO
 import { PlusCircle, Trash2, X } from 'lucide-react-native';
 import { ProdutoService } from '@/src/services/produtos';
+import { AuthService } from '@/src/services/storage';
 import { Produto } from '@/src/interfaces/produtos/request';
 import { styles } from './style';
-import { StyleSheet } from "react-native";
-
-
-// Importa o componente de criar produto (que agora é só o conteúdo do form)
 import { CreateProduto } from '@/src/components/CreateProduto';
 
 interface ProductDisplay extends Produto {
@@ -17,27 +17,22 @@ interface ProductDisplay extends Produto {
 export const ProductList = () => {
   const [products, setProducts] = useState<ProductDisplay[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Estado para controlar a visibilidade do Modal
   const [isModalVisible, setModalVisible] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
+      const token = await AuthService.getToken();
       const rawData: Produto[] = await ProdutoService.listarProdutos();
 
       const displayProducts: ProductDisplay[] = rawData.map((p) => {
-        let finalImageSource = require('@/assets/imagens/BoloCenoura.jpg');
-        const rawImage = p.imagem || p.imagemBase64;
-
-        if (rawImage) {
-          const base64String = rawImage.startsWith('data:')
-            ? rawImage
-            : `data:image/png;base64,${rawImage}`;
-          finalImageSource = { uri: base64String };
-        }
-
-        return { ...p, imageSource: finalImageSource };
+        return { 
+            ...p, 
+            imageSource: { 
+                uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${p.id}`,
+                headers: { Authorization: `Bearer ${token}` }
+            }
+        };
       });
 
       setProducts(displayProducts);
@@ -53,16 +48,14 @@ export const ProductList = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Função chamada quando o produto é criado com sucesso
   const handleCreateSuccess = () => {
-    setModalVisible(false); // Fecha o modal
-    fetchProducts(); // Atualiza a lista
+    setModalVisible(false);
+    fetchProducts();
   };
 
   const handleDelete = async (id: number) => {
     Alert.alert(
-      "Confirmação",
-      "Deseja excluir este produto?",
+      "Confirmação", "Deseja excluir este produto?",
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -84,13 +77,10 @@ export const ProductList = () => {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Produtos Disponíveis</Text>
         </View>
-
-        {/* Abre o Modal ao clicar */}
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <PlusCircle size={28} color="#000" strokeWidth={1.5} />
         </TouchableOpacity>
@@ -105,15 +95,20 @@ export const ProductList = () => {
         ) : products.length === 0 ? (
           <Text style={styles.emptyText}>Nenhum produto cadastrado.</Text>
         ) : (
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={true}
-            nestedScrollEnabled={true}
-          >
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true} nestedScrollEnabled={true}>
             {products.map((item) => (
               <View key={item.id} style={styles.itemWrapper}>
                 <View style={styles.itemCard}>
-                  <Image source={item.imageSource} style={styles.itemImage} resizeMode="cover" />
+                  
+                  {/* --- MUDANÇA AQUI: Componente expo-image --- */}
+                  <Image 
+                    source={item.imageSource} 
+                    style={styles.itemImage} 
+                    contentFit="cover" // Em vez de resizeMode
+                    transition={1000}  // Efeito suave igual ao da Home
+                  />
+                  {/* ------------------------------------------- */}
+
                   <View style={styles.itemInfo}>
                     <Text style={styles.itemTitle}>{item.nome}</Text>
                     <Text style={styles.itemDesc} numberOfLines={2}>{item.descricao}</Text>
@@ -131,49 +126,24 @@ export const ProductList = () => {
         )}
       </View>
 
-      <Modal
-        visible={isModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
+      <Modal visible={isModalVisible} transparent animationType="fade" onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
-
-          {/* Área clicável para fechar (somente o fundo, NÃO o conteúdo) */}
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
             <View style={StyleSheet.absoluteFillObject} />
           </TouchableWithoutFeedback>
-
-          {/* Conteúdo do modal */}
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={styles.modalContentContainer}
-          >
-
-            {/* Cabeçalho */}
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.modalContentContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Novo Produto</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <X size={24} color="#666" />
               </TouchableOpacity>
             </View>
-
-            {/* Conteúdo Scrollável (importante: sem flex:1) */}
-            <ScrollView
-              style={{ maxHeight: '90%' }}
-              contentContainerStyle={{ paddingBottom: 30 }}
-              showsVerticalScrollIndicator
-              keyboardShouldPersistTaps="handled"
-            >
+            <ScrollView style={{ maxHeight: '90%' }} contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator keyboardShouldPersistTaps="handled">
               <CreateProduto onSuccess={handleCreateSuccess} />
             </ScrollView>
-
           </KeyboardAvoidingView>
-
         </View>
       </Modal>
-
-
     </View>
   );
-};
+}; 

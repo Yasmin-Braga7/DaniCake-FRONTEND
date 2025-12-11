@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 1,
+    fontSize: 18,
     fontFamily: FONTS.inter.regular,
     color: '#000',
   },
@@ -103,8 +103,8 @@ export const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontFamily: FONTS.inter.bold,
+    color: '#000000ff',
   },
 
   itemImage: {

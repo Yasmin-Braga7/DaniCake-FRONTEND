@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity, ScrollView, Image, TouchableWithoutFeedback, Dimensions, FlatList, } from "react-native";
+import { Modal, View, Text, TouchableWithoutFeedback, Dimensions, FlatList } from "react-native";
+import { Image } from "expo-image"; 
 import { styles } from "./style";
 
 interface OrderItem {
@@ -7,6 +8,8 @@ interface OrderItem {
   name: string;
   qty: number;
   price: string;
+  // Agora o tipo 'any' vai aceitar o objeto { uri, headers }
+  image: any; 
 }
 
 interface OrderData {
@@ -20,28 +23,20 @@ interface OrderDetailsModalProps {
   visible: boolean;
   onClose: () => void;
   order: OrderData | null;
-  token: string | null;
 }
 
-export const OrderDetailsModal = ({ visible, onClose, order, token }: OrderDetailsModalProps) => {
+export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModalProps) => {
   if (!order) return null;
 
   const screenHeight = Dimensions.get("window").height;
-  const ITEM_HEIGHT = 80; // ajuste se necessário para casar com seu layout
+  const ITEM_HEIGHT = 80; 
   const VISIBLE_ITEMS = 3;
 
   const visibleCount = Math.min(order.items.length, VISIBLE_ITEMS);
   const itemsContainerHeight =
     order.items.length > VISIBLE_ITEMS ? ITEM_HEIGHT * VISIBLE_ITEMS : ITEM_HEIGHT * visibleCount;
 
-    const total = order.items.reduce((acc, item) => {
-    // transforma "R$ 8,00" → 8
-    const preco = Number(item.price.replace("R$", "").trim().replace(",", "."));
-    return acc + preco * item.qty;
-  }, 0);
-
-  // formata de volta em R$ 00,00
-  const totalFormatado = `R$ ${total.toFixed(2)}`.replace(".", ",");
+  const totalDisplay = order.total;
 
   return (
     <Modal
@@ -75,11 +70,15 @@ export const OrderDetailsModal = ({ visible, onClose, order, token }: OrderDetai
                 keyExtractor={(item, index) => `${item.id ?? "item"}-${index}`}
                 renderItem={({ item }) => (
                   <View style={styles.itemCard}>
+                    
+                    {/* AQUI ESTÁ O USO DO EXPO-IMAGE */}
                     <Image 
-                    source={{ 
-                      uri: `http://academico3.rj.senac.br/receitix/api/v1/images/foto/${item.id}`,
-                      headers: { Authorization: `Bearer ${token}` }
-                      }} style={styles.itemImage} resizeMode="cover" />
+                        source={item.image} // Recebe o objeto com headers vindo da tela pai
+                        style={styles.itemImage} 
+                        contentFit="cover" 
+                        transition={1000}
+                    />
+
                     <View style={styles.itemInfo}>
                       <Text style={styles.itemName}>{item.name}</Text>
                       <Text style={styles.itemQty}>Qtd: {item.qty}</Text>
@@ -90,9 +89,7 @@ export const OrderDetailsModal = ({ visible, onClose, order, token }: OrderDetai
                 showsVerticalScrollIndicator
                 nestedScrollEnabled
                 contentContainerStyle={{ paddingBottom: 8 }}
-                // melhora comportamento de toques dentro do modal
                 keyboardShouldPersistTaps="handled"
-                // otimização: cada item tem altura aproximada
                 getItemLayout={(_, index) => ({
                   length: ITEM_HEIGHT,
                   offset: ITEM_HEIGHT * index,
@@ -104,7 +101,7 @@ export const OrderDetailsModal = ({ visible, onClose, order, token }: OrderDetai
             <View style={styles.footer}>
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Total:</Text>
-                <Text style={styles.totalValue}>{totalFormatado}</Text>
+                <Text style={styles.totalValue}>{totalDisplay}</Text>
               </View>
 
               <TouchableWithoutFeedback onPress={onClose}>
