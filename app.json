@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/imagens/LogoCake.png",
-    "scheme": "barzin",
+    "scheme": "danicake",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -25,14 +25,23 @@
       "output": "static"
     },
     "plugins": [
-      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       "expo-router",
       "expo-web-browser"
     ],
     "extra": {
       "eas": {
-        "projectId": "0f48c0db-ed02-4815-94f7-ffcb26bf1303"
-      }
-    }
+        "projectId": "b362ddbc-446f-4154-83d6-1e77e77e4ea9"
+      },
+      "router": {}
+    },
+    "owner": "mimi71"
   }
 }
