@@ -104,7 +104,7 @@ export const RegisterScreen = () => {
                                 <Text style={styles.label}>Nome completo</Text>
                                 {errors.nome ? <Text style={styles.errorText}>{errors.nome}</Text> : null}
                                 <TextInput
-                                    style={[styles.input, errors.nome && styles.inputError, { fontSize: 17 }]}
+                                    style={[styles.input, errors.nome && styles.inputError]}
                                     placeholder="Digite seu Nome"
                                     value={nome}
                                     onChangeText={(text) =>{
@@ -121,7 +121,7 @@ export const RegisterScreen = () => {
                                 <Text style={styles.label}>E-mail</Text>
                                 {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                                 <TextInput
-                                    style={[styles.input,errors.email && styles.inputError, { fontSize: 17 }]}
+                                    style={[styles.input, errors.email && styles.inputError]}
                                     placeholder="Digite um E-mail"
                                     value={email}
                                     onChangeText={(text) => {
@@ -137,7 +137,7 @@ export const RegisterScreen = () => {
                                 <Text style={styles.label}>Senha</Text>
                                 {errors.senha ? <Text style={styles.errorText}>{errors.senha}</Text> : null}
                                 <TextInput
-                                    style={[styles.input, errors.senha && styles.inputError, { fontSize: 17 }]}
+                                    style={[styles.input, errors.senha && styles.inputError]}
                                     placeholder="Digite uma senha"
                                     value={senha}
                                     onChangeText={(text) => {

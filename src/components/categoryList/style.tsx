@@ -1,80 +1,75 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { FONTS } from '@/src/constants/fonts';
-
-const { width } = Dimensions.get('window');
+import { normalize, wp, hp } from '@/src/constants/responsive';
 
 export const styles = StyleSheet.create({
     container: {
-        width: '90%',
+        width: wp(90),
         alignSelf: 'center',
         backgroundColor: '#fff',
-        borderRadius: 20,
-        paddingHorizontal: 15,
-
-        // Remover paddingTop/paddingBottom do container
-        paddingTop: 10,
+        borderRadius: normalize(20),
+        paddingHorizontal: normalize(15),
+        paddingTop: normalize(10),
 
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
-        marginBottom: 20,
+        marginBottom: normalize(20),
     },
 
     header: {
-        height: 40,
+        height: normalize(38),
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: normalize(8),
     },
 
     headerTitleContainer: {
         borderBottomWidth: 1,
         borderBottomColor: '#666',
-        paddingBottom: 2,
+        paddingBottom: normalize(2),
         flex: 1,
-        marginRight: 10,
+        marginRight: normalize(10),
     },
 
     headerTitle: {
-        fontSize: 18,
+        fontSize: normalize(16),
         fontFamily: FONTS.inter.regular,
         color: '#000',
     },
 
     listContainer: {
-        height: 480,
+        height: hp(55),
     },
 
     listContent: {
-        paddingBottom: 10, 
+        paddingBottom: normalize(10), 
     },
 
     itemRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 12, 
-        paddingHorizontal: 2, 
+        marginBottom: normalize(12), 
+        paddingHorizontal: normalize(2), 
     },
 
     nameBox: {
         flex: 1,
-        // Fundo rosa claro do tema
         backgroundColor: '#FFF6F7', 
-        // Borda rosa mais escura para destacar
         borderWidth: 1,
         borderColor: '#F7B6C3',
         
-        borderRadius: 8,
-        paddingVertical: 12, 
-        paddingHorizontal: 15,
-        marginRight: 10,
+        borderRadius: normalize(8),
+        paddingVertical: normalize(12), 
+        paddingHorizontal: normalize(15),
+        marginRight: normalize(10),
     },
 
     nameText: {
-        fontSize: 14,
+        fontSize: normalize(13),
         color: '#000',
         fontFamily: FONTS.inter?.regular || 'System',
     },
@@ -87,8 +82,9 @@ export const styles = StyleSheet.create({
     emptyText: {
         textAlign: 'center',
         color: '#999',
-        marginTop: 20,
+        marginTop: normalize(20),
         fontFamily: FONTS.inter?.regular || 'System',
+        fontSize: normalize(14),
     },
 
     // --- Estilos do Modal ---
@@ -99,44 +95,43 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContent: {
-        width: '85%',
+        width: wp(85),
         backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: normalize(20),
+        padding: normalize(20),
         elevation: 10,
     },
     modalHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: normalize(20),
     },
     modalTitle: {
-        fontSize: 18,
+        fontSize: normalize(16),
         fontWeight: 'bold',
         color: '#333',
     },
     input: {
         borderWidth: 1,
         borderColor: '#CCC',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        marginBottom: 20,
+        borderRadius: normalize(8),
+        padding: normalize(12),
+        fontSize: normalize(15),
+        marginBottom: normalize(20),
         backgroundColor: '#FAFAFA'
     },
     
-    // Botão estilizado (Rosa e Redondinho)
     saveButton: {
         backgroundColor: '#FBCBC9',
-        borderRadius: 25,
-        paddingVertical: 12,
+        borderRadius: normalize(25),
+        paddingVertical: normalize(12),
         alignItems: 'center',
-        marginTop: 5,
-        marginBottom: 5,
+        marginTop: normalize(5),
+        marginBottom: normalize(5),
     },
     saveButtonText: {
-        fontSize: 16,
+        fontSize: normalize(15),
         fontFamily: FONTS.inter.bold,
         color: '#000',
     },

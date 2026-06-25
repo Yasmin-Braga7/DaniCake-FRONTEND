@@ -1,31 +1,30 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { FONTS } from '@/src/constants/fonts';
-
-const { width, height } = Dimensions.get('window');
+import { normalize, wp, hp } from '@/src/constants/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: wp(90),
     alignSelf: 'center',
     backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
+    borderRadius: normalize(20),
+    paddingVertical: normalize(20),
+    paddingHorizontal: normalize(15),
     
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
-    marginBottom: 20,
+    marginBottom: normalize(20),
   },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
-    paddingBottom: 10,
+    marginBottom: normalize(15),
+    paddingBottom: normalize(10),
     borderBottomWidth: 1, 
     borderBottomColor: 'transparent', 
   },
@@ -33,61 +32,57 @@ export const styles = StyleSheet.create({
   headerTitleContainer: {
     borderBottomWidth: 1,
     borderBottomColor: '#666',
-    paddingBottom: 2,
+    paddingBottom: normalize(2),
     flex: 1,
-    marginRight: 10,
+    marginRight: normalize(10),
   },
 
   headerTitle: {
-    fontSize: 18,
+    fontSize: normalize(16),
     fontFamily: FONTS.inter.regular,
     color: '#000',
   },
 
   listContainer: {
-    height: 480, 
+    height: hp(55), 
   },
   
   scrollContent: {
-    paddingBottom: 10,
+    paddingBottom: normalize(10),
   },
 
   itemWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: normalize(15),
   },
 
-  // --- AQUI ESTÁ A ALTERAÇÃO ---
   itemCard: {
     flex: 1,
     flexDirection: 'row',
-    // Alterado de '#D9D9D9' (cinza) para o rosa claro do seu tema
     backgroundColor: '#FFF6F7', 
-    // Opcional: Borda com o rosa mais escuro (usado na Home) para destacar
     borderWidth: 1,
     borderColor: '#F7B6C3', 
-    borderRadius: 12,
-    padding: 10,
+    borderRadius: normalize(12),
+    padding: normalize(10),
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: normalize(10),
     position: 'relative',
   },
-  // -----------------------------
 
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: normalize(20),
   },
   modalContentContainer: {
-    width: '90%',
-    maxHeight: '85%',
+    width: wp(88),
+    maxHeight: hp(85),
     backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: normalize(20),
+    padding: normalize(20),
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
@@ -98,64 +93,64 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
-    paddingHorizontal: 10,
+    marginBottom: normalize(15),
+    paddingHorizontal: normalize(10),
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    paddingBottom: 10,
+    paddingBottom: normalize(10),
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: normalize(18),
     fontFamily: FONTS.inter.bold,
     color: '#000000ff',
   },
 
   itemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: normalize(55),
+    height: normalize(55),
+    borderRadius: normalize(8),
     backgroundColor: '#fff',
-    marginRight: 12,
+    marginRight: normalize(12),
   },
 
   itemInfo: {
     flex: 1,
-    paddingRight: 20,
+    paddingRight: normalize(20),
   },
 
   itemTitle: {
-    fontSize: 14,
+    fontSize: normalize(13),
     fontFamily: FONTS.inter.regular,
     color: '#000',
-    marginBottom: 2,
+    marginBottom: normalize(2),
   },
 
   itemDesc: {
-    fontSize: 12,
+    fontSize: normalize(11),
     fontFamily: FONTS.inter.regular,
     color: '#333',
   },
 
   editButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: normalize(10),
+    right: normalize(10),
   },
 
   deleteButton: {
-    padding: 5,
+    padding: normalize(5),
   },
   loadingText: {
     textAlign: 'center',
-    paddingVertical: 20,
-    fontSize: 16,
+    paddingVertical: normalize(20),
+    fontSize: normalize(15),
     fontFamily: FONTS.inter.regular,
     color: '#666',
   },
   emptyText: {
     textAlign: 'center',
-    paddingVertical: 20,
-    fontSize: 16,
+    paddingVertical: normalize(20),
+    fontSize: normalize(15),
     fontFamily: FONTS.inter.regular,
     color: '#999',
   },

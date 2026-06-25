@@ -1,11 +1,10 @@
-import { StyleSheet, Dimensions } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
+import { normalize, wp, hp, SCREEN } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   footerContainer: {
     backgroundColor: "#FFFFFF",
-    borderTopWidth: 0,//Remover a linha
+    borderTopWidth: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -18,9 +17,9 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: 'flex-start',
-    marginTop: 4,
-    height: 80,
-    paddingHorizontal: 10,
+    marginTop: normalize(4),
+    height: normalize(72),
+    paddingHorizontal: normalize(10),
     backgroundColor: "#FFFFFF",
   },
 
@@ -28,36 +27,36 @@ export const styles = StyleSheet.create({
   topCurve: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: -38, // Ajustando para ficar melhor integrado
+    top: normalize(-35),
     left: "50%",
-    marginLeft: -36,
-    width: 80,
-    height: 35,
-    borderTopWidth: 0, // Remover linha
+    marginLeft: normalize(-36),
+    width: normalize(76),
+    height: normalize(33),
+    borderTopWidth: 0,
     borderTopColor: "transparent", 
-    borderTopLeftRadius: 110,
-    borderTopRightRadius: 110,
+    borderTopLeftRadius: normalize(110),
+    borderTopRightRadius: normalize(110),
     zIndex: 1,
   },
 
-  // 🔹 Aba comum (sem alteração)
+  // 🔹 Aba comum
   tab: {
     alignItems: "center",
     justifyContent: "center",
-    width: (width - 80) / 5,
-    paddingVertical: 8,
+    width: (SCREEN.width - normalize(80)) / 5,
+    paddingVertical: normalize(8),
     zIndex: 2,
   },
 
   // 🔹 Botão flutuante central
   centerTab: {
     position: "absolute",
-    top: -35, // Mantendo o botão acima da barra
+    top: normalize(-33),
     left: "50%",
-    marginLeft: -22,
-    width: 64,
-    height: 64,
-    borderRadius: 80,
+    marginLeft: normalize(-22),
+    width: normalize(60),
+    height: normalize(60),
+    borderRadius: normalize(80),
     backgroundColor: "#f7b6c34d",
     alignItems: "center",
     justifyContent: "center",
@@ -68,7 +67,7 @@ export const styles = StyleSheet.create({
     elevation: 6,
     borderWidth: 0.5,
     borderColor: "transparent",
-    zIndex: 3, // Garante que o botão fique sobre a barra
+    zIndex: 3,
   },
 
   activeTab: {
@@ -85,8 +84,8 @@ export const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: 11,
-    marginTop: 2,
+    fontSize: normalize(10),
+    marginTop: normalize(2),
     color: "#828181",
   },
 
@@ -96,21 +95,21 @@ export const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    right: -8,
-    top: -6,
+    right: normalize(-8),
+    top: normalize(-6),
     backgroundColor: '#D37A7A',
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
+    borderRadius: normalize(10),
+    minWidth: normalize(17),
+    height: normalize(17),
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#fff',
-    paddingHorizontal: 2
+    paddingHorizontal: normalize(2)
   },
   badgeText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: normalize(9),
     fontWeight: 'bold',
   }
 });

@@ -8,6 +8,7 @@ import { useNavigation } from "@/src/constants/router";
 import { useCart } from "@/src/context/CartContext";
 import { AuthService } from "@/src/services/storage";
 import { OrderService } from "@/src/services/orders";
+import { normalize } from "@/src/constants/responsive";
 
 export const CartScreen = () => {
     const navigation = useNavigation();
@@ -82,7 +83,7 @@ export const CartScreen = () => {
             <FlatList
                 data={cartItems}
                 keyExtractor={(item) => String(item.id)}
-                contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+                contentContainerStyle={{ paddingBottom: normalize(90), paddingTop: normalize(10) }}
                 renderItem={({ item }) => (
                     <CartCards
                         data={item}
@@ -92,23 +93,23 @@ export const CartScreen = () => {
                     />
                 )}
                 ListEmptyComponent={() => (
-                    <View style={{ alignItems: 'center', marginTop: 50 }}>
-                        <Text style={{ color: '#4e4e4eff' }}>Seu carrinho está vazio.</Text>
+                    <View style={{ alignItems: 'center', marginTop: normalize(50) }}>
+                        <Text style={{ color: '#4e4e4eff', fontSize: normalize(14), textAlign: 'center' }}>Seu carrinho está vazio.</Text>
                     </View>
                 )}
             />
             
             {cartItems.length > 0 && (
-                <View style={{ padding: 20, backgroundColor: '#fff', elevation: 10 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                        <Text style={{ fontSize: 16, color: '#4e4e4eff' }}>Subtotal</Text>
-                        <Text style={{ fontSize: 16, color: '#4e4e4eff' }}>
+                <View style={{ padding: normalize(18), backgroundColor: '#fff', elevation: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: normalize(5) }}>
+                        <Text style={{ fontSize: normalize(15), color: '#4e4e4eff' }}>Subtotal</Text>
+                        <Text style={{ fontSize: normalize(15), color: '#4e4e4eff' }}>
                             R$ {totalValue.toFixed(2).replace('.', ',')}
                         </Text>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Total (+Taxa)</Text>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#D4A574' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: normalize(14) }}>
+                        <Text style={{ fontSize: normalize(17), fontWeight: 'bold' }}>Total (+Taxa)</Text>
+                        <Text style={{ fontSize: normalize(17), fontWeight: 'bold', color: '#D4A574' }}>
                             R$ {(totalValue + 5).toFixed(2).replace('.', ',')}
                         </Text>
                     </View>

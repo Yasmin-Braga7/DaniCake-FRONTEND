@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { normalize, wp, hp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
     container: {
@@ -13,7 +14,7 @@ export const styles = StyleSheet.create({
     // --- Header Styles ---
     headerWrapper: {
         backgroundColor: '#FFF',
-        paddingBottom: 10,
+        paddingBottom: normalize(10),
         elevation: 5,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -22,48 +23,48 @@ export const styles = StyleSheet.create({
         zIndex: 1,
     },
     header: {
-        paddingHorizontal: 20,
-        paddingTop: 10,
+        paddingHorizontal: wp(5),
+        paddingTop: normalize(10),
     },
     headerTitle: {
-        fontSize: 26,
+        fontSize: normalize(24),
         fontWeight: 'bold',
         color: '#333',
     },
     headerSubtitle: {
-        fontSize: 16,
+        fontSize: normalize(15),
         color: '#666',
-        marginTop: 4,
+        marginTop: normalize(4),
     },
     // ---------------------
     
     content: {
-        padding: 20,
-        paddingBottom: 50,
+        padding: normalize(20),
+        paddingBottom: normalize(50),
     },
     subTitleSection: { 
-        fontSize: 18,
+        fontSize: normalize(16),
         fontWeight: '600',
         color: '#444',
-        marginBottom: 10,
-        marginTop: 10
+        marginBottom: normalize(10),
+        marginTop: normalize(10)
     },
     chartContainer: {
         backgroundColor: '#FFF',
-        borderRadius: 16,
-        padding: 10,
+        borderRadius: normalize(16),
+        padding: normalize(10),
         elevation: 4,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        marginBottom: 25,
+        marginBottom: normalize(25),
         alignItems: 'center',
-        marginTop: 10
+        marginTop: normalize(10)
     },
     chart: {
-        borderRadius: 16,
-        marginVertical: 8,
+        borderRadius: normalize(16),
+        marginVertical: normalize(8),
     },
     statsRow: {
         flexDirection: 'row',
@@ -71,9 +72,9 @@ export const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: '#FFF',
-        width: '48%', // Usamos porcentagem, não precisa do Dimensions aqui
-        padding: 20,
-        borderRadius: 12,
+        width: '48%',
+        padding: normalize(18),
+        borderRadius: normalize(12),
         alignItems: 'center',
         elevation: 3,
         shadowColor: '#000',
@@ -82,14 +83,16 @@ export const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     cardLabel: {
-        fontSize: 14,
+        fontSize: normalize(13),
         color: '#888',
         fontWeight: '600',
-        marginBottom: 5,
+        marginBottom: normalize(5),
+        textAlign: 'center',
     },
     cardValue: {
-        fontSize: 22,
+        fontSize: normalize(20),
         fontWeight: 'bold',
         color: '#FF69B4', 
+        textAlign: 'center',
     },
 });

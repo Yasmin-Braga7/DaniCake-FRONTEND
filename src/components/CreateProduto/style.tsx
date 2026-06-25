@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { FONTS } from '@/src/constants/fonts';
+import { normalize, wp } from '@/src/constants/responsive';
 
 export const styles = StyleSheet.create({
   container: {
-    width: '85%',
+    width: wp(85),
     alignSelf: 'center',
     backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+    borderRadius: normalize(20),
+    paddingVertical: normalize(15),
+    paddingHorizontal: normalize(15),
     
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -18,42 +19,42 @@ export const styles = StyleSheet.create({
   },
   
   scrollContainer: {
-    paddingBottom: 10,
+    paddingBottom: normalize(10),
     overflow: 'visible',
   },
   
   // --- Formulário ---
   formGroup: {
-    marginBottom: 12,
+    marginBottom: normalize(12),
   },
 
   dropdownGroup: {
-    marginBottom: 12,
+    marginBottom: normalize(12),
     zIndex: 1000,
     elevation: 1000,
   },
 
   label: {
-    fontSize: 14,
+    fontSize: normalize(13),
     fontFamily: FONTS.inter.regular,
     color: '#000',
-    marginBottom: 4,
+    marginBottom: normalize(4),
   },
   
   input: {
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 15,
+    borderRadius: normalize(8),
+    paddingHorizontal: normalize(12),
+    paddingVertical: normalize(8),
+    fontSize: normalize(14),
     fontFamily: FONTS.inter.regular,
     color: '#333',
     backgroundColor: '#fff',
   },
   
   textArea: {
-    height: 70,
+    height: normalize(70),
     textAlignVertical: 'top',
   },
 
@@ -63,37 +64,37 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 8,
-    paddingHorizontal: 12,
+    borderRadius: normalize(8),
+    paddingHorizontal: normalize(12),
     backgroundColor: '#fff',
-    height: 45, 
+    height: normalize(42), 
   },
   pricePrefix: {
-    fontSize: 15,
+    fontSize: normalize(14),
     fontFamily: FONTS.inter.regular,
     color: '#333',
-    marginRight: 5,
+    marginRight: normalize(5),
   },
   priceInput: {
     flex: 1,
-    paddingVertical: 8,
-    fontSize: 15,
+    paddingVertical: normalize(8),
+    fontSize: normalize(14),
     fontFamily: FONTS.inter.regular,
     color: '#333',
   },
 
-  // --- Upload de Imagem Compacto ---
+  // --- Upload de Imagem ---
   imageUploadTouch: {
     width: '100%',
-    height: 120,
+    height: normalize(110),
     backgroundColor: '#F5F5F5',
-    borderRadius: 12,
+    borderRadius: normalize(12),
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: normalize(15),
     overflow: 'hidden',
   },
   
@@ -103,15 +104,14 @@ export const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 
-  // Estilo para o conteúdo vazio (ícone + texto)
   uploadContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   
   uploadText: {
-    marginTop: 5,
-    fontSize: 14,
+    marginTop: normalize(5),
+    fontSize: normalize(13),
     color: '#888',
     fontFamily: FONTS.inter.regular,
   },
@@ -119,14 +119,14 @@ export const styles = StyleSheet.create({
   // --- Botão Final ---
   submitButton: {
     backgroundColor: '#FBCBC9',
-    borderRadius: 25,
-    paddingVertical: 12,
+    borderRadius: normalize(25),
+    paddingVertical: normalize(12),
     alignItems: 'center',
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: normalize(5),
+    marginBottom: normalize(5),
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: normalize(15),
     fontFamily: FONTS.inter.bold,
     color: '#000',
   },

@@ -1,10 +1,8 @@
 import { FONTS } from "@/src/constants/fonts";
-import { StyleSheet, Dimensions } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
+import { normalize, wp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
-  // ... (overlay e card continuam iguais)
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -12,10 +10,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    width: width * 0.8,
+    width: wp(82),
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: normalize(20),
+    padding: normalize(18),
     elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -23,14 +21,13 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
   },
 
-  // AQUI ESTÁ A MUDANÇA PRINCIPAL
   imageContainer: {
-    width: "100%", // Fixa na largura total disponível do card
-    height: 300, // Aumentei de 150 para 300 (agora fica bem maior/quadrado)
-    backgroundColor: "#ffffffff", // Cor de fundo suave caso a imagem demore ou seja transparente
-    overflow: "hidden", // OBRIGATÓRIO: Corta qualquer parte da imagem que tentar "fugir"
-    marginBottom: 12,
-    justifyContent: "center", // Centraliza o conteúdo
+    width: "100%",
+    height: normalize(260),
+    backgroundColor: "#ffffffff",
+    overflow: "hidden",
+    marginBottom: normalize(12),
+    justifyContent: "center",
     alignItems: "center",
   },
   image: {
@@ -38,42 +35,43 @@ export const styles = StyleSheet.create({
     height: "100%",
   },
 
-  // ... (restante dos estilos: title, description, addButton...)
   title: {
-    fontSize: 25,
+    fontSize: normalize(22),
     fontFamily: FONTS.inter.bold,
-    marginBottom: 5,
+    marginBottom: normalize(5),
     color: "#000000ff",
+    textAlign: 'center',
   },
 
   iconX: {
     alignItems: 'flex-end',
-    marginBottom: 14,
+    marginBottom: normalize(12),
   },
 
   description: {
-    fontSize: 18,
+    fontSize: normalize(16),
     fontFamily: FONTS.inter.regular,
     color: "#333333ff",
-    marginBottom: 20,
-    lineHeight: 20,
-    marginLeft: 20,
+    marginBottom: normalize(18),
+    lineHeight: normalize(22),
+    paddingHorizontal: normalize(10),
+    textAlign: 'center',
   },
   addButton: {
     backgroundColor: "#C23B6B",
-    borderRadius: 35,
-    paddingVertical: 12,
+    borderRadius: normalize(35),
+    paddingVertical: normalize(12),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: "center",
     width: "60%",
-    height: 60,
+    height: normalize(54),
     alignSelf: "center",
-    gap: 12,
+    gap: normalize(10),
   },
   addButtonText: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: normalize(15),
     color: "#ffffffff",
   },
 });

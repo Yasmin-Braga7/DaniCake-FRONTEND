@@ -1,7 +1,6 @@
 import { FONTS } from "@/src/constants/fonts";
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width, height } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
+import { normalize, wp, hp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,7 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFF6F7",
   },
   headerWrapper: {
-    width: width,
+    width: '100%',
     backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -20,47 +19,43 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: wp(5),
+    paddingVertical: normalize(15),
   },
 
   headerTitle: {
     fontFamily: FONTS.inter.light,
-    fontSize: 15,
+    fontSize: normalize(14),
     color: "#6e6e6eea",
-    marginBottom: 4,
+    marginBottom: normalize(4),
   },
 
   headerSubtitle: {
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 16,
+    fontSize: normalize(15),
     color: "#6B6B6B",
   },
 
-  // seguraforms: {
-  //   height: height * 0.73,
-  //   justifyContent: 'center'
-  // },
-
   scrollContent: {
-    paddingTop: 20, // Espaço entre o header e o primeiro card
-    paddingBottom: 40,
+    paddingTop: normalize(20),
+    paddingBottom: normalize(40),
   },
 
   userCard: {
-    height: 280,
+    minHeight: hp(30),
     backgroundColor: "#ffffffff",
-    marginHorizontal: 16,
-    marginBottom: 15,
-    borderRadius: 18,
+    marginHorizontal: wp(4),
+    marginBottom: normalize(15),
+    borderRadius: normalize(18),
     justifyContent: 'center',
     alignItems: "center",
+    paddingVertical: hp(2),
     elevation: 4,
   },
   photoCircle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: normalize(130),
+    height: normalize(130),
+    borderRadius: normalize(65),
     backgroundColor: "#DCDCDC",
     justifyContent: "center",
     alignItems: "center",
@@ -68,36 +63,37 @@ export const styles = StyleSheet.create({
   photoText: {
     color: "#555",
     fontFamily: FONTS.inter.bold,
-    fontSize: 18,
+    fontSize: normalize(16),
   },
   userName: {
-    marginTop: 12,
+    marginTop: normalize(12),
     fontFamily: FONTS.inter.bold,
-    fontSize: 19,
+    fontSize: normalize(18),
+    textAlign: 'center',
   },
   userType: {
     fontFamily: FONTS.inter.regular,
-    fontSize: 14,
+    fontSize: normalize(13),
     color: "#777",
+    textAlign: 'center',
   },
 
   infoCard: {
-    height: 430,
     backgroundColor: "#fff",
-    marginHorizontal: 16,
-    marginTop: 15,
-    borderRadius: 18,
-    padding: 20,
+    marginHorizontal: wp(4),
+    marginTop: normalize(15),
+    borderRadius: normalize(18),
+    padding: normalize(18),
     elevation: 4,
   },
   infoHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: normalize(16),
   },
   infoTitle: {
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 16,
+    fontSize: normalize(15),
     color: "#000000d8",
   },
   
@@ -107,31 +103,31 @@ export const styles = StyleSheet.create({
   },
   editButton: {
     fontFamily: FONTS.inter.bold,
-    fontSize: 17,
+    fontSize: normalize(16),
     color: "#6B3F31",
   },
 
   seguraLabel: {
-    padding: 6,
-    marginBottom: 8,
+    padding: normalize(6),
+    marginBottom: normalize(8),
     justifyContent: 'center'
   },
 
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: normalize(4),
   },
 
   itemLabel: {
-    marginLeft: 10,
+    marginLeft: normalize(10),
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 14,
+    fontSize: normalize(13),
     color: "#686868de",
   },
   itemValue: {
     fontFamily: FONTS.inter.regular,
-    fontSize: 16,
+    fontSize: normalize(15),
     color: "#000000ff",
   },
 

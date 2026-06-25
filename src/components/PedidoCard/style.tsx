@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
+import { normalize, wp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginVertical: 8,
+    borderRadius: normalize(12),
+    paddingVertical: normalize(12),
+    paddingHorizontal: normalize(14),
+    marginVertical: normalize(8),
 
     // sombra iOS
     shadowColor: '#000',
@@ -29,14 +30,14 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 16,
+    fontSize: normalize(15),
     fontWeight: '600',
     color: '#3B2F2F',
-    marginBottom: 4,
+    marginBottom: normalize(4),
   },
 
   date: {
-    fontSize: 12,
+    fontSize: normalize(11),
     color: '#8E8E8E',
   },
 
@@ -44,9 +45,9 @@ export const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    paddingVertical: normalize(4),
+    paddingHorizontal: normalize(8),
+    borderRadius: normalize(12),
     borderWidth: 1,
   },
 
@@ -89,15 +90,15 @@ export const styles = StyleSheet.create({
   },
 
   badgeEmPreparo: {
-    backgroundColor: '#F3E5F5', // Um lilás claro ou roxo suave
+    backgroundColor: '#F3E5F5',
     borderColor: '#E1BEE7',
   },
   badgeTextEmPreparo: {
-    color: '#8E24AA', // Roxo escuro
+    color: '#8E24AA',
   },
 
   badgeText: {
-    fontSize: 12,
+    fontSize: normalize(11),
     fontWeight: '600',
     color: '#6B6B6B',
   },
@@ -109,7 +110,7 @@ export const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#EFEFEF',
-    marginVertical: 10,
+    marginVertical: normalize(10),
     borderRadius: 1,
   },
 
@@ -120,15 +121,14 @@ export const styles = StyleSheet.create({
   },
 
   itemsText: {
-    fontSize: 13,
+    fontSize: normalize(12),
     color: '#8E8E8E',
   },
 
   priceText: {
-    fontSize: 14,
+    fontSize: normalize(13),
     fontWeight: '700',
     color: '#111111',
   },
   
 });
-

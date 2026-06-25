@@ -8,12 +8,22 @@
     "scheme": "danicake",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/imagens/LogoCake.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF6F7"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE"
+        "backgroundColor": "#FFF6F7"
+      },
+      "splash": {
+        "image": "./assets/imagens/LogoCake.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#FFF6F7"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -31,6 +41,15 @@
           "android": {
             "usesCleartextTraffic": true
           }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/imagens/LogoCake.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF6F7"
         }
       ],
       "expo-router",

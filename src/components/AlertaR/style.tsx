@@ -1,46 +1,47 @@
 import { StyleSheet } from 'react-native';
-import {FONTS} from '@/src/constants/fonts';
+import { FONTS } from '@/src/constants/fonts';
+import { normalize, wp } from '@/src/constants/responsive';
 
 export const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo escuro transparente
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: normalize(20),
   },
   alertContainer: {
     width: '100%',
-    maxWidth: 340,
+    maxWidth: normalize(340),
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    elevation: 5, // Sombra Android
-    shadowColor: '#000', // Sombra iOS
+    borderRadius: normalize(16),
+    padding: normalize(20),
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
   header: {
-    marginBottom: 10,
+    marginBottom: normalize(10),
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: normalize(18),
     fontFamily: FONTS.inter.bold,
     color: '#333',
     textAlign: 'center',
   },
   body: {
-    marginBottom: 20,
+    marginBottom: normalize(20),
     alignItems: 'center',
   },
   message: {
-    fontSize: 16,
+    fontSize: normalize(15),
     fontFamily: FONTS.inter.regular,
     color: '#666',
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: normalize(22),
   },
   footer: {
     width: '100%',

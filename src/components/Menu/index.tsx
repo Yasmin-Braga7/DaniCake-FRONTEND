@@ -5,6 +5,7 @@ import { styles } from "./style";
 import { Home, ShoppingBag, ShoppingCart, Calendar, User } from "lucide-react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withSequence } from "react-native-reanimated";
 import { useCart } from "@/src/context/CartContext";
+import { normalize } from "@/src/constants/responsive";
 
 type MenuItem = {
   id: string;
@@ -77,7 +78,7 @@ export const Menu = () => {
               {isCart ? (
                 <Animated.View style={animatedStyle}>
                   <IconComponent
-                    size={item.isCenter ? 32 : 30}
+                    size={item.isCenter ? normalize(28) : normalize(26)}
                     color={activeTab === item.id ? "#F7B6C3" : "#4b4b4eff"}
                   />
                   {/* 5. A BOLINHA (BADGE) */}
@@ -91,7 +92,7 @@ export const Menu = () => {
                 </Animated.View>
               ) : (
                 <IconComponent
-                  size={item.isCenter ? 32 : 30}
+                  size={item.isCenter ? normalize(28) : normalize(26)}
                   color={activeTab === item.id ? "#F7B6C3" : "#4b4b4eff"}
                 />
               )}

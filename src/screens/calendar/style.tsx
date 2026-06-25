@@ -1,5 +1,6 @@
 import { FONTS } from "@/src/constants/fonts";
 import { StyleSheet } from "react-native";
+import { normalize } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   containerPai: {
@@ -14,6 +15,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontFamily: FONTS.inter.bold,
-    fontSize: 22,
+    fontSize: normalize(20),
+    textAlign: 'center',
   },
 });

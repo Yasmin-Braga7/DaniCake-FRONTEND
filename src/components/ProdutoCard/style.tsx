@@ -1,36 +1,36 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import { FONTS } from "@/src/constants/fonts";
+import { normalize, SCREEN } from "@/src/constants/responsive";
 
-const { width } = Dimensions.get("window");
-export const CARD_WIDTH = (width - 90) / 3;
+export const CARD_WIDTH = (SCREEN.width - normalize(80)) / 3;
 
 export const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: "#ffff",
-    borderRadius: 10,
+    borderRadius: normalize(10),
     overflow: "hidden",
-    marginBottom: 15,
-    marginHorizontal: 4,
+    marginBottom: normalize(12),
+    marginHorizontal: normalize(4),
   },
   cardImage: {
     width: "100%",
     aspectRatio: 1,
     resizeMode: "cover",
-    borderRadius: 10,
+    borderRadius: normalize(10),
     backgroundColor: "#ffffffff",
   },
   cardInfo: {
-    paddingTop: 14,
-    padding: 10,
+    paddingTop: normalize(12),
+    padding: normalize(8),
   },
   cardPreco: {
-    fontSize: 14,
+    fontSize: normalize(13),
     fontFamily: FONTS.inter.bold,
     color: "#000",
-    marginBottom: 2,
+    marginBottom: normalize(2),
   },
   cardNome: {
-    fontSize: 16,
+    fontSize: normalize(14),
     fontFamily: FONTS.inter.light,
     color: "#000",
   },

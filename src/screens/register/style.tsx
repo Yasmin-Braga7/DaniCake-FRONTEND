@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { FONTS } from "@/src/constants/fonts";
+import { normalize, wp, hp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
     safeArea: {
@@ -18,7 +19,7 @@ export const styles = StyleSheet.create({
 
     scrollContent: {
         flexGrow: 1,
-        paddingBottom: 20,
+        paddingBottom: hp(3),
     },
 
     container: {
@@ -30,41 +31,42 @@ export const styles = StyleSheet.create({
     topHeader: {
         width: '100%',
         alignItems: 'flex-start',
-        paddingHorizontal: 25,
-        marginTop: 10,
+        paddingHorizontal: wp(6),
+        marginTop: normalize(10),
     },
 
     backButton: {
-        padding: 5,
+        padding: normalize(5),
     },
 
     
     header: {
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20,
+        marginTop: normalize(10),
+        marginBottom: hp(2),
     },
 
     img: {
-        width: 200,
-        height: 170,
+        width: normalize(170),
+        height: normalize(150),
         resizeMode: 'contain',
-        marginBottom: 5,
+        marginBottom: normalize(5),
     },
 
     pageTitle: {
-        fontSize: 21,
+        fontSize: normalize(20),
         fontFamily: FONTS.inter.bold,
         color: '#828181',
         textTransform: 'uppercase',
+        textAlign: 'center',
     },
 
     cardForm: {
         backgroundColor: '#FFFFFF',
-        width: '90%',
-        borderRadius: 25,
-        paddingVertical: 35,
-        paddingHorizontal: 25,
+        width: wp(88),
+        borderRadius: normalize(25),
+        paddingVertical: normalize(30),
+        paddingHorizontal: normalize(22),
         elevation: 3,
         shadowColor: '#000000ff',
         shadowOffset: { width: 0, height: 2 },
@@ -75,32 +77,34 @@ export const styles = StyleSheet.create({
 
     inputContainer: {
         width: '100%',
-        marginBottom: 18,
+        marginBottom: normalize(14),
     },
 
     label: {
-        fontSize: 16,
+        fontSize: normalize(15),
         fontFamily: FONTS.inter.regular,
         color: '#73443E',
-        marginBottom: 8,
-        marginLeft: 5,
+        marginBottom: normalize(6),
+        marginLeft: normalize(5),
     },
 
     input: {
         borderWidth: 1,
         borderColor: '#0000002d',
-        borderRadius: 25,
-        height: 55,
-        padding: 10,
+        borderRadius: normalize(25),
+        height: normalize(50),
+        paddingHorizontal: normalize(14),
+        paddingVertical: normalize(8),
         backgroundColor: '#FFF6F7',
+        fontSize: normalize(16),
     },
 
     errorText:{
         color:'#f81345ff',
         fontFamily:FONTS.inter.light,
-        fontSize:14,
-        paddingLeft: 15, 
-        height: 20,
+        fontSize: normalize(13),
+        paddingLeft: normalize(12), 
+        height: normalize(18),
     },
     inputError:{
         borderColor:'#f81345ff',

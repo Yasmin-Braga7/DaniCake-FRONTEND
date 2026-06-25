@@ -1,5 +1,6 @@
 import { FONTS } from "@/src/constants/fonts";
 import { StyleSheet } from "react-native";
+import { normalize, wp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
     container: {
@@ -12,32 +13,33 @@ export const styles = StyleSheet.create({
         zIndex: 10 
     },
     header: { 
-        padding: 20 
+        padding: normalize(20) 
     },
     headerTitle: { 
         fontFamily: FONTS.inter.light, 
-        fontSize: 14, 
-        color: "#666" },
+        fontSize: normalize(13), 
+        color: "#666" 
+    },
     headerSubtitle: { 
         fontFamily: FONTS.inter.semiBold, 
-        fontSize: 18, 
+        fontSize: normalize(16), 
         color: "#6B6B6B" 
     },
     cardWrapper: { 
-        marginBottom: 15 
+        marginBottom: normalize(15) 
     },
     actionBtn: {
-        padding: 12,
-        borderRadius: 8,
-        marginTop: -8, // Cola no card de cima
-        marginHorizontal: 4,
+        padding: normalize(12),
+        borderRadius: normalize(8),
+        marginTop: normalize(-8),
+        marginHorizontal: normalize(4),
         alignItems: 'center',
         elevation: 2,
-        marginBottom: 5
+        marginBottom: normalize(5)
     },
     btnText: { 
         color: 'white', 
         fontFamily: FONTS.inter.bold, 
-        fontSize: 14 
+        fontSize: normalize(13) 
     }
 });

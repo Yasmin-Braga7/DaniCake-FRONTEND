@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native";
 import { FONTS } from "@/src/constants/fonts";
+import { normalize, wp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
- // Adicione isso dentro do seu StyleSheet.create({ ... }) no arquivo style.js
-
   logoutButton: {
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -11,23 +10,22 @@ export const styles = StyleSheet.create({
 
     borderWidth: 1,
     borderColor: "#D37A7A",
-    borderRadius: 32,
+    borderRadius: normalize(32),
     backgroundColor: '#ffffffff',
 
-    paddingVertical: 10,
-    marginHorizontal: 16, 
-    marginTop: 30,
-    marginBottom: 40,
+    paddingVertical: normalize(10),
+    marginHorizontal: wp(4), 
+    marginTop: normalize(28),
+    marginBottom: normalize(36),
   },
 
-  // Novo estilo para dar um espacinho entre o ícone e o texto
   logoutIcon: {
-    marginRight: 10,
+    marginRight: normalize(10),
   },
 
   logoutText: {
     color: "#D37A7A",
-    fontSize: 22,
+    fontSize: normalize(20),
     fontFamily: FONTS.inter.semiBold, 
   },
 })

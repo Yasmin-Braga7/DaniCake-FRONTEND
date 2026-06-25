@@ -1,7 +1,6 @@
-import { FONTS } from "@/src/constants/fonts"; // Ajuste se necessário
-import { Dimensions, StyleSheet } from "react-native";
-
-const { height } = Dimensions.get("window");
+import { FONTS } from "@/src/constants/fonts";
+import { StyleSheet } from "react-native";
+import { normalize, wp, hp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
     modalOverlay: {
@@ -12,11 +11,11 @@ export const styles = StyleSheet.create({
     },
 
     modalContent: {
-        width: "90%",
-        maxHeight: height * 0.8, // limite para o modal não ultrapassar a tela
+        width: wp(88),
+        maxHeight: hp(80),
         backgroundColor: "#FFF",
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: normalize(20),
+        padding: normalize(18),
         elevation: 10,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -42,78 +41,77 @@ export const styles = StyleSheet.create({
     centered: {
         width: "100%",
         alignItems: "center",
-        paddingHorizontal: 18,
+        paddingHorizontal: normalize(18),
     },
 
     modalTitle: {
-        fontSize: 20,
+        fontSize: normalize(18),
         fontFamily: FONTS.inter.bold,
         color: "#5F3A3A",
         textAlign: "center",
-        marginBottom: 20,
+        marginBottom: normalize(18),
     },
 
     dateRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         backgroundColor: "#FFF0F0",
-        padding: 12,
-        borderRadius: 10,
-        marginBottom: 15,
+        padding: normalize(12),
+        borderRadius: normalize(10),
+        marginBottom: normalize(14),
     },
     dateLabel: {
-        fontSize: 14,
+        fontSize: normalize(13),
         color: "#333",
         fontFamily: FONTS.inter.regular,
     },
     dateValue: {
-        fontSize: 14,
+        fontSize: normalize(13),
         color: "#333",
         fontFamily: FONTS.inter.regular,
     },
 
     sectionTitle: {
-        fontSize: 16,
+        fontSize: normalize(15),
         fontFamily: FONTS.inter.bold,
-        marginBottom: 10,
+        marginBottom: normalize(10),
         color: "#000",
     },
 
-    // itemsList removido (usamos wrapper inline para controlar height dinamicamente)
     itemsList: {
-        marginBottom: 20,
+        marginBottom: normalize(18),
     },
 
     itemCard: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#FFF0F0",
-        borderRadius: 12,
-        padding: 10,
-        marginBottom: 10,
-        minHeight: 70, // garante altura mínima visual estável
+        borderRadius: normalize(12),
+        padding: normalize(10),
+        marginBottom: normalize(10),
+        minHeight: normalize(65),
     },
     itemImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 8,
-        marginRight: 12,
+        width: normalize(46),
+        height: normalize(46),
+        borderRadius: normalize(8),
+        marginRight: normalize(12),
     },
     itemInfo: {
         flex: 1,
     },
     itemName: {
-        fontSize: 14,
+        fontSize: normalize(13),
         fontFamily: FONTS.inter.regular,
         color: "#000",
     },
     itemQty: {
-        fontSize: 12,
+        fontSize: normalize(11),
         color: "#666",
-        marginTop: 4,
+        marginTop: normalize(4),
     },
     itemPrice: {
-        fontSize: 14,
+        fontSize: normalize(13),
         fontFamily: FONTS.inter.semiBold,
         color: "#000",
     },
@@ -121,34 +119,34 @@ export const styles = StyleSheet.create({
     footer: {
         borderTopWidth: 1,
         borderTopColor: "#EEE",
-        paddingTop: 15,
+        paddingTop: normalize(14),
     },
     totalRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 20,
+        marginBottom: normalize(18),
     },
     totalLabel: {
-        fontSize: 18,
+        fontSize: normalize(16),
         fontFamily: FONTS.inter.regular,
     },
     totalValue: {
-        fontSize: 18,
+        fontSize: normalize(16),
         fontFamily: FONTS.inter.bold,
         color: "#000",
     },
 
     closeButton: {
         backgroundColor: "#C23B6B",
-        borderRadius: 25,
-        paddingVertical: 12,
+        borderRadius: normalize(25),
+        paddingVertical: normalize(12),
         alignItems: "center",
         width: "50%",
         alignSelf: "center",
     },
     closeButtonText: {
         color: "#FFF",
-        fontSize: 16,
+        fontSize: normalize(15),
         fontFamily: FONTS.inter.regular,
     },
 });

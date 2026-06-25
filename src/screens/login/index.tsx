@@ -109,7 +109,7 @@ export const LoginScreen = () => {
                   <Text style={styles.label}>E-mail</Text>
                   {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                   <TextInput
-                    style={[styles.input, errors.email && styles.inputError, { fontSize: 17 }]}
+                    style={[styles.input, errors.email && styles.inputError]}
                     placeholder="Digite seu email"
                     placeholderTextColor="#5e5e5eff"
                     value={email}
@@ -121,7 +121,7 @@ export const LoginScreen = () => {
                   <Text style={styles.label}>Senha</Text>
                   {errors.senha ? <Text style={styles.errorText}>{errors.senha}</Text> : null}
                   <TextInput                  
-                    style={[styles.input, errors.senha && styles.inputError, { fontSize: 17 }]}
+                    style={[styles.input, errors.senha && styles.inputError]}
                     placeholder="Digite sua senha"
                     placeholderTextColor="#5e5e5eff"
                     secureTextEntry

@@ -1,7 +1,6 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { FONTS } from "@/src/constants/fonts";
-
-const { width, height } = Dimensions.get("window");
+import { normalize, wp, hp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   safeArea:{
@@ -17,34 +16,31 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF6F7',
     alignItems: 'center',
     justifyContent: 'center',
-    width: width,
-    paddingLeft: 30,
-    paddingRight: 30,
-    
+    paddingHorizontal: wp(6),
   },
   seguraForm: {
-      width: width * 0.9,
+      width: wp(88),
       alignItems: 'center',
   },
   img: {
-    width: 200,
-    height: 200,
+    width: normalize(180),
+    height: normalize(180),
     resizeMode: 'contain',
-    marginBottom: 20,
+    marginBottom: hp(2),
   },
   titulo: {
     fontFamily: FONTS.inter.semiBold,
-    fontSize: 21,
+    fontSize: normalize(20),
     color: '#828181',
-    marginBottom: 30,
+    marginBottom: hp(3),
+    textAlign: 'center',
   },
   form: {
     width: '100%',
-    height: 390,
     justifyContent: 'center',
     backgroundColor: '#fff',
-    padding: 25,
-    borderRadius: 20,
+    padding: normalize(22),
+    borderRadius: normalize(20),
     shadowColor: '#000000ff',
     shadowOpacity: 0.10,
     shadowOffset: { width: 0, height: 2 },
@@ -53,27 +49,29 @@ export const styles = StyleSheet.create({
   },
   inputContainer:{
     width: '100%',
-    marginBottom: 5,
+    marginBottom: normalize(5),
   },
   label: {
     fontFamily: FONTS.inter.regular,
-    fontSize: 16,
+    fontSize: normalize(15),
     color: '#73443E',
-    marginBottom: 10,
+    marginBottom: normalize(8),
   },
   input: {
     borderWidth: 1,
     borderColor: '#0000002d',
-    borderRadius: 25,
-    height: 58,
-    padding: 10,
-    marginBottom: 15,
+    borderRadius: normalize(25),
+    height: normalize(52),
+    paddingHorizontal: normalize(14),
+    paddingVertical: normalize(8),
+    marginBottom: normalize(12),
     backgroundColor: '#FFF6F7',
+    fontSize: normalize(16),
   },
   errorContainer: {
     borderWidth: 0.2,
     borderColor: '#cfcfcfff',
-    borderRadius: 8,
+    borderRadius: normalize(8),
   },
   inputError:{
       borderColor:'#f81345ff',
@@ -83,45 +81,23 @@ export const styles = StyleSheet.create({
   errorText:{
         color:'#f81345ff',
         fontFamily:FONTS.inter.semiBold,
-        fontSize:14,
-        paddingLeft: 15,
-        height: 20,
+        fontSize: normalize(13),
+        paddingLeft: normalize(12),
+        height: normalize(18),
     },
-  // errorText: {
-  //   color: '#d8000c',
-  //   textAlign: 'center',
-  //   marginBottom: 10,
-  //   fontWeight: '500',
-  // },
-  // button: {
-  //   backgroundColor: '#6c3f32ff',
-  //   width: '100%',
-  //   height: 48,
-  //   borderRadius: 25,
-  //   paddingVertical: 12,
-  //   alignItems: 'center',
-  //   marginTop: 5,
-  // },
-  // buttonText: {
-  //   color: '#fff',
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  // },
-  // buttonC: {
-  //   alignItems: 'center',
-  // },
   link: {
     color: '#6B3F31',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: normalize(10),
     fontFamily: FONTS.inter.regular,
-    fontSize: 16,
+    fontSize: normalize(15),
   },
   footer: {
-    marginTop: 30,
+    marginTop: hp(3),
     fontFamily: FONTS.inter.regular,
-    fontSize: 16,
+    fontSize: normalize(15),
     color: '#7E7E7E',
+    textAlign: 'center',
   },
   signup: {
     color: '#6B3F31',

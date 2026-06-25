@@ -1,22 +1,22 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { FONTS } from "@/src/constants/fonts";
+import { normalize, wp } from "@/src/constants/responsive";
 
-const { width } = Dimensions.get("window");
-const CARD_WIDTH = width - 32;
+const CARD_WIDTH = wp(100) - normalize(32);
 
 export const styles = StyleSheet.create({
   wrapper: {
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: normalize(8),
   },
   card: {
     width: CARD_WIDTH,
     backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: normalize(16),
+    padding: normalize(14),
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 130,
+    minHeight: normalize(120),
 
     // Sombras
     shadowColor: "#000",
@@ -26,60 +26,59 @@ export const styles = StyleSheet.create({
     elevation: 4,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    marginRight: 16,
+    width: normalize(72),
+    height: normalize(72),
+    borderRadius: normalize(12),
+    marginRight: normalize(14),
     backgroundColor: '#f0f0f0'
   },
   center: {
     flex: 1,
     justifyContent: 'center',
-    // height: '100%',
   },
   name: {
     fontFamily: FONTS.inter.bold,
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: normalize(15),
+    marginBottom: normalize(4),
     color: '#333',
   },
   unitPrice: {
     fontFamily: FONTS.inter.regular,
-    fontSize: 14,
+    fontSize: normalize(13),
     color: "#888",
   },
   right: {
     alignItems: "flex-end",
     justifyContent: "space-between",
-    height: 80, // Altura para alinhar os elementos verticalmente
-    paddingLeft: 10,
+    height: normalize(72),
+    paddingLeft: normalize(8),
   },
   trashBtn: {
-    padding: 4,
+    padding: normalize(4),
   },
   quantityControl: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: '#F5F5F5',
-      borderRadius: 20,
-      paddingHorizontal: 6,
-      paddingVertical: 4,
-      marginTop: 6,
+      borderRadius: normalize(20),
+      paddingHorizontal: normalize(6),
+      paddingVertical: normalize(4),
+      marginTop: normalize(6),
   },
   qtdBtn: {
-      padding: 4,
+      padding: normalize(4),
   },
   qtyText: {
       fontFamily: FONTS.inter.bold,
-      fontSize: 14,
-      marginHorizontal: 8,
-      minWidth: 16,
+      fontSize: normalize(13),
+      marginHorizontal: normalize(8),
+      minWidth: normalize(16),
       textAlign: 'center',
   },
   totalPrice: {
     fontFamily: FONTS.inter.bold,
-    fontSize: 15,
-    color: "#D4A574", // Cor de destaque (do seu tema)
-    marginTop: 6,
+    fontSize: normalize(14),
+    color: "#D4A574",
+    marginTop: normalize(6),
   },
 });
