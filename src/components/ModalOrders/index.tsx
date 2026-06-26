@@ -5,13 +5,12 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Dimensions,
   FlatList,
   StyleSheet,
 } from "react-native";
 import { Image } from "expo-image";
-import { X, Package, CalendarDays, ShoppingBag } from "lucide-react-native";
-import { normalize, wp } from "@/src/constants/responsive";
+import { X, Package, CalendarDays, ShoppingBag, Truck } from "lucide-react-native";
+import { normalize } from "@/src/constants/responsive";
 import { FONTS } from "@/src/constants/fonts";
 
 export interface OrderItem {
@@ -27,23 +26,35 @@ export interface OrderData {
   date: string;
   items: OrderItem[];
   total: string;
-  status?: string;
+  status?: number;
+  rawId?: number;
+  showConfirmButton?: boolean;
+  isWaiting?: boolean;
 }
 
 interface OrderDetailsModalProps {
   visible: boolean;
   onClose: () => void;
   order: OrderData | null;
+  onConfirmReceipt?: (orderId: number) => void;
 }
 
-export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModalProps) => {
+export const OrderDetailsModal = ({
+  visible,
+  onClose,
+  order,
+  onConfirmReceipt,
+}: OrderDetailsModalProps) => {
   if (!order) return null;
 
-  const ITEM_HEIGHT = 80;
-  const VISIBLE_ITEMS = 3;
+  // Altura aumentada para mostrar mais itens
+  const ITEM_HEIGHT = 90;
+  const VISIBLE_ITEMS = 4;
   const visibleCount = Math.min(order.items.length, VISIBLE_ITEMS);
   const itemsContainerHeight =
-    order.items.length > VISIBLE_ITEMS ? ITEM_HEIGHT * VISIBLE_ITEMS : ITEM_HEIGHT * visibleCount;
+    order.items.length > VISIBLE_ITEMS
+      ? ITEM_HEIGHT * VISIBLE_ITEMS
+      : ITEM_HEIGHT * visibleCount;
 
   return (
     <Modal
@@ -85,7 +96,8 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
           <Text style={styles.sectionTitle}>Itens do pedido</Text>
         </View>
 
-        <View style={{ height: itemsContainerHeight, marginBottom: normalize(16) }}>
+        {/* Caixa de itens maior */}
+        <View style={[styles.itemsContainer, { height: itemsContainerHeight }]}>
           <FlatList
             data={order.items}
             keyExtractor={(item, index) => `${item.id ?? "item"}-${index}`}
@@ -122,10 +134,41 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
           <Text style={styles.totalValue}>{order.total}</Text>
         </View>
 
-        {/* Botão fechar */}
-        <TouchableOpacity style={styles.closePillBtn} onPress={onClose} activeOpacity={0.85}>
-          <Text style={styles.closePillText}>Fechar</Text>
-        </TouchableOpacity>
+        {/* Banner: pedido a caminho (aguardando timer) */}
+        {order.isWaiting && (
+          <View style={styles.waitingBanner}>
+            <Truck size={14} color="#1E90FF" style={{ marginRight: 6 }} />
+            <Text style={styles.waitingText}>
+              Pedido a caminho... Confirme quando chegar!
+            </Text>
+          </View>
+        )}
+
+        {/* Botão confirmar entrega (dentro do modal) */}
+        {order.showConfirmButton && order.rawId !== undefined && onConfirmReceipt && (
+          <TouchableOpacity
+            onPress={() => onConfirmReceipt(order.rawId!)}
+            style={styles.confirmBtn}
+            activeOpacity={0.85}
+          >
+            <Truck size={16} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.confirmBtnText}>Chegou! Confirmar entrega</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Botão Fechar */}
+        {!order.showConfirmButton && (
+          <TouchableOpacity style={styles.closePillBtn} onPress={onClose} activeOpacity={0.85}>
+            <Text style={styles.closePillText}>Fechar</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Se tem botão confirmar, adiciona botão fechar secundário */}
+        {order.showConfirmButton && (
+          <TouchableOpacity style={styles.closePillBtnSecondary} onPress={onClose} activeOpacity={0.85}>
+            <Text style={styles.closePillTextSecondary}>Fechar</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Modal>
   );
@@ -217,20 +260,34 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: "#1a1a1a",
   },
+  // Container de itens com borda e background para parecer uma "caixa"
+  itemsContainer: {
+    backgroundColor: "#FFF6F7",
+    borderRadius: normalize(16),
+    borderWidth: 1,
+    borderColor: "#F0D6DC",
+    padding: normalize(8),
+    marginBottom: normalize(16),
+  },
   itemCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF6F7",
+    backgroundColor: "#fff",
     borderRadius: normalize(14),
     padding: normalize(10),
     marginBottom: normalize(8),
     minHeight: normalize(72),
     borderWidth: 1,
     borderColor: "#FFF0F3",
+    elevation: 1,
+    shadowColor: "#C23B6B",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
   },
   itemImage: {
-    width: normalize(52),
-    height: normalize(52),
+    width: normalize(56),
+    height: normalize(56),
     borderRadius: normalize(10),
     marginRight: normalize(12),
   },
@@ -259,7 +316,7 @@ const styles = StyleSheet.create({
     paddingTop: normalize(14),
     borderTopWidth: 1,
     borderTopColor: "#F5F5F5",
-    marginBottom: normalize(20),
+    marginBottom: normalize(16),
   },
   totalLabel: {
     flex: 1,
@@ -272,6 +329,43 @@ const styles = StyleSheet.create({
     fontSize: normalize(18),
     color: "#C23B6B",
   },
+  // Banner "a caminho"
+  waitingBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EBF5FF",
+    borderRadius: normalize(10),
+    paddingHorizontal: normalize(14),
+    paddingVertical: normalize(10),
+    marginBottom: normalize(12),
+  },
+  waitingText: {
+    fontFamily: FONTS.inter.regular,
+    fontSize: normalize(12),
+    color: "#1E90FF",
+    flex: 1,
+  },
+  // Botão principal: confirmar entrega
+  confirmBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#C23B6B",
+    borderRadius: normalize(28),
+    paddingVertical: normalize(15),
+    marginBottom: normalize(10),
+    elevation: 4,
+    shadowColor: "#C23B6B",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  confirmBtnText: {
+    color: "#fff",
+    fontFamily: FONTS.inter.bold,
+    fontSize: normalize(15),
+  },
+  // Botão fechar principal (sem confirmar)
   closePillBtn: {
     backgroundColor: "#C23B6B",
     borderRadius: normalize(28),
@@ -282,5 +376,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: FONTS.inter.bold,
     fontSize: normalize(15),
+  },
+  // Botão fechar secundário (quando tem confirmar)
+  closePillBtnSecondary: {
+    backgroundColor: "transparent",
+    borderRadius: normalize(28),
+    paddingVertical: normalize(12),
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: "#E0E0E0",
+  },
+  closePillTextSecondary: {
+    color: "#888",
+    fontFamily: FONTS.inter.semiBold,
+    fontSize: normalize(14),
   },
 });

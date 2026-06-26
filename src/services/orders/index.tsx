@@ -2,11 +2,29 @@ import { Order } from "@/src/interfaces/pedidos";
 import { api } from "../index";
 
 export const OrderService = {
-    async listarMeusPedidos(): Promise<Order[]> {
+    async listarMeusPedidos(idUsuario?: number): Promise<Order[]> {
         try {
-            const response = await api.get<Order[]>('/pedido/listar');
+            // Se tiver idUsuario, filtra pelo endpoint específico do usuário
+            // caso contrário, usa o endpoint geral como fallback
+            const url = idUsuario
+                ? `/pedido/listar/usuario/${idUsuario}`
+                : '/pedido/listar';
+            const response = await api.get<Order[]>(url);
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
+            // Se o endpoint filtrado por usuário não existir (404), tenta o geral
+            // e filtra localmente pelo idUsuario
+            if (error?.response?.status === 404 && idUsuario) {
+                try {
+                    const response = await api.get<Order[]>('/pedido/listar');
+                    return response.data.filter((order: any) =>
+                        order.idUsuario === idUsuario || order.usuario?.id === idUsuario
+                    );
+                } catch (fallbackError) {
+                    console.error("Erro ao buscar pedidos (fallback):", fallbackError);
+                    throw fallbackError;
+                }
+            }
             console.error("Erro ao buscar pedidos:", error);
             throw error;
         }
