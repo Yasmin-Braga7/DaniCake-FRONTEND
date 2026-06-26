@@ -5,45 +5,70 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Dimensions,
   FlatList,
   StyleSheet,
 } from "react-native";
-import { Image } from "expo-image";
-import { X, Package, CalendarDays, ShoppingBag } from "lucide-react-native";
-import { normalize, wp } from "@/src/constants/responsive";
+import { X, CalendarDays, ShoppingBag, Package, User, ChefHat, Truck, Check, Clock } from "lucide-react-native";
+import { normalize } from "@/src/constants/responsive";
 import { FONTS } from "@/src/constants/fonts";
+import { OrderStatus } from "@/src/enums/pedidos";
 
-export interface OrderItem {
-  id: string;
-  name: string;
-  qty: number;
-  price: string;
-  image: any;
+export interface AdminOrderItem {
+  nome: string;
+  quantidade: number;
+  preco: number;
 }
 
-export interface OrderData {
-  id: string;
+export interface AdminOrderData {
+  id: number;
   date: string;
-  items: OrderItem[];
-  total: string;
-  status?: string;
+  clientName?: string;
+  items: AdminOrderItem[];
+  total: number;
+  status: number;
 }
 
-interface OrderDetailsModalProps {
+interface AdminOrderModalProps {
   visible: boolean;
   onClose: () => void;
-  order: OrderData | null;
+  order: AdminOrderData | null;
+  onAdvance?: () => void;
 }
 
-export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModalProps) => {
+const STATUS_LABELS: Record<number, string> = {
+  [OrderStatus.PENDENTE]:   "Pendente",
+  [OrderStatus.EM_PREPARO]: "Em Preparo",
+  [OrderStatus.ENVIADO]:    "Enviado",
+  [OrderStatus.ENTREGUE]:   "Entregue",
+  [OrderStatus.CANCELADO]:  "Cancelado",
+};
+
+const ADVANCE_LABEL: Record<number, string> = {
+  [OrderStatus.PENDENTE]:   "Aceitar e Iniciar Preparo",
+  [OrderStatus.EM_PREPARO]: "Enviar para Entrega",
+};
+
+const ADVANCE_COLOR: Record<number, string> = {
+  [OrderStatus.PENDENTE]:   "#27AE60",
+  [OrderStatus.EM_PREPARO]: "#2196F3",
+};
+
+const StatusIcon = ({ status }: { status: number }) => {
+  const props = { size: 16, style: { marginRight: 6 } };
+  switch (status) {
+    case OrderStatus.ENTREGUE:   return <Check   {...props} color="#C81D63" />;
+    case OrderStatus.ENVIADO:    return <Truck   {...props} color="#1E90FF" />;
+    case OrderStatus.PENDENTE:   return <Clock   {...props} color="#F0A500" />;
+    case OrderStatus.EM_PREPARO: return <ChefHat {...props} color="#8E24AA" />;
+    default:                      return null;
+  }
+};
+
+export const AdminOrderModal = ({ visible, onClose, order, onAdvance }: AdminOrderModalProps) => {
   if (!order) return null;
 
-  const ITEM_HEIGHT = 80;
-  const VISIBLE_ITEMS = 3;
-  const visibleCount = Math.min(order.items.length, VISIBLE_ITEMS);
-  const itemsContainerHeight =
-    order.items.length > VISIBLE_ITEMS ? ITEM_HEIGHT * VISIBLE_ITEMS : ITEM_HEIGHT * visibleCount;
+  const canAdvance = order.status === OrderStatus.PENDENTE || order.status === OrderStatus.EM_PREPARO;
+  const orderId = String(order.id).padStart(3, "0");
 
   return (
     <Modal
@@ -58,26 +83,40 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
       </TouchableWithoutFeedback>
 
       <View style={styles.sheet}>
-        {/* Handle */}
         <View style={styles.handle} />
 
         {/* Header */}
         <View style={styles.sheetHeader}>
           <View>
             <Text style={styles.sheetTitle}>Detalhes do Pedido</Text>
-            <Text style={styles.sheetSubtitle}>Nº {order.id}</Text>
+            <Text style={styles.sheetSubtitle}>Nº {orderId}</Text>
           </View>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
             <X size={18} color="#C23B6B" />
           </TouchableOpacity>
         </View>
 
-        {/* Data do pedido */}
+        {/* Status badge */}
+        <View style={styles.statusRow}>
+          <StatusIcon status={order.status} />
+          <Text style={styles.statusText}>{STATUS_LABELS[order.status] ?? "—"}</Text>
+        </View>
+
+        {/* Data */}
         <View style={styles.infoRow}>
           <CalendarDays size={16} color="#C23B6B" style={{ marginRight: 8 }} />
           <Text style={styles.infoLabel}>Data do pedido</Text>
           <Text style={styles.infoValue}>{order.date}</Text>
         </View>
+
+        {/* Cliente */}
+        {order.clientName ? (
+          <View style={styles.infoRow}>
+            <User size={16} color="#C23B6B" style={{ marginRight: 8 }} />
+            <Text style={styles.infoLabel}>Cliente</Text>
+            <Text style={styles.infoValue}>{order.clientName}</Text>
+          </View>
+        ) : null}
 
         {/* Itens */}
         <View style={styles.sectionHeader}>
@@ -85,47 +124,44 @@ export const OrderDetailsModal = ({ visible, onClose, order }: OrderDetailsModal
           <Text style={styles.sectionTitle}>Itens do pedido</Text>
         </View>
 
-        <View style={{ height: itemsContainerHeight, marginBottom: normalize(16) }}>
-          <FlatList
-            data={order.items}
-            keyExtractor={(item, index) => `${item.id ?? "item"}-${index}`}
-            renderItem={({ item }) => (
-              <View style={styles.itemCard}>
-                <Image
-                  source={item.image}
-                  style={styles.itemImage}
-                  contentFit="cover"
-                  transition={500}
-                />
-                <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemQty}>Quantidade: {item.qty}</Text>
-                </View>
-                <Text style={styles.itemPrice}>{item.price}</Text>
+        <FlatList
+          data={order.items}
+          keyExtractor={(_, i) => String(i)}
+          scrollEnabled={order.items.length > 3}
+          style={{ maxHeight: normalize(200), marginBottom: normalize(12) }}
+          renderItem={({ item }) => (
+            <View style={styles.itemCard}>
+              <View style={styles.itemInfo}>
+                <Text style={styles.itemName}>{item.nome}</Text>
+                <Text style={styles.itemQty}>Quantidade: {item.quantidade}</Text>
               </View>
-            )}
-            showsVerticalScrollIndicator={false}
-            nestedScrollEnabled
-            contentContainerStyle={{ paddingBottom: 4 }}
-            getItemLayout={(_, index) => ({
-              length: ITEM_HEIGHT,
-              offset: ITEM_HEIGHT * index,
-              index,
-            })}
-          />
-        </View>
+              <Text style={styles.itemPrice}>R$ {item.preco.toFixed(2).replace('.', ',')}</Text>
+            </View>
+          )}
+        />
 
         {/* Total */}
         <View style={styles.totalRow}>
           <Package size={18} color="#1a1a1a" style={{ marginRight: 8 }} />
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>{order.total}</Text>
+          <Text style={styles.totalValue}>R$ {order.total.toFixed(2).replace('.', ',')}</Text>
         </View>
 
-        {/* Botão fechar */}
-        <TouchableOpacity style={styles.closePillBtn} onPress={onClose} activeOpacity={0.85}>
-          <Text style={styles.closePillText}>Fechar</Text>
-        </TouchableOpacity>
+        {/* Botões de ação */}
+        <View style={{ gap: normalize(10) }}>
+          {canAdvance && onAdvance && (
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: ADVANCE_COLOR[order.status] }]}
+              onPress={() => { onClose(); onAdvance(); }}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.actionBtnText}>{ADVANCE_LABEL[order.status]}</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.closePillBtn} onPress={onClose} activeOpacity={0.85}>
+            <Text style={styles.closePillText}>Fechar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
@@ -165,7 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: normalize(18),
+    marginBottom: normalize(14),
   },
   sheetTitle: {
     fontFamily: FONTS.inter.bold,
@@ -186,13 +222,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: normalize(14),
+  },
+  statusText: {
+    fontFamily: FONTS.inter.semiBold,
+    fontSize: normalize(13),
+    color: "#555",
+  },
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFF6F7",
     borderRadius: normalize(12),
     padding: normalize(12),
-    marginBottom: normalize(18),
+    marginBottom: normalize(10),
     borderWidth: 1,
     borderColor: "#FFF0F3",
   },
@@ -211,6 +257,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: normalize(10),
+    marginTop: normalize(4),
   },
   sectionTitle: {
     fontFamily: FONTS.inter.semiBold,
@@ -221,18 +268,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFF6F7",
-    borderRadius: normalize(14),
-    padding: normalize(10),
+    borderRadius: normalize(12),
+    padding: normalize(12),
     marginBottom: normalize(8),
-    minHeight: normalize(72),
     borderWidth: 1,
     borderColor: "#FFF0F3",
-  },
-  itemImage: {
-    width: normalize(52),
-    height: normalize(52),
-    borderRadius: normalize(10),
-    marginRight: normalize(12),
   },
   itemInfo: {
     flex: 1,
@@ -246,7 +286,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.inter.regular,
     fontSize: normalize(12),
     color: "#888",
-    marginTop: normalize(3),
+    marginTop: normalize(2),
   },
   itemPrice: {
     fontFamily: FONTS.inter.bold,
@@ -256,10 +296,10 @@ const styles = StyleSheet.create({
   totalRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: normalize(14),
+    paddingVertical: normalize(14),
     borderTopWidth: 1,
     borderTopColor: "#F5F5F5",
-    marginBottom: normalize(20),
+    marginBottom: normalize(16),
   },
   totalLabel: {
     flex: 1,
@@ -272,15 +312,25 @@ const styles = StyleSheet.create({
     fontSize: normalize(18),
     color: "#C23B6B",
   },
-  closePillBtn: {
-    backgroundColor: "#C23B6B",
+  actionBtn: {
     borderRadius: normalize(28),
     paddingVertical: normalize(15),
     alignItems: "center",
   },
-  closePillText: {
+  actionBtnText: {
     color: "#fff",
     fontFamily: FONTS.inter.bold,
-    fontSize: normalize(15),
+    fontSize: normalize(14),
+  },
+  closePillBtn: {
+    backgroundColor: "#F5F5F5",
+    borderRadius: normalize(28),
+    paddingVertical: normalize(14),
+    alignItems: "center",
+  },
+  closePillText: {
+    color: "#555",
+    fontFamily: FONTS.inter.semiBold,
+    fontSize: normalize(14),
   },
 });

@@ -1,21 +1,20 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, Image, ActivityIndicator } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { User, Mail, Phone, MapPin, Pencil, Camera, Save, X } from "lucide-react-native"; 
+import { User, Mail, Phone, MapPin, Pencil, Camera, Save, X, LogOut } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect } from "expo-router"; // Importante para recarregar ao voltar para a tela
+import { useFocusEffect } from "expo-router";
 
 import { styles } from "./style";
-import { LogoutButton } from "@/src/components/ButtonProfile";
-import { AuthService } from "@/src/services/storage"; // Import para pegar o ID salvo
+import { Toast } from "@/src/components/Toast";
+import { AuthService } from "@/src/services/storage";
 import { UserUpdateData } from "@/src/interfaces/user/request";
 import { router } from "expo-router";
 import { UserService } from "@/src/services/auth/user";
 
 export const ProfileScreen = () => {
-    const iconColor = "#6B3F31";
-    
-    // --- ESTADOS ---
+    const iconColor = "#C23B6B";
+
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -26,9 +25,12 @@ export const ProfileScreen = () => {
     const [address, setAddress] = useState("");
     const [image, setImage] = useState<string | null>(null);
 
-    // --- CARREGAR DADOS ---
-    
-    // UseFocusEffect garante que os dados atualizem sempre que você entrar na tela
+    const [toast, setToast] = useState({ visible: false, message: "", type: "success" as "success" | "error" | "warning" | "info" });
+
+    const showToast = (message: string, type: "success" | "error" | "warning" | "info" = "success") => {
+        setToast({ visible: true, message, type });
+    };
+
     useFocusEffect(
         useCallback(() => {
             loadUserData();
@@ -38,83 +40,61 @@ export const ProfileScreen = () => {
     const loadUserData = async () => {
         setLoading(true);
         try {
-            // 1. Pega o usuário salvo no Login (AsyncStorage)
             const storedUser = await AuthService.getUser();
-            
             if (storedUser && storedUser.id) {
-                setUserId(storedUser.id); // Salva o ID para usar depois
-
-                // 2. Busca os dados FRESQUINHOS do backend pelo ID
-                // (Isso garante que se mudou algo em outro lugar, aqui atualiza)
+                setUserId(storedUser.id);
                 const userFromApi = await UserService.getById(storedUser.id);
-                
                 setName(userFromApi.nome);
                 setEmail(userFromApi.email);
                 setPhone(userFromApi.telefone || "");
                 setAddress(userFromApi.endereco || "");
-                
                 if (userFromApi.imagem) {
-                    // O backend manda em Base64, precisamos formatar
                     setImage(`data:image/png;base64,${userFromApi.imagem}`);
                 }
             }
         } catch (error) {
-            console.error("Erro ao carregar perfil:", error);
-            Alert.alert("Erro", "Não foi possível carregar seus dados.");
+            showToast("Não foi possível carregar seus dados.", "error");
         } finally {
             setLoading(false);
         }
     };
 
-    // --- AÇÕES ---
-
     const handlePickImage = async () => {
         if (!userId) return;
-
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert("Permissão", "Precisamos de acesso à galeria.");
+            showToast("Precisamos de acesso à galeria.", "warning");
             return;
         }
-
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 0.5, // Qualidade média para não pesar o envio
+            quality: 0.5,
         });
-
         if (!result.canceled) {
             const localUri = result.assets[0].uri;
-            setImage(localUri); // Mostra preview
-            
+            setImage(localUri);
             try {
-                // Envia para o backend
                 await UserService.updatePhoto(userId, localUri);
-                Alert.alert("Sucesso", "Foto atualizada!");
+                showToast("Foto de perfil atualizada!", "success");
             } catch (error) {
-                Alert.alert("Erro", "Falha ao enviar a foto.");
-                loadUserData(); // Reverte se der erro
+                showToast("Falha ao enviar a foto.", "error");
+                loadUserData();
             }
         }
     };
 
     const handleSaveData = async () => {
         if (!userId) return;
-
         try {
             setLoading(true);
-            const data: UserUpdateData = {
-                nome: name,
-                email: email,
-                telefone: phone,
-                endereco: address
-            };
+            const data: UserUpdateData = { nome: name, email, telefone: phone, endereco: address };
             await UserService.updateData(userId, data);
-            Alert.alert("Sucesso", "Dados atualizados!");
+            showToast("Perfil atualizado com sucesso!", "success");
             setIsEditing(false);
         } catch (error) {
-            Alert.alert("Erro", "Falha ao salvar dados.");
+            showToast("Falha ao salvar dados.", "error");
         } finally {
             setLoading(false);
         }
@@ -125,10 +105,15 @@ export const ProfileScreen = () => {
         router.replace('/auth/login');
     };
 
-    // --- RENDERIZAÇÃO ---
-
     return (
         <View style={styles.container}>
+            <Toast
+                visible={toast.visible}
+                message={toast.message}
+                type={toast.type}
+                onHide={() => setToast((t) => ({ ...t, visible: false }))}
+            />
+
             <SafeAreaView edges={["top"]} style={styles.headerWrapper}>
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Meu Perfil</Text>
@@ -137,22 +122,18 @@ export const ProfileScreen = () => {
             </SafeAreaView>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                
+
                 {/* CARTÃO DE USUÁRIO (FOTO) */}
                 <View style={styles.userCard}>
                     <TouchableOpacity onPress={handlePickImage} style={styles.photoCircle}>
                         {image ? (
-                            <Image 
-                                source={{ uri: image }} 
-                                style={{ width: '100%', height: '100%', borderRadius: 999 }} 
-                            />
+                            <Image source={{ uri: image }} style={{ width: '100%', height: '100%', borderRadius: 999 }} />
                         ) : (
                             <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                                <Camera size={24} color="#6B3F31" />
+                                <Camera size={28} color={iconColor} />
                             </View>
                         )}
                     </TouchableOpacity>
-                    
                     <Text style={styles.userName}>{name || "Carregando..."}</Text>
                     <Text style={styles.userType}>Cliente</Text>
                 </View>
@@ -161,82 +142,86 @@ export const ProfileScreen = () => {
                 <View style={styles.infoCard}>
                     <View style={styles.infoHeader}>
                         <Text style={styles.infoTitle}>Informações Pessoais</Text>
-                        
                         {!isEditing ? (
-                            <TouchableOpacity style={styles.editContainer} onPress={() => setIsEditing(true)}>
-                                <Pencil size={18} color="#6B3F31" style={{ marginRight: 5 }} />
+                            <TouchableOpacity style={styles.editContainer} onPress={() => setIsEditing(true)} activeOpacity={0.7}>
+                                <Pencil size={14} color={iconColor} style={{ marginRight: 5 }} />
                                 <Text style={styles.editButton}>Editar</Text>
                             </TouchableOpacity>
                         ) : (
-                            <View style={{ flexDirection: 'row', gap: 15 }}>
-                                <TouchableOpacity onPress={() => { setIsEditing(false); loadUserData(); }}>
-                                    <X size={24} color="red" />
+                            <View style={{ flexDirection: 'row', gap: 12 }}>
+                                <TouchableOpacity
+                                    onPress={() => { setIsEditing(false); loadUserData(); }}
+                                    style={[styles.editContainer, { backgroundColor: '#FFF0F0' }]}
+                                    activeOpacity={0.7}
+                                >
+                                    <X size={18} color="#D37A7A" />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={handleSaveData}>
-                                    {loading ? <ActivityIndicator size="small" color="green"/> : <Save size={24} color="green" />}
+                                <TouchableOpacity
+                                    onPress={handleSaveData}
+                                    style={[styles.editContainer, { backgroundColor: '#F0FFF0' }]}
+                                    activeOpacity={0.7}
+                                >
+                                    {loading ? <ActivityIndicator size="small" color="#4CAF50" /> : <Save size={18} color="#4CAF50" />}
                                 </TouchableOpacity>
                             </View>
                         )}
                     </View>
 
-                    {/* CAMPOS DINÂMICOS */}
-                    
-                    {/* Nome */}
                     <View style={styles.seguraLabel}>
                         <View style={styles.labelRow}>
-                            <User size={20} color={iconColor} />
+                            <User size={18} color={iconColor} />
                             <Text style={styles.itemLabel}>Nome</Text>
                         </View>
                         {isEditing ? (
-                            <TextInput style={{borderBottomWidth:1, flex:1}} value={name} onChangeText={setName}/>
+                            <TextInput style={styles.editInput} value={name} onChangeText={setName} />
                         ) : (
                             <Text style={styles.itemValue}>{name}</Text>
                         )}
                     </View>
 
-                    {/* E-mail (Geralmente não editável ou requer cuidado) */}
                     <View style={styles.seguraLabel}>
                         <View style={styles.labelRow}>
-                            <Mail size={20} color={iconColor} />
+                            <Mail size={18} color={iconColor} />
                             <Text style={styles.itemLabel}>E-mail</Text>
                         </View>
                         {isEditing ? (
-                            <TextInput style={{borderBottomWidth:1, flex:1}} value={email} onChangeText={setEmail} keyboardType="email-address"/>
+                            <TextInput style={styles.editInput} value={email} onChangeText={setEmail} keyboardType="email-address" />
                         ) : (
                             <Text style={styles.itemValue}>{email}</Text>
                         )}
                     </View>
 
-                    {/* Telefone */}
                     <View style={styles.seguraLabel}>
                         <View style={styles.labelRow}>
-                            <Phone size={20} color={iconColor} />
+                            <Phone size={18} color={iconColor} />
                             <Text style={styles.itemLabel}>Telefone</Text>
                         </View>
                         {isEditing ? (
-                            <TextInput style={{borderBottomWidth:1, flex:1}} value={phone} onChangeText={setPhone} keyboardType="phone-pad"/>
+                            <TextInput style={styles.editInput} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
                         ) : (
                             <Text style={styles.itemValue}>{phone || "Não informado"}</Text>
                         )}
                     </View>
 
-                    {/* Endereço */}
                     <View style={styles.seguraLabel}>
                         <View style={styles.labelRow}>
-                            <MapPin size={20} color={iconColor} />
+                            <MapPin size={18} color={iconColor} />
                             <Text style={styles.itemLabel}>Endereço</Text>
                         </View>
                         {isEditing ? (
-                            <TextInput style={{borderBottomWidth:1, flex:1}} value={address} onChangeText={setAddress}/>
+                            <TextInput style={styles.editInput} value={address} onChangeText={setAddress} />
                         ) : (
                             <Text style={styles.itemValue}>{address || "Não informado"}</Text>
                         )}
                     </View>
                 </View>
-                
-                <LogoutButton onPress={handleLogout}/>
-                
-                <View style={{ height: 20 }} /> 
+
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
+                    <LogOut size={20} color="#D37A7A" style={styles.logoutIcon} />
+                    <Text style={styles.logoutText}>Sair</Text>
+                </TouchableOpacity>
+
+                <View style={{ height: 20 }} />
             </ScrollView>
         </View>
     );

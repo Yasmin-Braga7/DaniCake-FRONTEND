@@ -1,13 +1,12 @@
 import { FONTS } from "@/src/constants/fonts";
 import { StyleSheet } from "react-native";
-import { normalize, wp, hp } from "@/src/constants/responsive";
+import { normalize, wp } from "@/src/constants/responsive";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF6F7",
   },
-
   headerWrapper: {
     width: '100%',
     backgroundColor: "#fff",
@@ -18,28 +17,23 @@ export const styles = StyleSheet.create({
     elevation: 6,
     zIndex: 999,
   },
-
   header: {
     paddingHorizontal: wp(5),
-    paddingVertical: normalize(15),
+    paddingVertical: normalize(14),
   },
-
   headerTitle: {
-    fontFamily: FONTS.inter.light,
-    fontSize: normalize(14),
-    color: "#6e6e6eea",
-    marginBottom: normalize(4),
+    fontFamily: FONTS.inter.bold,
+    fontSize: normalize(22),
+    color: "#1a1a1a",
+    marginBottom: normalize(3),
   },
-
   headerSubtitle: {
-    fontFamily: FONTS.inter.semiBold,
-    fontSize: normalize(15),
-    color: "#6B6B6B",
+    fontFamily: FONTS.inter.regular,
+    fontSize: normalize(13),
+    color: "#888",
   },
-
   listContent: {
     paddingHorizontal: wp(4),
-    paddingVertical: normalize(10),
     paddingTop: normalize(14),
   },
 });
