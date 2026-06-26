@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./style";
-import { ProductList } from "@/src/components/ProductList";
+import { ProductList } from "@/src/components/ProductList/ProductList";
 import { CategoryList } from "@/src/components/categoryList";
 
 export const ProductCreate = () => {
