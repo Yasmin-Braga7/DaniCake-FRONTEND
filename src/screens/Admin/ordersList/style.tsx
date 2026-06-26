@@ -9,33 +9,43 @@ export const styles = StyleSheet.create({
     },
     headerWrapper: { 
         backgroundColor: "#fff", 
-        elevation: 4, 
+        elevation: 6, 
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 5,
         zIndex: 10 
     },
     header: { 
-        padding: normalize(20) 
+        paddingHorizontal: wp(5),
+        paddingVertical: normalize(14),
     },
     headerTitle: { 
-        fontFamily: FONTS.inter.light, 
-        fontSize: normalize(13), 
-        color: "#666" 
+        fontFamily: FONTS.inter.bold, 
+        fontSize: normalize(22), 
+        color: "#1a1a1a",
+        marginBottom: normalize(3),
     },
     headerSubtitle: { 
-        fontFamily: FONTS.inter.semiBold, 
-        fontSize: normalize(16), 
-        color: "#6B6B6B" 
+        fontFamily: FONTS.inter.regular, 
+        fontSize: normalize(13), 
+        color: "#888" 
     },
     cardWrapper: { 
-        marginBottom: normalize(15) 
+        marginBottom: normalize(12) 
     },
     actionBtn: {
-        padding: normalize(12),
-        borderRadius: normalize(8),
-        marginTop: normalize(-8),
+        padding: normalize(14),
+        borderRadius: normalize(14),
+        marginTop: normalize(-6),
         marginHorizontal: normalize(4),
         alignItems: 'center',
-        elevation: 2,
-        marginBottom: normalize(5)
+        elevation: 3,
+        marginBottom: normalize(5),
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     btnText: { 
         color: 'white', 

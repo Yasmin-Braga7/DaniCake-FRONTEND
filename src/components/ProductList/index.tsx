@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-// REMOVA o Image do import do react-native acima ^
 
-import { Image } from 'expo-image'; // <--- ADICIONE ISSO
-import { PlusCircle, Trash2, X } from 'lucide-react-native';
+import { Image } from 'expo-image';
+import { CirclePlus, Trash2, X } from 'lucide-react-native';
 import { ProdutoService } from '@/src/services/produtos';
 import { AuthService } from '@/src/services/storage';
 import { Produto } from '@/src/interfaces/produtos/request';
@@ -81,44 +80,40 @@ export const ProductList = () => {
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Produtos Disponíveis</Text>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <PlusCircle size={28} color="#000" strokeWidth={1.5} />
+        <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7}>
+          <CirclePlus size={30} color="#C23B6B" strokeWidth={1.5} />
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.listContainer, {height: 300}]}>
+      <View style={styles.listContainer}>
         {loading ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#D4A574" />
+            <ActivityIndicator size="large" color="#C23B6B" />
             <Text style={styles.loadingText}>Carregando...</Text>
           </View>
         ) : products.length === 0 ? (
           <Text style={styles.emptyText}>Nenhum produto cadastrado.</Text>
         ) : (
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true} nestedScrollEnabled={true}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
             {products.map((item) => (
               <View key={item.id} style={styles.itemWrapper}>
                 <View style={styles.itemCard}>
-                  
-                  {/* --- MUDANÇA AQUI: Componente expo-image --- */}
                   <Image 
                     source={item.imageSource} 
                     style={styles.itemImage} 
-                    contentFit="cover" // Em vez de resizeMode
-                    transition={1000}  // Efeito suave igual ao da Home
+                    contentFit="cover"
+                    transition={500}
                   />
-                  {/* ------------------------------------------- */}
-
                   <View style={styles.itemInfo}>
                     <Text style={styles.itemTitle}>{item.nome}</Text>
                     <Text style={styles.itemDesc} numberOfLines={2}>{item.descricao}</Text>
-                    <Text style={[styles.itemDesc, { marginTop: 4, fontWeight: 'bold' }]}>
+                    <Text style={[styles.itemDesc, { marginTop: 4, fontFamily: 'Inter_700Bold', color: '#C23B6B' }]}>
                       R$ {item.preco?.toFixed(2).replace('.', ',')}
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-                  <Trash2 size={24} color="#000" strokeWidth={1.5} />
+                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)} activeOpacity={0.7}>
+                  <Trash2 size={20} color="#D37A7A" strokeWidth={1.8} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -134,8 +129,8 @@ export const ProductList = () => {
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.modalContentContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Novo Produto</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <X size={24} color="#666" />
+              <TouchableOpacity onPress={() => setModalVisible(false)} activeOpacity={0.7}>
+                <X size={24} color="#999" strokeWidth={2} />
               </TouchableOpacity>
             </View>
             <ScrollView style={{ maxHeight: '90%' }} contentContainerStyle={{ paddingBottom: 30 }} showsVerticalScrollIndicator keyboardShouldPersistTaps="handled">

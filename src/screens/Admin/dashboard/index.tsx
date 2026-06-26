@@ -4,6 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { OrderService } from '@/src/services/orders';
+import { TrendingUp, DollarSign, ShoppingBag } from 'lucide-react-native';
 
 // Importando os estilos separados
 import { styles } from './style';
@@ -36,15 +37,20 @@ export const DashboardScreen = () => {
     const chartConfig = {
         backgroundGradientFrom: "#ffffff",
         backgroundGradientTo: "#ffffff",
-        color: (opacity = 1) => `rgba(255, 105, 180, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        color: (opacity = 1) => `rgba(194, 59, 107, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(100, 100, 100, ${opacity})`,
         strokeWidth: 3,
         barPercentage: 0.5,
+        decimalCount: 0,
         propsForDots: {
-            r: "4",
+            r: "5",
             strokeWidth: "2",
-            stroke: "#ffa726"
-        }
+            stroke: "#C23B6B"
+        },
+        propsForBackgroundLines: {
+            strokeDasharray: "6,6",
+            stroke: "#f0f0f0",
+        },
     };
 
     const chartData = {
@@ -52,8 +58,8 @@ export const DashboardScreen = () => {
         datasets: [
             {
                 data: data?.dataGrafico?.length > 0 ? data.dataGrafico : [0],
-                color: (opacity = 1) => `rgba(255, 105, 180, ${opacity})`,
-                strokeWidth: 2
+                color: (opacity = 1) => `rgba(194, 59, 107, ${opacity})`,
+                strokeWidth: 3
             }
         ],
         legend: ["Vendas do Mês"] 
@@ -62,7 +68,7 @@ export const DashboardScreen = () => {
     if (loading && !data) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#FF69B4" />
+                <ActivityIndicator size="large" color="#C23B6B" />
             </View>
         );
     }
@@ -81,23 +87,36 @@ export const DashboardScreen = () => {
             <ScrollView 
                 contentContainerStyle={styles.content}
                 refreshControl={<RefreshControl refreshing={loading} onRefresh={loadDashboard} />}
+                showsVerticalScrollIndicator={false}
             >
-                <Text style={styles.subTitleSection}>Desempenho Financeiro</Text>
+                {/* Seção do gráfico */}
+                <View style={styles.sectionHeader}>
+                    <View style={styles.sectionIcon}>
+                        <TrendingUp size={20} color="#C23B6B" strokeWidth={2} />
+                    </View>
+                    <Text style={styles.subTitleSection}>Desempenho Financeiro</Text>
+                </View>
 
                 <View style={styles.chartContainer}>
                     <LineChart
                         data={chartData}
-                        width={width - 40} 
-                        height={220}
+                        width={width - 80} 
+                        height={200}
                         chartConfig={chartConfig}
                         bezier
                         style={styles.chart}
                         yAxisLabel="R$ "
+                        withInnerLines={true}
+                        withOuterLines={false}
                     />
                 </View>
 
+                {/* Cards de Resumo */}
                 <View style={styles.statsRow}>
                     <View style={styles.card}>
+                        <View style={styles.cardIconContainer}>
+                            <DollarSign size={24} color="#C23B6B" strokeWidth={2} />
+                        </View>
                         <Text style={styles.cardLabel}>Total Vendido</Text>
                         <Text style={styles.cardValue}>
                             R$ {data?.totalFaturamento ? data.totalFaturamento.toFixed(2) : "0.00"}
@@ -105,6 +124,9 @@ export const DashboardScreen = () => {
                     </View>
 
                     <View style={styles.card}>
+                        <View style={styles.cardIconContainer}>
+                            <ShoppingBag size={24} color="#C23B6B" strokeWidth={2} />
+                        </View>
                         <Text style={styles.cardLabel}>Total Pedidos</Text>
                         <Text style={styles.cardValue}>
                             {data?.totalPedidos || 0}

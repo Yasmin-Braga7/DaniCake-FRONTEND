@@ -1,22 +1,26 @@
 import { StyleSheet } from 'react-native';
 import { normalize, wp } from "@/src/constants/responsive";
+import { FONTS } from '@/src/constants/fonts';
 
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: normalize(12),
-    paddingVertical: normalize(12),
-    paddingHorizontal: normalize(14),
-    marginVertical: normalize(8),
+    borderRadius: normalize(18),
+    paddingVertical: normalize(16),
+    paddingHorizontal: normalize(18),
+    marginVertical: normalize(6),
+    marginHorizontal: normalize(2),
 
     // sombra iOS
     shadowColor: '#000',
     shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
 
     // sombra Android
     elevation: 4,
+    borderWidth: 1,
+    borderColor: '#FFF0F3',
   },
 
   header: {
@@ -31,58 +35,59 @@ export const styles = StyleSheet.create({
 
   title: {
     fontSize: normalize(15),
-    fontWeight: '600',
-    color: '#3B2F2F',
+    fontFamily: FONTS.inter.semiBold,
+    color: '#1a1a1a',
     marginBottom: normalize(4),
   },
 
   date: {
     fontSize: normalize(11),
-    color: '#8E8E8E',
+    fontFamily: FONTS.inter.regular,
+    color: '#999',
   },
 
-  // ⭐ BASE DO BADGE
+  // Badge base
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: normalize(4),
-    paddingHorizontal: normalize(8),
-    borderRadius: normalize(12),
+    paddingVertical: normalize(5),
+    paddingHorizontal: normalize(10),
+    borderRadius: normalize(20),
     borderWidth: 1,
   },
 
-  // ⭐ COR DO BADGE ENTREGUE
+  // Badge Entregue
   badgeDelivered: {
     backgroundColor: '#FFF0F6',
     borderColor: '#FFD6E6',
   },
 
-  // ⭐ COR DEFAULT (pendente, enviado, etc)
+  // Badge Default
   badgeDefault: {
-    backgroundColor: '#F2F2F2',
-    borderColor: '#E0E0E0',
+    backgroundColor: '#F5F5F5',
+    borderColor: '#E8E8E8',
   },
 
   badgeEnviado: {
-    backgroundColor: '#E8F1FF',
+    backgroundColor: '#EBF5FF',
     borderColor: '#B3D4FF',
   },
   badgeTextEnviado: {
     color: '#1E90FF',
   },
 
-  // ⭐ PENDENTE
+  // Pendente
   badgePendente: {
-    backgroundColor: '#FFF7E6',
+    backgroundColor: '#FFF8E6',
     borderColor: '#FFE0A3',
   },
   badgeTextPendente: {
     color: '#F0A500',
   },
 
-  // ⭐ CANCELADO
+  // Cancelado
   badgeCancelado: {
-    backgroundColor: '#FFECEC',
+    backgroundColor: '#FFF0F0',
     borderColor: '#FFB3B3',
   },
   badgeTextCancelado: {
@@ -90,7 +95,7 @@ export const styles = StyleSheet.create({
   },
 
   badgeEmPreparo: {
-    backgroundColor: '#F3E5F5',
+    backgroundColor: '#F5F0FF',
     borderColor: '#E1BEE7',
   },
   badgeTextEmPreparo: {
@@ -99,18 +104,18 @@ export const styles = StyleSheet.create({
 
   badgeText: {
     fontSize: normalize(11),
-    fontWeight: '600',
-    color: '#6B6B6B',
+    fontFamily: FONTS.inter.semiBold,
+    color: '#777',
   },
 
   badgeTextDelivered: {
-    color: '#C81D63',
+    color: '#C23B6B',
   },
 
   divider: {
     height: 1,
-    backgroundColor: '#EFEFEF',
-    marginVertical: normalize(10),
+    backgroundColor: '#F5F5F5',
+    marginVertical: normalize(12),
     borderRadius: 1,
   },
 
@@ -122,13 +127,14 @@ export const styles = StyleSheet.create({
 
   itemsText: {
     fontSize: normalize(12),
-    color: '#8E8E8E',
+    fontFamily: FONTS.inter.regular,
+    color: '#999',
   },
 
   priceText: {
-    fontSize: normalize(13),
-    fontWeight: '700',
-    color: '#111111',
+    fontSize: normalize(14),
+    fontFamily: FONTS.inter.bold,
+    color: '#1a1a1a',
   },
   
 });

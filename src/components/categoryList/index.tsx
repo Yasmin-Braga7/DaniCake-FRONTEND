@@ -3,13 +3,13 @@ import {
     View,
     Text,
     TouchableOpacity,
-    FlatList,
+    ScrollView,
     Modal,
     TextInput,
     Alert,
     ActivityIndicator
 } from "react-native";
-import { Plus, Trash2, Edit3, X, PlusCircle } from "lucide-react-native";
+import { Trash2, Pencil, X, CirclePlus } from "lucide-react-native";
 import { styles } from "./style";
 import { CategoriaService } from "@/src/services/categoria";
 import { Categoria } from "@/src/interfaces/categoria/response";
@@ -33,8 +33,7 @@ export const CategoryList = () => {
             const data = await CategoriaService.listarCategorias();
             setCategories(data);
         } catch (error) {
-            console.log(error); // Log para debug
-            // Opcional: não alertar sempre se for apenas vazio, mas aqui alerta erro de conexão
+            console.log(error);
         } finally {
             setLoading(false);
         }
@@ -92,59 +91,61 @@ export const CategoryList = () => {
     };
 
     return (
-        <View style={[styles.container, {height: 200}]}>
-            {/* 1. Header FIXO (fora da lista) */}
+        <View style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
                 <View style={styles.headerTitleContainer}>
                     <Text style={styles.headerTitle}>Categorias Disponíveis</Text>
                 </View>
-                <TouchableOpacity onPress={handleOpenCreate}>
-                    <PlusCircle size={28} color="#000" strokeWidth={1.5} />
+                <TouchableOpacity onPress={handleOpenCreate} activeOpacity={0.7}>
+                    <CirclePlus size={30} color="#C23B6B" strokeWidth={1.5} />
                 </TouchableOpacity>
             </View>
 
-            <View style={[styles.listContainer, {height: 115}]}>
-
+            <View style={styles.listContainer}>
             {loading ? (
-                <ActivityIndicator color="#000" style={{ marginTop: 20 }} />
+                <ActivityIndicator color="#C23B6B" style={{ marginTop: 20 }} />
+            ) : categories.length === 0 ? (
+                <Text style={styles.emptyText}>Nenhuma categoria.</Text>
             ) : (
-                <FlatList
-                    data={categories}
-                    keyExtractor={(item) => String(item.id)}
-                    contentContainerStyle={{ paddingBottom: 10 }}
-                    showsVerticalScrollIndicator={true}
+                <ScrollView 
+                    contentContainerStyle={styles.listContent} 
+                    showsVerticalScrollIndicator={false} 
                     nestedScrollEnabled={true}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemRow}>
+                >
+                    {categories.map((item) => (
+                        <View key={String(item.id)} style={styles.itemRow}>
                             <View style={styles.nameBox}>
                                 <Text style={styles.nameText}>{item.nome}</Text>
                             </View>
 
                             <View style={styles.actionButtons}>
-                                <TouchableOpacity onPress={() => handleOpenEdit(item)} style={{ marginRight: 10 }}>
-                                    <Edit3 color="#555" size={22} />
+                                <TouchableOpacity 
+                                    onPress={() => handleOpenEdit(item)} 
+                                    style={[styles.actionBtn, styles.editBtn]}
+                                    activeOpacity={0.7}
+                                >
+                                    <Pencil color="#C23B6B" size={18} strokeWidth={1.8} />
                                 </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                                    <Trash2 color="#000" size={22} />
+                                <TouchableOpacity 
+                                    onPress={() => handleDelete(item.id)}
+                                    style={[styles.actionBtn, styles.deleteBtn]}
+                                    activeOpacity={0.7}
+                                >
+                                    <Trash2 color="#D37A7A" size={18} strokeWidth={1.8} />
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    )}
-                    ListEmptyComponent={
-                        <Text style={styles.emptyText}>Nenhuma categoria.</Text>
-                    }
-
-                    style={{ flex: 1 }}
-                />
-
+                    ))}
+                </ScrollView>
             )}
             </View>
 
             <Modal
                 visible={modalVisible}
                 transparent={true}
-                animationType="slide"
+                animationType="fade"
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
@@ -153,19 +154,20 @@ export const CategoryList = () => {
                             <Text style={styles.modalTitle}>
                                 {editingId ? "Editar Categoria" : "Nova Categoria"}
                             </Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <X color="#ffbfbfff" size={24} />
+                            <TouchableOpacity onPress={() => setModalVisible(false)} activeOpacity={0.7}>
+                                <X color="#999" size={24} strokeWidth={2} />
                             </TouchableOpacity>
                         </View>
 
                         <TextInput
                             style={styles.input}
                             placeholder="Digite o nome da categoria"
+                            placeholderTextColor="#aaa"
                             value={categoryName}
                             onChangeText={setCategoryName}
                         />
 
-                        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                        <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.8}>
                             <Text style={styles.saveButtonText}>Salvar</Text>
                         </TouchableOpacity>
                     </View>

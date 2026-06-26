@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { AdminMenu } from "@/src/components/MenuAdmn"; // Certifique-se que o componente existe
+import { AdminMenu } from "@/src/components/MenuAdmn";
 
 export default function AdminLayout() {
   return (
@@ -13,6 +13,7 @@ export default function AdminLayout() {
       <Tabs.Screen name="dashboard/index" options={{ title: 'Dashboard' }} />
       <Tabs.Screen name="createProduct/index" options={{ title: 'Criar Produto' }} />
       <Tabs.Screen name="listOrders/index" options={{ title: 'Pedidos' }} />
+      <Tabs.Screen name="adminProfile/index" options={{ title: 'Perfil' }} />
     </Tabs>
   );
 }

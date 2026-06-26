@@ -45,45 +45,51 @@ export default function ProductModal({
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
-          {/* 2. Card do Produto - Clique dentro NÃO fecha */}
+          {/* Card do Produto - Clique dentro NÃO fecha */}
           <TouchableWithoutFeedback>
             <View style={styles.card}>
-              <View style={styles.iconX}>
-                <TouchableOpacity onPress={onClose}>
-                  <X color="black" size={28} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
+              {/* Imagem no topo com X flutuante */}
               <View style={styles.imageContainer}>
                 <Image
-                  // Usa a imagem passada ou um placeholder
                   source={imagemSource}
                   style={styles.image}
-                  // 'cover' = preenche tudo (pode cortar bordas)
-                  // 'contain' = mostra imagem inteira (pode sobrar espaço)
-                  contentFit="contain"
-                  transition={1000} // Efeito suave ao carregar
+                  contentFit="cover"
+                  transition={500}
                 />
+                {/* X flutuante sobre a imagem */}
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={onClose}
+                  activeOpacity={0.7}
+                >
+                  <X color="#333" size={20} strokeWidth={2.5} />
+                </TouchableOpacity>
               </View>
 
-              {/* Título Dinâmico */}
-              <Text style={styles.title}>{produto?.nome}</Text>
+              {/* Conteúdo */}
+              <View style={styles.contentContainer}>
+                {/* Título Dinâmico */}
+                <Text style={styles.title}>{produto?.nome}</Text>
 
-              {/* Descrição Dinâmica (com fallback caso não tenha descrição) */}
-              <Text style={styles.description}>
-                {produto?.descricao || "Sem descrição disponível."}
-              </Text>
+                {/* Preço */}
+                <Text style={styles.priceText}>
+                  R$ {produto?.preco?.toFixed(2).replace('.', ',')}
+                </Text>
 
-              {/* Preço (Opcional, se tiver no objeto produto) */}
-              {/* <Text style={styles.price}>R$ {produto?.preco}</Text> */}
+                {/* Descrição Dinâmica */}
+                <Text style={styles.description}>
+                  {produto?.descricao || "Sem descrição disponível."}
+                </Text>
 
-              <TouchableOpacity
-                style={styles.addButton}
-                activeOpacity={0.8}
-                onPress={handleAddToCart}
-              >
-                <Text style={styles.addButtonText}>Adicionar</Text>
-                <ShoppingCart color="white" size={24} strokeWidth={2} />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.addButton}
+                  activeOpacity={0.8}
+                  onPress={handleAddToCart}
+                >
+                  <ShoppingCart color="white" size={20} strokeWidth={2} />
+                  <Text style={styles.addButtonText}>Adicionar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>
