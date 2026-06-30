@@ -230,25 +230,34 @@ export const DashboardScreen = () => {
             </View>
 
             <View style={styles.chartContainer}>
-              <LineChart
-                data={{
-                  labels: data?.labelsGrafico?.length > 0 ? data.labelsGrafico : ['Sem dados'],
-                  datasets: [{
-                    data: data?.dataGrafico?.length > 0 ? data.dataGrafico : [0],
-                    color: (o = 1) => `rgba(194, 59, 107, ${o})`,
-                    strokeWidth: 3,
-                  }],
-                  legend: [`Vendas — ${MESES[mes - 1]}`],
-                }}
-                width={chartWidthMensal}
-                height={200}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-                yAxisLabel="R$ "
-                withInnerLines
-                withOuterLines={false}
-              />
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingRight: 16 }}
+              >
+                <LineChart
+                  data={{
+                    labels: data?.labelsGrafico?.length > 0 ? data.labelsGrafico : ['Sem dados'],
+                    datasets: [{
+                      data: data?.dataGrafico?.length > 0 ? data.dataGrafico : [0],
+                      color: (o = 1) => `rgba(194, 59, 107, ${o})`,
+                      strokeWidth: 3,
+                    }],
+                    legend: [`Vendas — ${MESES[mes - 1]}`],
+                  }}
+                  width={Math.max(
+                    chartWidthMensal,
+                    (data?.labelsGrafico?.length ?? 1) * 60 + 60
+                  )}
+                  height={200}
+                  chartConfig={chartConfig}
+                  bezier
+                  style={styles.chart}
+                  yAxisLabel="R$ "
+                  withInnerLines
+                  withOuterLines={false}
+                />
+              </ScrollView>
             </View>
 
             {/* Cards resumo */}
