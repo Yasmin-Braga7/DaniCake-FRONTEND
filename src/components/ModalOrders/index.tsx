@@ -47,14 +47,14 @@ export const OrderDetailsModal = ({
 }: OrderDetailsModalProps) => {
   if (!order) return null;
 
-  // Altura aumentada para mostrar mais itens
-  const ITEM_HEIGHT = 90;
-  const VISIBLE_ITEMS = 4;
-  const visibleCount = Math.min(order.items.length, VISIBLE_ITEMS);
+  // Altura: mostra até 3 itens inteiros; scroll automático se tiver mais
+  const ITEM_HEIGHT = 140;
+  const MAX_VISIBLE = 3;
   const itemsContainerHeight =
-    order.items.length > VISIBLE_ITEMS
-      ? ITEM_HEIGHT * VISIBLE_ITEMS
-      : ITEM_HEIGHT * visibleCount;
+    order.items.length <= 1
+      ? ITEM_HEIGHT * order.items.length + 16
+      : Math.min(order.items.length, MAX_VISIBLE) * ITEM_HEIGHT + 16;
+  const scrollEnabled = order.items.length > MAX_VISIBLE;
 
   return (
     <Modal
@@ -116,7 +116,8 @@ export const OrderDetailsModal = ({
                 <Text style={styles.itemPrice}>{item.price}</Text>
               </View>
             )}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={scrollEnabled}
+            scrollEnabled={scrollEnabled}
             nestedScrollEnabled
             contentContainerStyle={{ paddingBottom: 4 }}
             getItemLayout={(_, index) => ({

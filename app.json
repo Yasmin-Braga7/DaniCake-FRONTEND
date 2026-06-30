@@ -54,7 +54,8 @@
       ],
       "expo-router",
       "expo-web-browser",
-      "expo-font"
+      "expo-font",
+      "expo-notifications"
     ],
     "extra": {
       "eas": {

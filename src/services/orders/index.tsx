@@ -65,9 +65,12 @@ export const OrderService = {
         }
     },
 
-    async getDashboard(): Promise<any> {
+    async getDashboard(mes?: number, ano?: number): Promise<any> {
         try {
-            const response = await api.get('/pedido/dashboard');
+            const params: Record<string, number> = {};
+            if (mes !== undefined) params.mes = mes;
+            if (ano !== undefined) params.ano = ano;
+            const response = await api.get('/pedido/dashboard', { params });
             return response.data;
         } catch (error) {
             console.error("Erro ao carregar dashboard:", error);

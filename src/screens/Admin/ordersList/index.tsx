@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, ScrollView, RefreshControl, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChefHat, Truck } from "lucide-react-native";
 import { OrderService } from "@/src/services/orders";
 import { OrderCard } from "@/src/components/PedidoCard";
 import { AdminOrderModal, AdminOrderData } from "@/src/components/AdminOrderModal";
@@ -9,7 +8,7 @@ import { Toast } from "@/src/components/Toast";
 import { OrderStatus } from "@/src/enums/pedidos";
 import { styles } from "./style";
 import { groupOrdersByPeriod } from "@/src/utils/orderGroups";
-import { normalize, wp } from "@/src/constants/responsive";
+import { normalize } from "@/src/constants/responsive";
 import { FONTS } from "@/src/constants/fonts";
 
 export default function ListOrdersScreen() {
@@ -79,6 +78,8 @@ export default function ListOrdersScreen() {
         try {
             await OrderService.atualizarStatus(orderId, nextStatus);
             showToast(`${emoji} ${actionName}`, "success");
+            setModalVisible(false);
+            setSelectedOrder(null);
             fetchOrders();
         } catch (error) {
             showToast("Não foi possível atualizar o pedido.", "error");
@@ -115,7 +116,6 @@ export default function ListOrdersScreen() {
 
                 {groups.map((group) => (
                     <View key={group.label}>
-                        {/* Separador de período */}
                         <View style={localStyles.periodRow}>
                             <View style={localStyles.periodLine} />
                             <Text style={localStyles.periodLabel}>{group.label}</Text>
@@ -123,7 +123,7 @@ export default function ListOrdersScreen() {
                         </View>
 
                         {group.data.map((item) => (
-                            <View key={item.id} style={styles.cardWrapper}>
+                            <View key={item.id} style={[styles.cardWrapper, { marginBottom: normalize(12) }]}>
                                 <OrderCard
                                     orderNumber={String(item.id).padStart(3, '0')}
                                     date={new Date(item.criado).toLocaleDateString('pt-BR')}
@@ -132,28 +132,6 @@ export default function ListOrdersScreen() {
                                     status={item.status}
                                     onPress={() => handleOpenModal(item)}
                                 />
-
-                                {item.status === OrderStatus.PENDENTE && (
-                                    <TouchableOpacity
-                                        style={[localStyles.actionBtn, { backgroundColor: '#27AE60' }]}
-                                        onPress={() => advanceStatus(item.id, item.status)}
-                                        activeOpacity={0.85}
-                                    >
-                                        <ChefHat size={16} color="#fff" style={{ marginRight: 8 }} />
-                                        <Text style={localStyles.btnText}>Aceitar · Iniciar Preparo</Text>
-                                    </TouchableOpacity>
-                                )}
-
-                                {item.status === OrderStatus.EM_PREPARO && (
-                                    <TouchableOpacity
-                                        style={[localStyles.actionBtn, { backgroundColor: '#2196F3' }]}
-                                        onPress={() => advanceStatus(item.id, item.status)}
-                                        activeOpacity={0.85}
-                                    >
-                                        <Truck size={16} color="#fff" style={{ marginRight: 8 }} />
-                                        <Text style={localStyles.btnText}>Enviar · Saiu para Entrega</Text>
-                                    </TouchableOpacity>
-                                )}
                             </View>
                         ))}
                     </View>
@@ -191,25 +169,5 @@ const localStyles = StyleSheet.create({
         marginHorizontal: normalize(10),
         textTransform: "uppercase",
         letterSpacing: 0.8,
-    },
-    actionBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: normalize(14),
-        paddingVertical: normalize(14),
-        marginTop: normalize(-4),
-        marginHorizontal: normalize(2),
-        marginBottom: normalize(4),
-        elevation: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
-    },
-    btnText: {
-        color: "#fff",
-        fontFamily: FONTS.inter.bold,
-        fontSize: normalize(14),
     },
 });

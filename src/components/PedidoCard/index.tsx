@@ -76,7 +76,7 @@ export const OrderCard = ({
     <TouchableOpacity style={styles.container} activeOpacity={0.85} onPress={onPress}>
       <View style={styles.header}>
         <View style={styles.titleBlock}>
-          <Text style={styles.title}>Pedido #{orderNumber}</Text>
+          <Text style={styles.title}>Pedido Nº {orderNumber}</Text>
           <Text style={styles.date}>{date}</Text>
         </View>
 
