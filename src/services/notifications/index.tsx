@@ -1,34 +1,84 @@
 /**
  * Serviço de Notificações Push
  *
- * Para funcionar em produção você precisa:
- * 1. Instalar: npx expo install expo-notifications expo-device
- * 2. Adicionar no app.json > "plugins": ["expo-notifications"]
- * 3. No backend: salvar o pushToken por usuário e chamar a API
- *    do Expo para enviar notificação quando um pedido for criado.
+ * IMPORTANTE: A partir do Expo SDK 53, o módulo `expo-notifications`
+ * registra automaticamente um listener nativo assim que é importado
+ * (mesmo sem chamar nenhuma função dele). Esse listener quebra dentro
+ * do app Expo Go, porque a Google removeu push remoto de lá.
+ *
+ * Por isso, este arquivo NÃO importa `expo-notifications` de forma
+ * estática no topo do arquivo. Em vez disso, ele só é carregado via
+ * `require()` dinâmico, e somente quando NÃO estamos no Expo Go.
+ *
+ * Para testar push de verdade, rode um development build:
+ *   npx expo run:android
+ * ou
+ *   eas build --profile development --platform android
  */
 
-import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { api } from '../index';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// true quando rodando dentro do app "Expo Go" (não é development build nem produção)
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+// Tipagem mínima, sem depender do import estático do módulo
+type NotificationsModule = typeof import('expo-notifications');
+
+let NotificationsLib: NotificationsModule | null = null;
+
+/**
+ * Carrega o módulo expo-notifications sob demanda (lazy require).
+ * Retorna null se estivermos no Expo Go, sem nunca importar o módulo nesse caso.
+ */
+function getNotificationsLib(): NotificationsModule | null {
+  if (isExpoGo) return null;
+
+  if (!NotificationsLib) {
+    // require() dinâmico: só executa (e só registra os listeners nativos)
+    // quando esta linha realmente roda — ou seja, fora do Expo Go.
+    NotificationsLib = require('expo-notifications') as NotificationsModule;
+
+    NotificationsLib.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+  }
+
+  return NotificationsLib;
+}
 
 export const NotificationService = {
+  /**
+   * Indica se as notificações push estão disponíveis neste ambiente.
+   */
+  isDisponivel(): boolean {
+    return !isExpoGo && Device.isDevice;
+  },
+
   async registrar(): Promise<string | null> {
+    if (isExpoGo) {
+      console.log(
+        'ℹ️ Notificações push desativadas: rodando no Expo Go. ' +
+        'Use um development build para testar push de verdade.'
+      );
+      return null;
+    }
+
     if (!Device.isDevice) {
       console.warn('Notificações só funcionam em dispositivos físicos.');
       return null;
     }
+
+    const Notifications = getNotificationsLib();
+    if (!Notifications) return null;
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -53,11 +103,20 @@ export const NotificationService = {
       });
     }
 
-    const tokenData = await Notifications.getExpoPushTokenAsync();
-    return tokenData.data;
+    try {
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+      const tokenData = await Notifications.getExpoPushTokenAsync(
+        projectId ? { projectId } : undefined
+      );
+      return tokenData.data;
+    } catch (error) {
+      console.warn('Erro ao obter push token:', error);
+      return null;
+    }
   },
 
   async salvarTokenNoBackend(usuarioId: number, pushToken: string): Promise<void> {
+    if (isExpoGo) return;
     try {
       await api.patch(`/usuario/pushToken/${usuarioId}`, { pushToken });
     } catch (error) {
@@ -73,15 +132,22 @@ export const NotificationService = {
     }
   },
 
-  addReceivedListener(callback: (n: Notifications.Notification) => void) {
+  addReceivedListener(callback: (n: any) => void) {
+    if (isExpoGo) return null;
+    const Notifications = getNotificationsLib();
+    if (!Notifications) return null;
     return Notifications.addNotificationReceivedListener(callback);
   },
 
-  addResponseListener(callback: (r: Notifications.NotificationResponse) => void) {
+  addResponseListener(callback: (r: any) => void) {
+    if (isExpoGo) return null;
+    const Notifications = getNotificationsLib();
+    if (!Notifications) return null;
     return Notifications.addNotificationResponseReceivedListener(callback);
   },
 
-  removeSubscription(subscription: Notifications.EventSubscription) {
+  removeSubscription(subscription: any) {
+    if (!subscription) return;
     subscription.remove();
   },
 };

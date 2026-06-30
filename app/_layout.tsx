@@ -1,25 +1,24 @@
 import { CartProvider } from "@/src/context/CartContext";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { Alert, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AuthService } from "@/src/services/storage";
 import { NotificationService } from "@/src/services/notifications";
 import { api } from "@/src/services";
 
 /**
  * Banner de aviso de sessão encerrada em outro dispositivo.
- * Aparece no topo da tela quando detectamos que o sessionId
- * atual foi substituído por outro dispositivo.
+ * Some sozinho depois que o logout é concluído (usuário só confirma "Entendi").
  */
 function SessaoEncerradaBanner({ onDismiss }: { onDismiss: () => void }) {
   return (
     <View style={bannerStyles.container}>
       <Text style={bannerStyles.text}>
-        ⚠️ Sua conta foi acessada em outro dispositivo. Você foi deslogado de lá.
+        ⚠️ Sua conta foi acessada em outro dispositivo. Você foi desconectado.
       </Text>
       <TouchableOpacity onPress={onDismiss} style={bannerStyles.btn}>
-        <Text style={bannerStyles.btnText}>OK</Text>
+        <Text style={bannerStyles.btnText}>Entendi</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,15 +62,28 @@ export default function RootLayout() {
   const [mostrarBanner, setMostrarBanner] = useState(false);
   const notifReceived = useRef<any>(null);
   const notifResponse = useRef<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     inicializarNotificacoes();
-    verificarSessaoUnica();
+    const limparPolling = verificarSessaoUnica();
     return () => {
       if (notifReceived.current) NotificationService.removeSubscription(notifReceived.current);
       if (notifResponse.current) NotificationService.removeSubscription(notifResponse.current);
+      limparPolling?.then((fn) => fn && fn());
     };
   }, []);
+
+  /**
+   * Desloga de verdade: limpa o AsyncStorage e manda para a tela de login.
+   * Usado tanto quando a notificação SESSAO_ENCERRADA chega (app aberto)
+   * quanto pelo polling de segurança (app em foreground sem push disponível).
+   */
+  const forcarLogoutPorOutraSessao = async () => {
+    await AuthService.logout();
+    setMostrarBanner(true);
+    router.replace('/auth/login');
+  };
 
   const inicializarNotificacoes = async () => {
     const isLogado = await AuthService.isLoggedIn();
@@ -95,48 +107,64 @@ export default function RootLayout() {
     // Listener: notificação recebida com app aberto
     notifReceived.current = NotificationService.addReceivedListener((notification) => {
       const data = notification.request.content.data as any;
-      // Se receber notificação de sessão encerrada
+
       if (data?.tipo === 'SESSAO_ENCERRADA') {
-        setMostrarBanner(true);
+        forcarLogoutPorOutraSessao();
       }
+      // NOVO_PEDIDO (admin) e STATUS_PEDIDO (cliente) já aparecem
+      // como notificação do sistema automaticamente; nada extra a fazer aqui
+      // além de, opcionalmente, atualizar listas abertas — feito via refresh manual.
     });
 
-    // Listener: usuário tocou na notificação
+    // Listener: usuário tocou na notificação (app em background/fechado)
     notifResponse.current = NotificationService.addResponseListener((response) => {
       const data = response.notification.request.content.data as any;
+
+      if (data?.tipo === 'SESSAO_ENCERRADA') {
+        forcarLogoutPorOutraSessao();
+        return;
+      }
+
       if (data?.tipo === 'NOVO_PEDIDO') {
-        // Navegar para a lista de pedidos do admin (tratado via deep link se necessário)
-        console.log('Novo pedido recebido, id:', data?.pedidoId);
+        // Admin tocou na notificação de novo pedido → abre a lista de pedidos
+        router.push('/(adm)/listOrders' as any);
+        return;
+      }
+
+      if (data?.tipo === 'STATUS_PEDIDO') {
+        // Cliente tocou na notificação de status → abre "Meus Pedidos"
+        router.push('/(tabs)/Orders' as any);
+        return;
       }
     });
   };
 
   /**
-   * Verifica periodicamente se o sessionId local ainda é o ativo no backend.
-   * Se não for, significa que outro dispositivo fez login → exibe aviso.
+   * Verifica periodicamente (a cada 30s, só enquanto o app está em foreground)
+   * se o sessionId local ainda é o ativo no backend. É uma camada extra de
+   * segurança caso a notificação push não chegue por algum motivo
+   * (sem internet no momento do push, app no Expo Go, etc).
    */
   const verificarSessaoUnica = async () => {
     const isLogado = await AuthService.isLoggedIn();
-    if (!isLogado) return;
+    if (!isLogado) return undefined;
 
     const user = await AuthService.getUser();
     const sessionIdLocal = await AuthService.getSessionId();
-    if (!user || !sessionIdLocal) return;
+    if (!user || !sessionIdLocal) return undefined;
 
-    // Verifica a cada 60 segundos
     const interval = setInterval(async () => {
       try {
         const response = await api.get(`/usuario/sessao/${user.id}`);
         const sessionIdRemoto = response.data?.sessionId;
         if (sessionIdRemoto && sessionIdRemoto !== sessionIdLocal) {
-          // Outro dispositivo fez login
-          setMostrarBanner(true);
           clearInterval(interval);
+          await forcarLogoutPorOutraSessao();
         }
       } catch {
-        // Endpoint não existe ainda → ignora silenciosamente
+        // Sem conexão ou endpoint indisponível → ignora silenciosamente nesta rodada
       }
-    }, 60000);
+    }, 30000);
 
     return () => clearInterval(interval);
   };
