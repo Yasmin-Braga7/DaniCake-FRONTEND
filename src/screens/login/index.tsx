@@ -131,7 +131,7 @@ export const LoginScreen = () => {
 
                   <ReusableButton title={loading ? 'ENTRANDO...' : 'ENTRAR'} onPress={handleLogin} />
 
-                  <Text style={styles.link}>Esqueci minha senha</Text>
+                  <Text style={styles.link} onPress={navigation.forgotPassword}>Esqueci minha senha</Text>
                 </View>
 
                 <Text style={styles.footer}>

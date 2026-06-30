@@ -6,6 +6,7 @@ export const useNavigation = () => {
     const navigateTo = {
         login: () => router.push('/auth/login'),
         register: () => router.push('/auth/register'),
+        forgotPassword: () => router.push('/auth/forgotPassword'),
         // Rotas Usuarios...
         home: () => router.push('/(tabs)/Home'),
         cart: () => router.push('/(tabs)/Cart'),

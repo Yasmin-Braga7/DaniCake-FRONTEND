@@ -12,7 +12,11 @@ export const api = axios.create({
 
 const ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = [
   '/api/usuario/login',
-  '/api/usuario/criar'
+  '/api/usuario/criar',
+  '/api/usuario/recuperarSenha/verificarEmail',
+  '/api/usuario/recuperarSenha/enviarCodigo',
+  '/api/usuario/recuperarSenha/validarCodigo',
+  '/api/usuario/recuperarSenha/redefinirSenha',
 ];
 
 api.interceptors.request.use(async (config) => {
