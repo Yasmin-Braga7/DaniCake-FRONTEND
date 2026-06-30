@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, Dimensions, RefreshControl,
-  ActivityIndicator, TouchableOpacity, StyleSheet,
+  ActivityIndicator, TouchableOpacity, StyleSheet, useWindowDimensions,
 } from 'react-native';
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,10 +19,17 @@ const MESES = [
   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro',
 ];
 
+// Largura por barra no gráfico anual — garante que labels nunca fiquem espremidas
+const BAR_WIDTH_PER_MONTH = 48;
+const ANUAL_CHART_WIDTH = BAR_WIDTH_PER_MONTH * 12 + 60; // 12 meses + margem eixo Y
+
 // Modo de visualização: mensal ou anual
 type ViewMode = 'mensal' | 'anual';
 
 export const DashboardScreen = () => {
+  const { width } = useWindowDimensions(); // recalcula automaticamente ao girar tela
+  // Padding horizontal do ScrollView é 16 de cada lado (32 total)
+  const chartWidthMensal = width - 72; // deixa espaço pro eixo Y
   const hoje = new Date();
   const [viewMode, setViewMode] = useState<ViewMode>('mensal');
 
@@ -233,7 +240,7 @@ export const DashboardScreen = () => {
                   }],
                   legend: [`Vendas — ${MESES[mes - 1]}`],
                 }}
-                width={width - 80}
+                width={chartWidthMensal}
                 height={200}
                 chartConfig={chartConfig}
                 bezier
@@ -308,21 +315,27 @@ export const DashboardScreen = () => {
 
             <View style={styles.chartContainer}>
               {dadosAnuais.length > 0 ? (
-                <BarChart
-                  data={{
-                    labels: dadosAnuais.map(d => d.mes),
-                    datasets: [{ data: dadosAnuais.map(d => d.total) }],
-                  }}
-                  width={width - 60}
-                  height={220}
-                  chartConfig={barChartConfig}
-                  style={styles.chart}
-                  yAxisLabel="R$"
-                  yAxisSuffix=""
-                  showValuesOnTopOfBars={false}
-                  withInnerLines
-                  fromZero
-                />
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingRight: 16 }}
+                >
+                  <BarChart
+                    data={{
+                      labels: dadosAnuais.map(d => d.mes),
+                      datasets: [{ data: dadosAnuais.map(d => d.total) }],
+                    }}
+                    width={ANUAL_CHART_WIDTH}
+                    height={220}
+                    chartConfig={barChartConfig}
+                    style={styles.chart}
+                    yAxisLabel="R$"
+                    yAxisSuffix=""
+                    showValuesOnTopOfBars={false}
+                    withInnerLines
+                    fromZero
+                  />
+                </ScrollView>
               ) : (
                 <ActivityIndicator color="#C23B6B" />
               )}
@@ -361,32 +374,38 @@ export const DashboardScreen = () => {
 
             <View style={styles.chartContainer}>
               {dadosAnuais.length > 0 && dadosAnoAnterior.length > 0 ? (
-                <LineChart
-                  data={{
-                    labels: dadosAnuais.map(d => d.mes),
-                    datasets: [
-                      {
-                        data: dadosAnuais.map(d => d.total),
-                        color: (o = 1) => `rgba(194, 59, 107, ${o})`,
-                        strokeWidth: 2,
-                      },
-                      {
-                        data: dadosAnoAnterior.map(d => d.total),
-                        color: (o = 1) => `rgba(100, 100, 200, ${o})`,
-                        strokeWidth: 2,
-                      },
-                    ],
-                    legend: [`${anoAnual}`, `${anoAnual - 1}`],
-                  }}
-                  width={width - 60}
-                  height={220}
-                  chartConfig={chartConfig}
-                  bezier
-                  style={styles.chart}
-                  yAxisLabel="R$"
-                  withInnerLines
-                  withOuterLines={false}
-                />
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingRight: 16 }}
+                >
+                  <LineChart
+                    data={{
+                      labels: dadosAnuais.map(d => d.mes),
+                      datasets: [
+                        {
+                          data: dadosAnuais.map(d => d.total),
+                          color: (o = 1) => `rgba(194, 59, 107, ${o})`,
+                          strokeWidth: 2,
+                        },
+                        {
+                          data: dadosAnoAnterior.map(d => d.total),
+                          color: (o = 1) => `rgba(100, 100, 200, ${o})`,
+                          strokeWidth: 2,
+                        },
+                      ],
+                      legend: [`${anoAnual}`, `${anoAnual - 1}`],
+                    }}
+                    width={ANUAL_CHART_WIDTH}
+                    height={220}
+                    chartConfig={chartConfig}
+                    bezier
+                    style={styles.chart}
+                    yAxisLabel="R$"
+                    withInnerLines
+                    withOuterLines={false}
+                  />
+                </ScrollView>
               ) : (
                 <ActivityIndicator color="#C23B6B" />
               )}
